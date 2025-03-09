@@ -4,24 +4,25 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:DesktopEye.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="DesktopEye.Views.MainView"
-             x:DataType="vm:MainViewModel">
+             x:Class="DesktopEye.Views.SettingsView"
+             x:DataType="vm:SettingsViewModel">
     <Design.DataContext>
         <!-- This only sets the DataContext for the previewer in an IDE,
          to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
-        <vm:MainViewModel />
+        <vm:SettingsViewModel />
     </Design.DataContext>
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition />
-            <ColumnDefinition />
-            <ColumnDefinition />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="3*" />
         </Grid.ColumnDefinitions>
 
-        <Button Grid.Column="0" HorizontalAlignment="Right" Command="{Binding DecrementCommand}">-1</Button>
-        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" Text="{Binding Qty}" />
-        <Button Grid.Column="2" HorizontalAlignment="Left" Command="{Binding IncrementCommand}">+1</Button>
+        <StackPanel HorizontalAlignment="Center">
+            <TextBlock>Views</TextBlock>
+            <Button>view1</Button>
+            <Button>view2</Button>
+        </StackPanel>
+        <ContentControl Grid.Column="1" />
 
     </Grid>
-
 </UserControl>

@@ -1,16 +1,26 @@
-using Avalonia;
-using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Data.Core;
-using Avalonia.Data.Core.Plugins;
+using System;
+using System.Globalization;
 using System.Linq;
+using System.Resources;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
+using Avalonia.Platform;
+using DesktopEye.Services;
+using DesktopEye.Services.ScreenCaptureService;
 using DesktopEye.ViewModels;
 using DesktopEye.Views;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace DesktopEye;
 
-public partial class App : Application
+public class App : Application
 {
+    // private Window _mainWindow;
+    private TrayIcon _trayIcon;
+
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
@@ -23,17 +33,23 @@ public partial class App : Application
             // Avoid duplicate validations from both Avalonia and the CommunityToolkit. 
             // More info: https://docs.avaloniaui.net/docs/guides/development-guides/data-validation#manage-validationplugins
             DisableAvaloniaDataAnnotationValidation();
-            desktop.MainWindow = new MainWindow
-            {
-                DataContext = new MainViewModel()
-            };
-        }
-        else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
-        {
-            singleViewPlatform.MainView = new MainView
-            {
-                DataContext = new MainViewModel()
-            };
+
+            // Dependency injection
+            ServiceCollection collection = new();
+            collection.AddCommonServices();
+
+            collection.AddTransient<ImageViewModel>();
+
+            // var serviceProvider = collection.BuildServiceProvider();
+
+            // _mainWindow = new SettingsWindow
+            // {
+            //     DataContext = new SettingsViewModel()
+            // };
+            desktop.ShutdownMode = ShutdownMode.OnExplicitShutdown;
+            // desktop.MainWindow = _mainWindow;
+
+            InitializeTrayIcon();
         }
 
         base.OnFrameworkInitializationCompleted();
@@ -46,9 +62,68 @@ public partial class App : Application
             BindingPlugins.DataValidators.OfType<DataAnnotationsValidationPlugin>().ToArray();
 
         // remove each entry found
-        foreach (var plugin in dataValidationPluginsToRemove)
+        foreach (var plugin in dataValidationPluginsToRemove) BindingPlugins.DataValidators.Remove(plugin);
+    }
+
+    private void InitializeTrayIcon()
+    {
+        var resourceManager = new ResourceManager("DesktopEye.Resources.Strings", typeof(MainWindow).Assembly);
+        _trayIcon = new TrayIcon
         {
-            BindingPlugins.DataValidators.Remove(plugin);
-        }
+            Icon = new WindowIcon(AssetLoader.Open(new Uri("avares://DesktopEye/Assets/avalonia-logo.ico"))),
+            ToolTipText = "DesktopEye",
+            IsVisible = true
+        };
+
+        var menu = new NativeMenu();
+
+        var gcMenuItem = new NativeMenuItem("GC");
+        gcMenuItem.Click += GarbageCollect;
+
+        var settingsString = resourceManager.GetString("Tray.Settings", CultureInfo.CurrentUICulture);
+        var settingsMenuItem = new NativeMenuItem(settingsString ?? "Settings");
+        // settingsMenuItem.Click += ShowMainWindow;
+
+        var exitString = resourceManager.GetString("Tray.Exit", CultureInfo.CurrentUICulture);
+        var exitMenuItem = new NativeMenuItem(exitString ?? "Exit");
+        exitMenuItem.Click += ExitApp;
+
+        menu.Add(gcMenuItem);
+        menu.Add(settingsMenuItem);
+        menu.Add(exitMenuItem);
+
+        _trayIcon.Menu = menu;
+        _trayIcon.Clicked += TriggerCapture;
+    }
+
+    // private void ShowMainWindow(object? sender, EventArgs e)
+    // {
+    //     if (_mainWindow != null)
+    //     {
+    //         _mainWindow.Show();
+    //         _mainWindow.Activate();
+    //     }
+    // }
+
+    private void ExitApp(object? sender, EventArgs e)
+    {
+        _trayIcon.IsVisible = false;
+        Environment.Exit(0);
+    }
+
+    private void TriggerCapture(object? sender, EventArgs e)
+    {
+        var fullScreenWindow = new FullScreenWindow
+        {
+            // TODO cé prouteu
+            DataContext = new ImageViewModel(new LinuxScreenCaptureService())
+        };
+        fullScreenWindow.Show();
+    }
+
+    private void GarbageCollect(object? sender, EventArgs e)
+    {
+        GC.Collect();
+        GC.WaitForPendingFinalizers();
     }
 }
