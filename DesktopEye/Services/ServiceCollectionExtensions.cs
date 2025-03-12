@@ -1,6 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 using DesktopEye.Services.ScreenCaptureService;
+using DesktopEye.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DesktopEye.Services;
@@ -12,21 +13,18 @@ public static class ServiceCollectionExtensions
     {
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
-            //collection.AddSingleton<IScreenCaptureService, >();
-            // collection.AddSingleton<IRepository, Repository>();
-            // collection.AddTransient<BusinessService>();
-            // collection.AddTransient<MainViewModel>();
+            collection.AddSingleton<IScreenCaptureService, WindowsScreenCaptureService>();
         }
         else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
         {
             collection.AddSingleton<IScreenCaptureService, LinuxScreenCaptureService>();
-            // collection.AddSingleton<IRepository, Repository>();
-            // collection.AddTransient<BusinessService>();
-            // collection.AddTransient<MainViewModel>();
         }
         else
         {
             throw new PlatformNotSupportedException();
         }
+        collection.AddTransient<ScreenCaptureViewModel>();
+        collection.AddTransient<LauncherViewModel>();
+        collection.AddTransient<SettingsViewModel>();
     }
 }

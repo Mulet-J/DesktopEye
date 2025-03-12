@@ -1,0 +1,47 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:DesktopEye.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="180"
+             x:Class="DesktopEye.Views.Launcher.LauncherView"
+             x:DataType="vm:LauncherViewModel">
+  
+    <Design.DataContext>
+        <vm:LauncherViewModel/>
+    </Design.DataContext>
+
+    <Grid Background="#5A5A5A">
+        <!-- En-tête avec le titre -->
+        <TextBlock Text="Desktop Eye" 
+                   FontSize="24" 
+                   Foreground="#8C9EFF"
+                   HorizontalAlignment="Center" 
+                   VerticalAlignment="Top"
+                   Margin="0,35,0,0"/>
+    
+        <!-- Bouton de capture central -->
+        <Button Content="Capture" 
+                HorizontalAlignment="Center" 
+                VerticalAlignment="Center"
+                Margin="0,40,0,0"
+                Width="400"
+                Height="60"
+                FontSize="18"
+                Background="#333333"
+                Foreground="White"
+                CornerRadius="4"
+                Command="{Binding CaptureRegionCommand}"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Center"/>
+    
+        <!-- Barre de statut discrète en bas -->
+        <TextBlock Text="{Binding StatusMessage}" 
+                   Foreground="#CCCCCC"
+                   FontSize="11"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Bottom"
+                   Margin="0,0,0,10"
+                   IsVisible="{Binding IsCapturing}"/>
+    </Grid>
+</UserControl>

@@ -27,12 +27,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Exception\"/>
-        <Folder Include="Models\"/>
-        <Folder Include="Views\Settings\"/>
-    </ItemGroup>
-
-    <ItemGroup>
         <Reference Include="SkiaSharp">
             <HintPath>..\..\..\.nuget\packages\skiasharp\2.88.9\lib\net6.0\SkiaSharp.dll</HintPath>
         </Reference>
@@ -54,5 +48,25 @@
             <AutoGen>True</AutoGen>
             <DependentUpon>Strings.resx</DependentUpon>
         </Compile>
+        <Compile Update="Views\ScreenCapture\ScreenCaptureView.axaml.cs">
+          <DependentUpon>ScreenCaptureView.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\ScreenCapture\ScreenCaptureWindow.axaml.cs">
+          <DependentUpon>ScreenCaptureWindow.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\Main\MainView.axaml.cs">
+          <DependentUpon>MainView.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\Main\MainWindow.axaml.cs">
+          <DependentUpon>MainWindow.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <UpToDateCheckInput Remove="Views\FullScreen\FullSreenWindow.axaml" />
     </ItemGroup>
 </Project>

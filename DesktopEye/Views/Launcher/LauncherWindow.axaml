@@ -1,0 +1,37 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:views="using:DesktopEye.Views.Launcher"
+        xmlns:vm="using:DesktopEye.ViewModels"
+        mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="180"
+        x:Class="DesktopEye.Views.Launcher.LauncherWindow"
+        Title="Desktop Eye"
+        Width="400" Height="180"
+        MinWidth="400" MinHeight="180"
+        WindowStartupLocation="CenterScreen"
+        Background="Transparent"
+        TransparencyLevelHint="AcrylicBlur"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="NoChrome"
+        ExtendClientAreaTitleBarHeightHint="-1">
+
+    <Design.DataContext>
+        <vm:LauncherViewModel/>
+    </Design.DataContext>
+
+    <Panel>
+        <!-- Barre de titre personnalisée -->
+        <Grid VerticalAlignment="Top" Height="30">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,5,0">
+                <Button Content="..." Width="30" Height="30" Padding="0" Click="settings_Click"/>
+                <Button Content="–" Width="30" Height="30" Padding="0" Click="MinimizeButton_Click"/>
+                <Button Content="□" Width="30" Height="30" Padding="0" Click="MaximizeButton_Click"/>
+                <Button Content="✕" Width="30" Height="30" Padding="0" Click="CloseButton_Click"/>
+            </StackPanel>
+        </Grid>
+    
+        <!-- Intégration de LauncherView -->
+        <views:LauncherView x:Name="LauncherView" Margin="0,30,0,0"/>
+    </Panel>
+</Window>

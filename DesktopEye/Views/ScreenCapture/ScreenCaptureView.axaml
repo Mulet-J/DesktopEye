@@ -1,0 +1,39 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:DesktopEye.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="DesktopEye.Views.ScreenCaptureView"
+             x:DataType="vm:ScreenCaptureViewModel">
+    
+    <!-- Move all the content from ScreenCaptureWindow.axaml here -->
+    <Grid>
+        <!-- Image control to display the screenshot -->
+        <Image x:Name="ScreenshotImage" Stretch="None" />
+        
+        <!-- Canvas for drawing selection rectangle and other overlays -->
+        <Canvas x:Name="OverlayCanvas">
+            <!-- This will be populated dynamically -->
+        </Canvas>
+        
+        <!-- Tool panels -->
+        <Panel x:Name="ToolPanel" IsVisible="False">
+            <!-- Tool buttons here (copy from existing window XAML) -->
+            <StackPanel Orientation="Vertical" Spacing="5">
+                <Button Command="{Binding AddTextCommand}" ToolTip.Tip="Add Text">T</Button>
+                <Button Command="{Binding AddPointCommand}" ToolTip.Tip="Add Point">•</Button>
+                <Button Command="{Binding AddArrowCommand}" ToolTip.Tip="Add Arrow">↑</Button>
+                <Button Command="{Binding ZoomCommand}" ToolTip.Tip="Zoom">🔍</Button>
+                <Button Command="{Binding AddShapeCommand}" ToolTip.Tip="Add Shape">□</Button>
+            </StackPanel>
+        </Panel>
+        
+        <StackPanel x:Name="BottomToolPanel" IsVisible="False" 
+                    Orientation="Horizontal" Spacing="10">
+            <!-- Bottom tool buttons (copy from existing window XAML) -->
+            <Button Command="{Binding CaptureSelectionCommand}">Capture</Button>
+            <Button Command="{Binding CancelCommand}">Cancel</Button>
+        </StackPanel>
+    </Grid>
+</UserControl>

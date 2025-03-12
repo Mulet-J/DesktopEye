@@ -1,0 +1,172 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:DesktopEye.ViewModels"
+        mc:Ignorable="d" d:DesignWidth="550" d:DesignHeight="500"
+        x:Class="DesktopEye.Views.Settings.SettingsWindow"
+        x:DataType="vm:SettingsViewModel"
+        Title="DesktopEye Settings"
+        Width="550" Height="500"
+        WindowStartupLocation="CenterScreen"
+        Background="#1E1E1E"
+        Icon="/Assets/avalonia-logo.ico">
+
+    <Design.DataContext>
+        <vm:SettingsViewModel/>
+    </Design.DataContext>
+    
+    <Grid RowDefinitions="Auto,*,Auto">
+        <!-- Header -->
+        <Grid Grid.Row="0" Background="#2D2D2D" Height="60">
+            <TextBlock Text="Settings" 
+                       HorizontalAlignment="Center" 
+                       VerticalAlignment="Center"
+                       FontSize="24" 
+                       FontWeight="Bold"
+                       Foreground="White"/>
+        </Grid>
+        
+        <!-- Content -->
+        <TabControl Grid.Row="1" Margin="20">
+            <!-- Onglet Général -->
+            <TabItem Header="General">
+                <ScrollViewer>
+                    <StackPanel Margin="10" Spacing="15">
+                        <TextBlock Text="Startup Options" 
+                                   FontSize="16" 
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,5"/>
+                                   
+                        <CheckBox Content="Start with system" 
+                                  IsChecked="{Binding StartWithSystem}"/>
+                                  
+                        <CheckBox Content="Minimize to tray when closed" 
+                                  IsChecked="{Binding MinimizeToTray}"/>
+                                  
+                        <CheckBox Content="Show notifications" 
+                                  IsChecked="{Binding ShowNotifications}"/>
+                                  
+                        <TextBlock Text="Save Location" 
+                                   FontSize="16" 
+                                   FontWeight="SemiBold"
+                                   Margin="0,15,0,5"/>
+                                   
+                        <Grid ColumnDefinitions="*,Auto">
+                            <TextBox Grid.Column="0" 
+                                     Text="{Binding SaveDirectory}"
+                                     Watermark="Screenshot save directory"
+                                     Margin="0,0,10,0"/>
+                                     
+                            <Button Grid.Column="1" 
+                                    Content="Browse..." 
+                                    Command="{Binding BrowseSaveDirectoryCommand}"/>
+                        </Grid>
+                        
+                        <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,5,0,0">
+                            <TextBlock Text="File name pattern:" VerticalAlignment="Center"/>
+                            <TextBox Text="{Binding DefaultFileName}" 
+                                     Width="250"
+                                     Watermark="e.g., DesktopEye_Capture_{timestamp}"/>
+                        </StackPanel>
+                        
+                        <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,5,0,0">
+                            <TextBlock Text="Format:" VerticalAlignment="Center"/>
+                            <ComboBox SelectedItem="{Binding FileFormat}" Width="100">
+                                <ComboBoxItem>PNG</ComboBoxItem>
+                                <ComboBoxItem>JPG</ComboBoxItem>
+                                <ComboBoxItem>BMP</ComboBoxItem>
+                            </ComboBox>
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+            
+            <!-- Onglet Capture -->
+            <TabItem Header="Capture">
+                <ScrollViewer>
+                    <StackPanel Margin="10" Spacing="15">
+                        <TextBlock Text="Capture Options" 
+                                   FontSize="16" 
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,5"/>
+                                   
+                        <CheckBox Content="Include cursor in screenshots" 
+                                  IsChecked="{Binding IncludeCursor}"/>
+                                  
+                        <CheckBox Content="Capture window under cursor" 
+                                  IsChecked="{Binding CaptureWindowUnderCursor}"/>
+                                  
+                        <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,5,0,0">
+                            <TextBlock Text="Capture delay (seconds):" VerticalAlignment="Center"/>
+                            <NumericUpDown Value="{Binding CaptureDelaySeconds}"
+                                         Minimum="0"
+                                         Maximum="10"
+                                         Increment="1"
+                                         Width="100"/>
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+            
+            <!-- Onglet Raccourcis -->
+            <TabItem Header="Hotkeys">
+                <ScrollViewer>
+                    <StackPanel Margin="10" Spacing="15">
+                        <TextBlock Text="Keyboard Shortcuts" 
+                                   FontSize="16" 
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,5"/>
+                                   
+                        <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto" Margin="0,10,0,0">
+                            <TextBlock Grid.Row="0" Grid.Column="0" 
+                                       Text="Full screen capture:" 
+                                       VerticalAlignment="Center"
+                                       Margin="0,0,10,0"/>
+                                       
+                            <TextBox Grid.Row="0" Grid.Column="1" 
+                                     Text="{Binding FullScreenHotkey}" 
+                                     Watermark="e.g., Print"/>
+                                     
+                            <TextBlock Grid.Row="1" Grid.Column="0" 
+                                       Text="Region capture:" 
+                                       VerticalAlignment="Center"
+                                       Margin="0,10,10,0"/>
+                                       
+                            <TextBox Grid.Row="1" Grid.Column="1" 
+                                     Text="{Binding RegionCaptureHotkey}" 
+                                     Watermark="e.g., Ctrl+Shift+Print"
+                                     Margin="0,10,0,0"/>
+                        </Grid>
+                        
+                        <TextBlock Text="Note: Hotkey functionality requires app to be running in the background." 
+                                   TextWrapping="Wrap"
+                                   Opacity="0.7"
+                                   Margin="0,15,0,0"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+        </TabControl>
+        
+        <!-- Footer -->
+        <Grid Grid.Row="2" Background="#2D2D2D" Height="60">
+            <StackPanel Orientation="Horizontal" 
+                        HorizontalAlignment="Right" 
+                        VerticalAlignment="Center"
+                        Margin="0,0,20,0"
+                        Spacing="10">
+                
+                <Button Content="Reset to Defaults" 
+                        Command="{Binding ResetToDefaultsCommand}"
+                        Width="140"
+                        Height="36"/>
+                        
+                <Button Content="Save" 
+                        Command="{Binding SaveSettingsCommand}"
+                        Background="#304FFE"
+                        Width="100"
+                        Height="36"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>
