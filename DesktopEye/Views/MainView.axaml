@@ -7,10 +7,112 @@
              x:Class="DesktopEye.Views.MainView"
              x:DataType="vm:MainViewModel">
   <Design.DataContext>
-    <!-- This only sets the DataContext for the previewer in an IDE,
-         to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
     <vm:MainViewModel />
   </Design.DataContext>
 
-  <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+  <UserControl.Styles>
+    <Style Selector="Button.primary">
+      <Setter Property="Background" Value="#6200EE"/>
+      <Setter Property="Foreground" Value="White"/>
+      <Setter Property="CornerRadius" Value="24"/>
+      <Setter Property="Padding" Value="24,12"/>
+      <Setter Property="HorizontalContentAlignment" Value="Center"/>
+      <Setter Property="VerticalContentAlignment" Value="Center"/>
+      <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="Transitions">
+        <Transitions>
+          <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.2"/>
+        </Transitions>
+      </Setter>
+    </Style>
+    <Style Selector="Button.primary:pointerover">
+      <Setter Property="Background" Value="#7E3FF2"/>
+      <Setter Property="RenderTransform" Value="scale(1.02)"/>
+    </Style>
+    <Style Selector="Button.secondary">
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="Foreground" Value="#6200EE"/>
+      <Setter Property="BorderBrush" Value="#6200EE"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="CornerRadius" Value="4"/>
+      <Setter Property="Padding" Value="12,8"/>
+      <Setter Property="Margin" Value="8"/>
+    </Style>
+    <Style Selector="Button.secondary:pointerover">
+      <Setter Property="Background" Value="#1A6200EE"/>
+    </Style>
+  </UserControl.Styles>
+
+  <Grid>
+    <!-- Fond dégradé -->
+    <Grid.Background>
+      <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+        <GradientStop Offset="0" Color="#1F1F1F"/>
+        <GradientStop Offset="1" Color="#2D2D2D"/>
+      </LinearGradientBrush>
+    </Grid.Background>
+
+    <Grid RowDefinitions="Auto,*,Auto">
+      <!-- En-tête -->
+      <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Margin="24,16">
+        <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+          <Ellipse Width="32" Height="32" Fill="#6200EE" Margin="0,0,12,0"/>
+          <TextBlock Text="Desktop Eye" 
+                     FontSize="24" 
+                     FontWeight="SemiBold"
+                     Foreground="White"
+                     VerticalAlignment="Center"/>
+        </StackPanel>
+        
+        <StackPanel Grid.Column="2" Orientation="Horizontal">
+          <Button Classes="secondary" Content="Settings" Margin="8,0" ToolTip.Tip="Paramètres de l'application"/>
+          <Button Classes="secondary" Content="Help" Margin="8,0" ToolTip.Tip="Aide"/>
+        </StackPanel>
+      </Grid>
+
+      <!-- Contenu principal -->
+      <Grid Grid.Row="1" Margin="24,0">
+        <StackPanel VerticalAlignment="Center" Spacing="24">
+          <TextBlock Text="Capturez votre écran en un clic" 
+                     FontSize="28" 
+                     Foreground="White"
+                     HorizontalAlignment="Center"
+                     TextAlignment="Center"
+                     Margin="0,0,0,8"/>
+                     
+          <TextBlock Text="Faites une capture, annotez-la et partagez-la instantanément" 
+                     FontSize="16" 
+                     Foreground="#CCCCCC"
+                     HorizontalAlignment="Center"
+                     TextAlignment="Center"
+                     Margin="0,0,0,24"/>
+                     
+          <Button Classes="primary"
+                  HorizontalAlignment="Center"
+                  Command="{Binding CaptureRegionCommand}">
+            <StackPanel Orientation="Horizontal" Spacing="12">
+              <PathIcon Data="M2,4.2 L19,4.2 L19,15.8 L2,15.8 L2,4.2 Z M0,2.2 L0,17.8 L21,17.8 L21,2.2 L0,2.2 Z M7,20.2 L14,20.2 L14,22.2 L7,22.2 L7,20.2 Z M5,18.8 L16,18.8 L16,19.2 L5,19.2 L5,18.8 Z" Width="24" Height="24"/>
+              <TextBlock Text="Capturer l'écran" FontSize="18" FontWeight="Medium"/>
+            </StackPanel>
+          </Button>
+          
+          <WrapPanel HorizontalAlignment="Center" Margin="0,16,0,0">
+            <Button Classes="secondary" Content="Capture plein écran" Margin="8,4"/>
+            <Button Classes="secondary" Content="Capture fenêtre active" Margin="8,4"/>
+            <Button Classes="secondary" Content="Capture avec délai" Margin="8,4"/>
+          </WrapPanel>
+        </StackPanel>
+      </Grid>
+
+      <!-- Pied de page -->
+      <Grid Grid.Row="2" Margin="24,8,24,16">
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="8">
+          <TextBlock Text="Raccourci clavier :" Foreground="#AAAAAA" VerticalAlignment="Center"/>
+          <Border Background="#333333" CornerRadius="4" Padding="8,4">
+            <TextBlock Text="Ctrl + Alt + C" Foreground="#EEEEEE" FontWeight="SemiBold"/>
+          </Border>
+        </StackPanel>
+      </Grid>
+    </Grid>
+  </Grid>
 </UserControl>
