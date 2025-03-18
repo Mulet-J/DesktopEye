@@ -20,6 +20,7 @@ public class App : Application
 {
     // private Window _mainWindow;
     private TrayIcon _trayIcon;
+    public static IServiceProvider Services { get; protected set; }
 
     public override void Initialize()
     {
@@ -39,6 +40,8 @@ public class App : Application
             collection.AddCommonServices();
 
             collection.AddTransient<ImageViewModel>();
+
+            Services = collection.BuildServiceProvider();
 
             // var serviceProvider = collection.BuildServiceProvider();
 
@@ -113,10 +116,11 @@ public class App : Application
 
     private void TriggerCapture(object? sender, EventArgs e)
     {
+        var bitmap = Services.GetService<IScreenCaptureService>()?.CaptureScreen();
+        if (bitmap == null) return;
         var fullScreenWindow = new FullScreenWindow
         {
-            // TODO cé prouteu
-            DataContext = new ImageViewModel(new LinuxScreenCaptureService())
+            DataContext = new ImageViewModel(bitmap)
         };
         fullScreenWindow.Show();
     }

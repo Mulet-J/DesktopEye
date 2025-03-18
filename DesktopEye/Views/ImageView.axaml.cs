@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Shapes;
 using Avalonia.Input;
 using Avalonia.Media;
+using DesktopEye.ViewModels;
 using Point = Avalonia.Point;
 
 namespace DesktopEye.Views;
@@ -70,14 +71,15 @@ public partial class ImageView : UserControl
         if (_selectionRectangle != null)
         {
             // Get the final mouse position
-            var currentPoint = e.GetPosition(ImageControl);
-
-            // Calculate the selected area
-            // var rect = new Rect(_startPoint, currentPoint);
+            var startPoint = _startPoint;
+            var endPoint = e.GetPosition(ImageControl);
 
             // Do something with the selected area (e.g., crop the image)
             // Console.WriteLine($"Selected area: X={rect.X}, Y={rect.Y}, Width={rect.Width}, Height={rect.Height}");
-            Console.WriteLine($"SP: {_startPoint.X}, {_startPoint.Y} EP: {currentPoint.X}, {currentPoint.Y}");
+            Console.WriteLine($"SP: {_startPoint.X}, {_startPoint.Y} EP: {endPoint.X}, {endPoint.Y}");
+
+            if (DataContext is ImageViewModel viewModel)
+                viewModel.ProcessSelectionCommand.Execute([startPoint, endPoint]);
 
             // Remove the rectangle from the canvas
             SelectionCanvas.Children.Remove(_selectionRectangle);

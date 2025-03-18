@@ -1,19 +1,35 @@
 using Avalonia.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using DesktopEye.Helpers;
-using DesktopEye.Services.ScreenCaptureService;
+using DesktopEye.Views;
+using SkiaSharp;
+using Point = Avalonia.Point;
 
 namespace DesktopEye.ViewModels;
 
 public partial class ImageViewModel : ViewModelBase
 {
-    private readonly IScreenCaptureService _screenCaptureService;
     [ObservableProperty] private Bitmap? _bitmap;
+    [ObservableProperty] private SKBitmap? _skBitmap;
 
-    public ImageViewModel(IScreenCaptureService screenCaptureService)
+    public ImageViewModel(SKBitmap bitmap)
     {
-        _screenCaptureService = screenCaptureService;
-        var bitmap = _screenCaptureService.CaptureScreen();
+        SkBitmap = bitmap;
         Bitmap = bitmap.ToAvaloniaBitmap();
+    }
+
+    [RelayCommand]
+    private void ProcessSelection(Point[] points)
+    {
+        var startPoint = points[0];
+        var endPoint = points[1];
+
+        var cropedBitmap = _skBitmap.CropBitmap(startPoint, endPoint);
+        var window = new InteractionWindow
+        {
+            DataContext = new InteractionViewModel(cropedBitmap)
+        };
+        window.Show();
     }
 }
