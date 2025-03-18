@@ -21,7 +21,7 @@
         </PackageReference>
         <PackageReference Include="CommunityToolkit.Mvvm"/>
         <PackageReference Include="Microsoft.Extensions.DependencyInjection"/>
-        <PackageReference Include="Tesseract"/>
+        <PackageReference Include="SkiaSharp" />
         <PackageReference Include="Tmds.DBus"/>
         <DotNetCliToolReference Include="Tmds.DBus.Tool" Version="0.5.0"/>
     </ItemGroup>
