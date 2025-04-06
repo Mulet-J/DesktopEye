@@ -1,3 +1,4 @@
+using Avalonia;
 using Avalonia.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -11,6 +12,7 @@ namespace DesktopEye.ViewModels;
 public partial class ImageViewModel : ViewModelBase
 {
     [ObservableProperty] private Bitmap? _bitmap;
+    [ObservableProperty] private Rect? _selection;
     [ObservableProperty] private SKBitmap? _skBitmap;
 
     public ImageViewModel(SKBitmap bitmap)
@@ -25,7 +27,7 @@ public partial class ImageViewModel : ViewModelBase
         var startPoint = points[0];
         var endPoint = points[1];
 
-        var cropedBitmap = _skBitmap.CropBitmap(startPoint, endPoint);
+        var cropedBitmap = SkBitmap.CropBitmap(startPoint, endPoint);
         var window = new InteractionWindow
         {
             DataContext = new InteractionViewModel(cropedBitmap)

@@ -31,7 +31,7 @@ public partial class ImageView : UserControl
             StrokeThickness = 2,
             Fill = Brushes.Transparent
         };
-        SelectionCanvas.Children.Add(_selectionRectangle);
+        // SelectionCanvas.Children.Add(_selectionRectangle);
 
         // Set the initial position of the rectangle
         Canvas.SetLeft(_selectionRectangle, _startPoint.X);
@@ -76,13 +76,13 @@ public partial class ImageView : UserControl
 
             // Do something with the selected area (e.g., crop the image)
             // Console.WriteLine($"Selected area: X={rect.X}, Y={rect.Y}, Width={rect.Width}, Height={rect.Height}");
-            Console.WriteLine($"SP: {_startPoint.X}, {_startPoint.Y} EP: {endPoint.X}, {endPoint.Y}");
+            Console.WriteLine($@"SP: {_startPoint.X}, {_startPoint.Y} EP: {endPoint.X}, {endPoint.Y}");
 
             if (DataContext is ImageViewModel viewModel)
                 viewModel.ProcessSelectionCommand.Execute([startPoint, endPoint]);
 
             // Remove the rectangle from the canvas
-            SelectionCanvas.Children.Remove(_selectionRectangle);
+            // SelectionCanvas.Children.Remove(_selectionRectangle);
         }
     }
 }
