@@ -8,7 +8,6 @@ using Avalonia.Media;
 namespace DesktopEye.Controls;
 
 //Fait en grande partie par Claude, potentiellement éclaté au sol
-// TODO: Exclure la zone sélectionnée de l'effet d'atténuation
 // TODO: Ajouter une toolbar avec les actions possibles sous la zone de sélection
 // TODO?: Ajouter un encadré d'aide à l'écran
 public partial class AreaSelectionControl : UserControl
@@ -28,7 +27,7 @@ public partial class AreaSelectionControl : UserControl
     public AreaSelectionControl()
     {
         // Background = new SolidColorBrush(Color.FromArgb(100, 30, 30, 30));
-        Background = new SolidColorBrush(Color.FromArgb(100, 0, 0, 0), 80.0);
+        Background = new SolidColorBrush(Color.FromArgb(0, 0, 0, 0), 100.0);
         _selectionRect = new Rect(0, 0, 0, 0);
     }
 
@@ -213,22 +212,23 @@ public partial class AreaSelectionControl : UserControl
 
     public override void Render(DrawingContext context)
     {
+        var brush = new SolidColorBrush(Color.FromArgb(100, 30, 30, 30), 60);
         if (_selectionRect.Width > 0 && _selectionRect.Height > 0)
         {
-            context.FillRectangle(Background,
+            context.FillRectangle(brush,
                 new Rect(0, 0, Bounds.Width, _selectionRect.Top));
 
             // Left rectangle
-            context.FillRectangle(Background,
+            context.FillRectangle(brush,
                 new Rect(0, _selectionRect.Top, _selectionRect.Left, _selectionRect.Height));
 
             // Right rectangle
-            context.FillRectangle(Background,
+            context.FillRectangle(brush,
                 new Rect(_selectionRect.Right, _selectionRect.Top,
                     Bounds.Width - _selectionRect.Right, _selectionRect.Height));
 
             // Bottom rectangle
-            context.FillRectangle(Background,
+            context.FillRectangle(brush,
                 new Rect(0, _selectionRect.Bottom,
                     Bounds.Width, Bounds.Height - _selectionRect.Bottom));
 
@@ -264,7 +264,7 @@ public partial class AreaSelectionControl : UserControl
         }
         else
         {
-            context.FillRectangle(Background, new Rect(0, 0, Bounds.Width, Bounds.Height));
+            context.FillRectangle(brush, new Rect(0, 0, Bounds.Width, Bounds.Height));
         }
     }
 }
