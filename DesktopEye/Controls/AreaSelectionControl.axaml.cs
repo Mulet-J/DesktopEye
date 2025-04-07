@@ -103,13 +103,12 @@ public partial class AreaSelectionControl : UserControl
             var deltaY = position.Y - _moveStartPoint.Y;
 
             // Check out of bounds
-            // TODO: Trouver pourquoi Width et Height sont NaN
             // TODO: Améliorer le retour utilisateur quand la sélection est bloqué à un bord de l'écran
             var newX = _selectionRect.X + deltaX;
             var newY = _selectionRect.Y + deltaY;
 
-            var rectX = Math.Clamp(newX, 0, Width);
-            var rectY = Math.Clamp(newY, 0, Height);
+            var rectX = Math.Clamp(newX, 0, Width - _selectionRect.Width);
+            var rectY = Math.Clamp(newY, 0, Height - _selectionRect.Height);
 
             // Create a new selection rectangle with the updated position
             _selectionRect = new Rect(
