@@ -15,6 +15,7 @@ public partial class FullScreenWindow : Window
         Opened += SpanAcrossAllScreens;
         KeyDown += OnKeyDown;
         LostFocus += OnLostFocus;
+        Topmost = true;
     }
 
 
@@ -22,7 +23,6 @@ public partial class FullScreenWindow : Window
     {
         if (e.Key == Key.Escape) Close();
     }
-
 
     private void OnLostFocus(object? sender, RoutedEventArgs e)
     {

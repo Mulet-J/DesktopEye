@@ -7,7 +7,6 @@ using Avalonia.Media;
 
 namespace DesktopEye.Controls;
 
-//Fait en grande partie par Claude, potentiellement éclaté au sol
 // TODO: Ajouter une toolbar avec les actions possibles sous la zone de sélection
 // TODO?: Ajouter un encadré d'aide à l'écran
 public partial class AreaSelectionControl : UserControl
@@ -18,15 +17,17 @@ public partial class AreaSelectionControl : UserControl
         AvaloniaProperty.Register<AreaSelectionControl, Rect>(nameof(SelectionRect));
 
     private int _dragHandleIndex = -1;
-    private bool _isMoving;
-    private bool _isSelecting;
+    private bool _isMovingArea;
+    private bool _isMovingHandle;
+    private bool _isSelectingArea;
     private Point _moveStartPoint;
+    private Point _position;
     private Rect _selectionRect;
     private Point _startPoint;
 
     public AreaSelectionControl()
     {
-        // Background = new SolidColorBrush(Color.FromArgb(100, 30, 30, 30));
+        // Does not work at all without the following line
         Background = new SolidColorBrush(Color.FromArgb(0, 0, 0, 0), 100.0);
         _selectionRect = new Rect(0, 0, 0, 0);
     }
@@ -39,34 +40,34 @@ public partial class AreaSelectionControl : UserControl
     {
         base.OnPointerPressed(e);
 
-        var position = e.GetPosition(this);
-        _dragHandleIndex = GetHandleAtPosition(position);
-
         // Check if we're on a handle
         if (_dragHandleIndex >= 0)
         {
-            _isSelecting = true;
-            _isMoving = false;
-            _startPoint = position;
+            _isSelectingArea = false;
+            _isMovingArea = false;
+            _isMovingHandle = true;
+            _startPoint = _position;
             e.Handled = true;
             return;
         }
 
         // Check if we're inside the selection area
-        if (_selectionRect.Contains(position))
+        if (_selectionRect.Contains(_position))
         {
-            _isMoving = true;
-            _isSelecting = false;
-            _moveStartPoint = position;
+            _isMovingArea = true;
+            _isSelectingArea = false;
+            _isMovingHandle = false;
+            _moveStartPoint = _position;
             e.Handled = true;
             return;
         }
 
         // Start new selection
-        _isSelecting = true;
-        _isMoving = false;
-        _startPoint = position;
-        _selectionRect = new Rect(position, new Size(0, 0));
+        _isSelectingArea = true;
+        _isMovingArea = false;
+        _isMovingHandle = false;
+        _startPoint = _position;
+        _selectionRect = new Rect(_position, new Size(0, 0));
         e.Handled = true;
     }
 
@@ -74,32 +75,36 @@ public partial class AreaSelectionControl : UserControl
     {
         base.OnPointerMoved(e);
 
-        var position = e.GetPosition(this);
+        _position = e.GetPosition(this);
 
-        if (_isSelecting && _dragHandleIndex >= 0)
+        if (_isMovingHandle && _dragHandleIndex >= 0)
         {
             // Resize using handles
-            UpdateSelectionByHandle(_dragHandleIndex, position);
+            UpdateSelectionByHandle(_dragHandleIndex, _position);
             InvalidateVisual();
             e.Handled = true;
+            return;
         }
-        else if (_isSelecting)
+
+        if (_isSelectingArea)
         {
             // Create new selection
-            var left = Math.Min(_startPoint.X, position.X);
-            var top = Math.Min(_startPoint.Y, position.Y);
-            var width = Math.Abs(position.X - _startPoint.X);
-            var height = Math.Abs(position.Y - _startPoint.Y);
+            var left = Math.Min(_startPoint.X, _position.X);
+            var top = Math.Min(_startPoint.Y, _position.Y);
+            var width = Math.Abs(_position.X - _startPoint.X);
+            var height = Math.Abs(_position.Y - _startPoint.Y);
 
             _selectionRect = new Rect(left, top, width, height);
             InvalidateVisual();
             e.Handled = true;
+            return;
         }
-        else if (_isMoving)
+
+        if (_isMovingArea)
         {
             // Move existing selection
-            var deltaX = position.X - _moveStartPoint.X;
-            var deltaY = position.Y - _moveStartPoint.Y;
+            var deltaX = _position.X - _moveStartPoint.X;
+            var deltaY = _position.Y - _moveStartPoint.Y;
 
             // Check out of bounds
             // TODO: Améliorer le retour utilisateur quand la sélection est bloqué à un bord de l'écran
@@ -109,7 +114,7 @@ public partial class AreaSelectionControl : UserControl
             var rectX = Math.Clamp(newX, 0, Width - _selectionRect.Width);
             var rectY = Math.Clamp(newY, 0, Height - _selectionRect.Height);
 
-            // Create a new selection rectangle with the updated position
+            // Create a new selection rectangle with the updated _position
             _selectionRect = new Rect(
                 rectX,
                 rectY,
@@ -118,18 +123,40 @@ public partial class AreaSelectionControl : UserControl
             );
 
             // Update the start point for the next move
-            _moveStartPoint = position;
+            _moveStartPoint = _position;
 
             InvalidateVisual();
             e.Handled = true;
+            return;
         }
+
+        _dragHandleIndex = GetHandleAtPosition(_position);
+
+        if (_dragHandleIndex >= 0)
+            Cursor = _dragHandleIndex switch
+            {
+                0 => new Cursor(StandardCursorType.TopLeftCorner),
+                1 => new Cursor(StandardCursorType.TopSide),
+                2 => new Cursor(StandardCursorType.TopRightCorner),
+                3 => new Cursor(StandardCursorType.LeftSide),
+                4 => new Cursor(StandardCursorType.RightSide),
+                5 => new Cursor(StandardCursorType.BottomLeftCorner),
+                6 => new Cursor(StandardCursorType.BottomSide),
+                7 => new Cursor(StandardCursorType.BottomRightCorner),
+                _ => Cursor
+            };
+        else if (!_isSelectingArea && _selectionRect.Contains(_position))
+            Cursor = new Cursor(StandardCursorType.Hand);
+        else
+            Cursor = new Cursor(StandardCursorType.DragMove);
     }
 
     protected override void OnPointerReleased(PointerReleasedEventArgs e)
     {
         base.OnPointerReleased(e);
-        _isSelecting = false;
-        _isMoving = false;
+        _isSelectingArea = false;
+        _isMovingArea = false;
+        _isMovingHandle = false;
         _dragHandleIndex = -1;
         e.Handled = true;
     }
@@ -213,7 +240,7 @@ public partial class AreaSelectionControl : UserControl
     public override void Render(DrawingContext context)
     {
         var brush = new SolidColorBrush(Color.FromArgb(100, 30, 30, 30), 60);
-        if (_selectionRect.Width > 0 && _selectionRect.Height > 0)
+        if (_selectionRect is { Width: > 0, Height: > 0 })
         {
             context.FillRectangle(brush,
                 new Rect(0, 0, Bounds.Width, _selectionRect.Top));
