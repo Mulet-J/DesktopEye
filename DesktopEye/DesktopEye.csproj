@@ -22,9 +22,16 @@
         </PackageReference>
         <PackageReference Include="Microsoft.Extensions.DependencyInjection"/>
         <PackageReference Include="CommunityToolkit.Mvvm"/>
-        <PackageReference Include="SkiaSharp" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection"/>
+        <PackageReference Include="SkiaSharp"/>
+        <PackageReference Include="Tesseract"/>
+        <PackageReference Include="SkiaSharp"/>
         <PackageReference Include="Tmds.DBus"/>
         <DotNetCliToolReference Include="Tmds.DBus.Tool" Version="0.5.0"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Folder Include="Views\Settings\"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -34,5 +41,53 @@
         <Reference Include="Tmds.DBus.Protocol">
             <HintPath>..\..\..\.nuget\packages\tmds.dbus.protocol\0.20.0\lib\net8.0\Tmds.DBus.Protocol.dll</HintPath>
         </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Update="Resources\Strings.resx">
+            <Generator>PublicResXFileCodeGenerator</Generator>
+            <LastGenOutput>Strings.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Update="Resources\Strings.Designer.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>Strings.resx</DependentUpon>
+        </Compile>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection"/>
+        <PackageReference Include="SkiaSharp"/>
+        <PackageReference Include="Tesseract"/>
+        <PackageReference Include="Tmds.DBus"/>
+        <DotNetCliToolReference Include="Tmds.DBus.Tool" Version="0.5.0"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Folder Include="Views\Settings\"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Reference Include="SkiaSharp">
+            <HintPath>..\..\..\.nuget\packages\skiasharp\2.88.9\lib\net6.0\SkiaSharp.dll</HintPath>
+        </Reference>
+        <Reference Include="Tmds.DBus.Protocol">
+            <HintPath>..\..\..\.nuget\packages\tmds.dbus.protocol\0.20.0\lib\net8.0\Tmds.DBus.Protocol.dll</HintPath>
+        </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Update="Resources\Strings.resx">
+            <Generator>PublicResXFileCodeGenerator</Generator>
+            <LastGenOutput>Strings.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Update="Resources\Strings.Designer.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>Strings.resx</DependentUpon>
+        </Compile>
     </ItemGroup>
 </Project>

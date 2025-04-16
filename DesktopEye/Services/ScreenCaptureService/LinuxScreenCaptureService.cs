@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using SkiaSharp;
 using Tmds.DBus;
 
-namespace DesktopEye.Services;
+namespace DesktopEye.Services.ScreenCaptureService;
 
 public class LinuxScreenCaptureService : IScreenCaptureService
 {
@@ -72,7 +72,7 @@ public class LinuxScreenCaptureService : IScreenCaptureService
 [DBusInterface("org.freedesktop.portal.Screenshot")]
 public interface IScreenshot : IDBusObject
 {
-    Task<ObjectPath> ScreenshotAsync(string ParentWindow, IDictionary<string, object> Options);
+    Task<ObjectPath> ScreenshotAsync(string parentWindow, IDictionary<string, object> options);
     // Task<ObjectPath> PickColorAsync(string ParentWindow, IDictionary<string, object> Options);
     // Task<T> GetAsync<T>(string prop);
     // Task<ScreenshotProperties> GetAllAsync();
@@ -86,5 +86,11 @@ public interface IRequest : IDBusObject
     Task CloseAsync();
 
     Task<IDisposable> WatchResponseAsync(Action<(uint response, IDictionary<string, object> results)> handler,
-        Action<Exception> onError = null);
+        Action<Exception>? onError = null);
 }
+
+// [Dictionary]
+// public class ScreenshotProperties
+// {
+//     public uint Version { get; set; } = default;
+// }

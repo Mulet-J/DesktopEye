@@ -1,9 +1,15 @@
+using System;
+using System.Globalization;
 using System.Linq;
+using System.Resources;
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
-using DesktopEye.Core;
+using Avalonia.Platform;
+using DesktopEye.Services;
+using DesktopEye.Services.ScreenCaptureService;
 using DesktopEye.ViewModels;
 using DesktopEye.Views;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,6 +18,12 @@ namespace DesktopEye;
 
 public class App : Application
 {
+    private Window _mainWindow;
+
+    // private Window _mainWindow;
+    private TrayIcon _trayIcon;
+    public static IServiceProvider Services { get; protected set; }
+
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
@@ -29,10 +41,20 @@ public class App : Application
             ServiceCollection collection = new();
             collection.AddCommonServices();
 
-            desktop.MainWindow = new MainWindow
+            collection.AddTransient<ImageViewModel>();
+
+            Services = collection.BuildServiceProvider();
+
+            // var serviceProvider = collection.BuildServiceProvider();
+
+            _mainWindow = new MainWindow
             {
                 DataContext = new MainViewModel()
             };
+            desktop.ShutdownMode = ShutdownMode.OnExplicitShutdown;
+            // desktop.MainWindow = _mainWindow;
+
+            InitializeTrayIcon();
         }
 
         base.OnFrameworkInitializationCompleted();
@@ -46,5 +68,73 @@ public class App : Application
 
         // remove each entry found
         foreach (var plugin in dataValidationPluginsToRemove) BindingPlugins.DataValidators.Remove(plugin);
+    }
+
+    private void InitializeTrayIcon()
+    {
+        var resourceManager = new ResourceManager("DesktopEye.Resources.Strings", typeof(MainWindow).Assembly);
+        _trayIcon = new TrayIcon
+        {
+            Icon = new WindowIcon(AssetLoader.Open(new Uri("avares://DesktopEye/Assets/avalonia-logo.ico"))),
+            ToolTipText = "DesktopEye",
+            IsVisible = true
+        };
+
+        var menu = new NativeMenu();
+
+        var mainWindowString = resourceManager.GetString("Tray.OpenMainWindow", CultureInfo.CurrentUICulture);
+        var mainWindowMenuItem = new NativeMenuItem(mainWindowString ?? "Open main window");
+        mainWindowMenuItem.Click += ShowMainWindow;
+
+        var gcMenuItem = new NativeMenuItem("GC");
+        gcMenuItem.Click += GarbageCollect;
+
+        var settingsString = resourceManager.GetString("Tray.Settings", CultureInfo.CurrentUICulture);
+        var settingsMenuItem = new NativeMenuItem(settingsString ?? "Settings");
+        // settingsMenuItem.Click += ShowMainWindow;
+
+        var exitString = resourceManager.GetString("Tray.Exit", CultureInfo.CurrentUICulture);
+        var exitMenuItem = new NativeMenuItem(exitString ?? "Exit");
+        exitMenuItem.Click += ExitApp;
+
+        menu.Add(mainWindowMenuItem);
+        menu.Add(gcMenuItem);
+        menu.Add(settingsMenuItem);
+        menu.Add(exitMenuItem);
+
+        _trayIcon.Menu = menu;
+        _trayIcon.Clicked += TriggerCapture;
+    }
+
+    private void ShowMainWindow(object? sender, EventArgs e)
+    {
+        if (_mainWindow != null)
+        {
+            _mainWindow.Show();
+            _mainWindow.Activate();
+        }
+    }
+
+    private void ExitApp(object? sender, EventArgs e)
+    {
+        _trayIcon.IsVisible = false;
+        Environment.Exit(0);
+    }
+
+    private void TriggerCapture(object? sender, EventArgs e)
+    {
+        var bitmap = Services.GetService<IScreenCaptureService>()?.CaptureScreen();
+        if (bitmap == null) return;
+        var fullScreenWindow = new FullScreenWindow
+        {
+            DataContext = new ImageViewModel(bitmap)
+        };
+        fullScreenWindow.Show();
+    }
+
+    private void GarbageCollect(object? sender, EventArgs e)
+    {
+        GC.Collect();
+        GC.WaitForPendingFinalizers();
     }
 }

@@ -3,6 +3,7 @@ using System;
 
 namespace DesktopEye.Services;
 
+// TODO mettre le code de app.axaml.cs ici
 public class TrayIconManager : IDisposable
 {
     private TrayIcon? _trayIcon;
