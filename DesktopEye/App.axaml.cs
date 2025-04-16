@@ -3,21 +3,23 @@ using System.Globalization;
 using System.Linq;
 using System.Resources;
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Data.Core;
 using Avalonia.Data.Core.Plugins;
-using System.Linq;
 using Avalonia.Markup.Xaml;
 using Avalonia.Platform;
 using DesktopEye.Services;
 using DesktopEye.Services.ScreenCaptureService;
 using DesktopEye.ViewModels;
 using DesktopEye.Views;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace DesktopEye;
 
-public partial class App : Application
+public class App : Application
 {
+    private Window _mainWindow;
+
     // private Window _mainWindow;
     private TrayIcon _trayIcon;
     public static IServiceProvider Services { get; protected set; }
@@ -45,10 +47,10 @@ public partial class App : Application
 
             // var serviceProvider = collection.BuildServiceProvider();
 
-            // _mainWindow = new SettingsWindow
-            // {
-            //     DataContext = new SettingsViewModel()
-            // };
+            _mainWindow = new MainWindow
+            {
+                DataContext = new MainViewModel()
+            };
             desktop.ShutdownMode = ShutdownMode.OnExplicitShutdown;
             // desktop.MainWindow = _mainWindow;
 
@@ -80,6 +82,10 @@ public partial class App : Application
 
         var menu = new NativeMenu();
 
+        var mainWindowString = resourceManager.GetString("Tray.OpenMainWindow", CultureInfo.CurrentUICulture);
+        var mainWindowMenuItem = new NativeMenuItem(mainWindowString ?? "Open main window");
+        mainWindowMenuItem.Click += ShowMainWindow;
+
         var gcMenuItem = new NativeMenuItem("GC");
         gcMenuItem.Click += GarbageCollect;
 
@@ -91,6 +97,7 @@ public partial class App : Application
         var exitMenuItem = new NativeMenuItem(exitString ?? "Exit");
         exitMenuItem.Click += ExitApp;
 
+        menu.Add(mainWindowMenuItem);
         menu.Add(gcMenuItem);
         menu.Add(settingsMenuItem);
         menu.Add(exitMenuItem);
@@ -99,14 +106,14 @@ public partial class App : Application
         _trayIcon.Clicked += TriggerCapture;
     }
 
-    // private void ShowMainWindow(object? sender, EventArgs e)
-    // {
-    //     if (_mainWindow != null)
-    //     {
-    //         _mainWindow.Show();
-    //         _mainWindow.Activate();
-    //     }
-    // }
+    private void ShowMainWindow(object? sender, EventArgs e)
+    {
+        if (_mainWindow != null)
+        {
+            _mainWindow.Show();
+            _mainWindow.Activate();
+        }
+    }
 
     private void ExitApp(object? sender, EventArgs e)
     {

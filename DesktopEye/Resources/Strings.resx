@@ -30,4 +30,7 @@
     <data name="Tray.Exit" xml:space="preserve">
         <value>Exit</value>
     </data>
+    <data name="Tray.OpenMainWindow" xml:space="preserve">
+        <value>Open main window</value>
+    </data>
 </root>

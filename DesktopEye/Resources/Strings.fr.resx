@@ -21,4 +21,7 @@
     <data name="Tray.Settings" xml:space="preserve">
         <value>Options</value>
     </data>
+    <data name="Tray.OpenMainWindow" xml:space="preserve">
+        <value>Ouvrir la fenètre principale</value>
+    </data>
 </root>
