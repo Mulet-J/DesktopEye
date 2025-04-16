@@ -1,21 +1,13 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using DesktopEye.Views;
 
 namespace DesktopEye.ViewModels;
 
 public partial class MainViewModel : ViewModelBase
 {
-    [ObservableProperty] private int _qty;
-
     [RelayCommand]
-    private void Increment()
+    private void CaptureRegion()
     {
-        Qty++;
-    }
-
-    [RelayCommand]
-    private void Decrement()
-    {
-        Qty--;
     }
 }

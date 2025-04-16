@@ -3,20 +3,20 @@ using System.Globalization;
 using System.Linq;
 using System.Resources;
 using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Data.Core;
 using Avalonia.Data.Core.Plugins;
+using System.Linq;
 using Avalonia.Markup.Xaml;
 using Avalonia.Platform;
 using DesktopEye.Services;
 using DesktopEye.Services.ScreenCaptureService;
 using DesktopEye.ViewModels;
 using DesktopEye.Views;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace DesktopEye;
 
-public class App : Application
+public partial class App : Application
 {
     // private Window _mainWindow;
     private TrayIcon _trayIcon;
