@@ -1,7 +1,7 @@
 ﻿using System;
 using Avalonia;
 
-namespace DesktopEye.Desktop;
+namespace DesktopEye.Linux;
 
 internal sealed class Program
 {

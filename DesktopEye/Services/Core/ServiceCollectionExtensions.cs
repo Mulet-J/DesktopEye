@@ -5,7 +5,7 @@ using DesktopEye.Services.ScreenCaptureService;
 using DesktopEye.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace DesktopEye.Services;
+namespace DesktopEye.Services.Core;
 
 public static class ServiceCollectionExtensions
 {

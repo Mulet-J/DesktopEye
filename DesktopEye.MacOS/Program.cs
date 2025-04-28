@@ -1,7 +1,4 @@
-﻿using System;
-using Avalonia;
-
-namespace DesktopEye.Desktop;
+﻿namespace DesktopEye.MacOS;
 
 internal sealed class Program
 {
