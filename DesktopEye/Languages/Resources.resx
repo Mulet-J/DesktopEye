@@ -24,13 +24,13 @@
             PublicKeyToken=b77a5c561934e089
         </value>
     </resheader>
-    <data name="Tray.Settings" xml:space="preserve">
+    <data name="Tray_Settings" xml:space="preserve">
         <value>Settings</value>
     </data>
-    <data name="Tray.Exit" xml:space="preserve">
+    <data name="Tray_Exit" xml:space="preserve">
         <value>Exit</value>
     </data>
-    <data name="Tray.OpenMainWindow" xml:space="preserve">
+    <data name="Tray_OpenMainWindow" xml:space="preserve">
         <value>Open main window</value>
     </data>
 </root>

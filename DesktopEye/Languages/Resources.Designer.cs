@@ -14,21 +14,21 @@ namespace DesktopEye.Resources {
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class Strings {
+    public class Resources {
         
         private static System.Resources.ResourceManager resourceMan;
         
         private static System.Globalization.CultureInfo resourceCulture;
         
         [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Strings() {
+        internal Resources() {
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
         public static System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.Equals(null, resourceMan)) {
-                    System.Resources.ResourceManager temp = new System.Resources.ResourceManager("DesktopEye.Resources.Strings", typeof(Strings).Assembly);
+                    System.Resources.ResourceManager temp = new System.Resources.ResourceManager("DesktopEye.Languages.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -47,19 +47,19 @@ namespace DesktopEye.Resources {
         
         public static string Tray_Settings {
             get {
-                return ResourceManager.GetString("Tray.Settings", resourceCulture);
+                return ResourceManager.GetString("Tray_Settings", resourceCulture);
             }
         }
         
         public static string Tray_Exit {
             get {
-                return ResourceManager.GetString("Tray.Exit", resourceCulture);
+                return ResourceManager.GetString("Tray_Exit", resourceCulture);
             }
         }
         
         public static string Tray_OpenMainWindow {
             get {
-                return ResourceManager.GetString("Tray.OpenMainWindow", resourceCulture);
+                return ResourceManager.GetString("Tray_OpenMainWindow", resourceCulture);
             }
         }
     }

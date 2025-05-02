@@ -1,14 +1,12 @@
 using System;
-using System.Globalization;
 using System.Linq;
-using System.Resources;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using Avalonia.Platform;
-using DesktopEye.Services;
+using DesktopEye.Services.Core;
 using DesktopEye.Services.ScreenCaptureService;
 using DesktopEye.ViewModels;
 using DesktopEye.Views;
@@ -18,7 +16,7 @@ namespace DesktopEye;
 
 public class App : Application
 {
-    private Window _mainWindow;
+    private Window? _mainWindow;
 
     // private Window _mainWindow;
     private TrayIcon _trayIcon;
@@ -72,7 +70,6 @@ public class App : Application
 
     private void InitializeTrayIcon()
     {
-        var resourceManager = new ResourceManager("DesktopEye.Resources.Strings", typeof(MainWindow).Assembly);
         _trayIcon = new TrayIcon
         {
             Icon = new WindowIcon(AssetLoader.Open(new Uri("avares://DesktopEye/Assets/avalonia-logo.ico"))),
@@ -82,18 +79,18 @@ public class App : Application
 
         var menu = new NativeMenu();
 
-        var mainWindowString = resourceManager.GetString("Tray.OpenMainWindow", CultureInfo.CurrentUICulture);
-        var mainWindowMenuItem = new NativeMenuItem(mainWindowString ?? "Open main window");
+        var mainWindowString = DesktopEye.Resources.Resources.Tray_OpenMainWindow;
+        var mainWindowMenuItem = new NativeMenuItem(mainWindowString);
         mainWindowMenuItem.Click += ShowMainWindow;
 
         var gcMenuItem = new NativeMenuItem("GC");
         gcMenuItem.Click += GarbageCollect;
 
-        var settingsString = resourceManager.GetString("Tray.Settings", CultureInfo.CurrentUICulture);
+        var settingsString = DesktopEye.Resources.Resources.Tray_Settings;
         var settingsMenuItem = new NativeMenuItem(settingsString ?? "Settings");
         // settingsMenuItem.Click += ShowMainWindow;
 
-        var exitString = resourceManager.GetString("Tray.Exit", CultureInfo.CurrentUICulture);
+        var exitString = DesktopEye.Resources.Resources.Tray_Exit;
         var exitMenuItem = new NativeMenuItem(exitString ?? "Exit");
         exitMenuItem.Click += ExitApp;
 
