@@ -2,10 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using DesktopEye.Services.ScreenCaptureService;
 using SkiaSharp;
 using Tmds.DBus;
 
-namespace DesktopEye.Services.ScreenCaptureService;
+namespace DesktopEye.Linux.Services;
 
 public class LinuxScreenCaptureService : IScreenCaptureService
 {

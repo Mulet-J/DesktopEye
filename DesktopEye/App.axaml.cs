@@ -6,7 +6,6 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using Avalonia.Platform;
-using DesktopEye.Services.Core;
 using DesktopEye.Services.ScreenCaptureService;
 using DesktopEye.ViewModels;
 using DesktopEye.Views;
@@ -16,11 +15,16 @@ namespace DesktopEye;
 
 public class App : Application
 {
+    private readonly IServiceProvider _serviceProvider;
     private Window? _mainWindow;
 
     // private Window _mainWindow;
     private TrayIcon _trayIcon;
-    public static IServiceProvider Services { get; protected set; }
+
+    public App(IServiceProvider serviceProviderProvider)
+    {
+        _serviceProvider = serviceProviderProvider;
+    }
 
     public override void Initialize()
     {
@@ -34,14 +38,6 @@ public class App : Application
             // Avoid duplicate validations from both Avalonia and the CommunityToolkit. 
             // More info: https://docs.avaloniaui.net/docs/guides/development-guides/data-validation#manage-validationplugins
             DisableAvaloniaDataAnnotationValidation();
-
-            // Dependency injection
-            ServiceCollection collection = new();
-            collection.AddCommonServices();
-
-            collection.AddTransient<ImageViewModel>();
-
-            Services = collection.BuildServiceProvider();
 
             // var serviceProvider = collection.BuildServiceProvider();
 
@@ -120,7 +116,7 @@ public class App : Application
 
     private void TriggerCapture(object? sender, EventArgs e)
     {
-        var bitmap = Services.GetService<IScreenCaptureService>()?.CaptureScreen();
+        var bitmap = _serviceProvider.GetService<IScreenCaptureService>()?.CaptureScreen();
         if (bitmap == null) return;
         var fullScreenWindow = new FullScreenWindow
         {

@@ -3,7 +3,7 @@ using SkiaSharp;
 
 namespace DesktopEye.Services.ScreenCaptureService;
 
-public class WindowsScreenCaptureService : IScreenCaptureService
+public class MacOsScreenCaptureService : IScreenCaptureService
 {
     public SKBitmap CaptureScreen()
     {
