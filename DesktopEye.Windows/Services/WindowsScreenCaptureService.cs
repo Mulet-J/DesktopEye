@@ -8,7 +8,7 @@ public class WindowsScreenCaptureService : IScreenCaptureService
 {
     public SKBitmap CaptureScreen()
     {
-        // TODO
+        
         throw new NotImplementedException();
     }
 }

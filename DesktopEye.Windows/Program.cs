@@ -21,6 +21,13 @@ internal static class Program
     [STAThread]
     public static void Main(string[] args)
     {
+        BuildAvaloniaApp()
+            .StartWithClassicDesktopLifetime(args);
+    }
+
+    // Avalonia configuration, don't remove; also used by visual designer.
+    private static AppBuilder BuildAvaloniaApp()
+    {
         // Dependency Injection
         var services = new ServiceCollection();
         services.AddCommonServices();
@@ -28,13 +35,6 @@ internal static class Program
 
         var serviceProvider = services.BuildServiceProvider();
 
-        BuildAvaloniaApp(serviceProvider)
-            .StartWithClassicDesktopLifetime(args);
-    }
-
-    // Avalonia configuration, don't remove; also used by visual designer.
-    private static AppBuilder BuildAvaloniaApp(IServiceProvider serviceProvider)
-    {
         return AppBuilder.Configure(() => new App(serviceProvider))
             .UsePlatformDetect()
             .WithInterFont()

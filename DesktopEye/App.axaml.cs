@@ -21,6 +21,7 @@ public class App : Application
     // private Window _mainWindow;
     private TrayIcon _trayIcon;
 
+
     public App(IServiceProvider serviceProviderProvider)
     {
         _serviceProvider = serviceProviderProvider;
