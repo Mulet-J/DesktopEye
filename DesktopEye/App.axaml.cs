@@ -14,7 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace DesktopEye;
 
-public class App(IServiceProvider serviceProviderProvider) : Application
+public class App(IServiceProvider serviceProvider) : Application
 {
     private Window? _mainWindow;
     private TrayIcon? _trayIcon;
@@ -31,7 +31,7 @@ public class App(IServiceProvider serviceProviderProvider) : Application
             DisableAvaloniaDataAnnotationValidation();
             _mainWindow = new MainWindow
             {
-                DataContext = new MainViewModel(serviceProviderProvider)
+                DataContext = new MainViewModel(serviceProvider)
             };
             desktop.ShutdownMode = ShutdownMode.OnExplicitShutdown;
             InitializeTrayIcon();
@@ -70,11 +70,15 @@ public class App(IServiceProvider serviceProviderProvider) : Application
         var exitString = DesktopEye.Resources.Resources.Tray_Exit;
         var exitMenuItem = new NativeMenuItem(exitString ?? "Exit");
         exitMenuItem.Click += ExitApp;
-
+        
+        var triggerItem = new NativeMenuItem("Screen Capture");
+        triggerItem.Click += TriggerCapture;
+            
         menu.Add(mainWindowMenuItem);
         menu.Add(gcMenuItem);
         menu.Add(settingsMenuItem);
         menu.Add(exitMenuItem);
+        menu.Add(triggerItem);
 
         _trayIcon.Menu = menu;
         _trayIcon.Clicked += TriggerCapture;
@@ -95,7 +99,7 @@ public class App(IServiceProvider serviceProviderProvider) : Application
 
     private void TriggerCapture(object? sender, EventArgs e)
     {
-        var bitmap = serviceProviderProvider.GetService<IScreenCaptureService>()?.CaptureScreen();
+        var bitmap = serviceProvider.GetService<IScreenCaptureService>()?.CaptureScreen();
         if (bitmap == null) return;
         var fullScreenWindow = new ScreenCaptureWindow()
         {

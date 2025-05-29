@@ -33,15 +33,10 @@ public static class ImageFormatExtension
 
     public static Bitmap ToAvaloniaBitmap(this SKBitmap skBitmap)
     {
-        var imageInfo = new SKImageInfo(skBitmap.Width, skBitmap.Height);
-        using (var skImage = SKImage.FromPixels(imageInfo, skBitmap.GetPixels()))
-        {
-            var data = skImage.Encode(SKEncodedImageFormat.Png, 100).ToArray();
-            using (var stream = new MemoryStream(data))
-            {
-                return new Bitmap(stream);
-            }
-        }
+        using var stream = new MemoryStream();
+        skBitmap.Encode(stream, SKEncodedImageFormat.Jpeg, 100);
+        stream.Position = 0;
+        return new Bitmap(stream);
     }
 
     public static Image ToTesseractImage(this SKBitmap bitmap)
