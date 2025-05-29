@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
@@ -6,24 +6,22 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using CommunityToolkit.Mvvm.Input;
 
-namespace DesktopEye.Views.Capture;
+namespace DesktopEye.Views.ScreenCapture;
 
-public partial class FullScreenWindow : Window
+public partial class ScreenCaptureWindow : Window
 {
-    public FullScreenWindow()
+    public ScreenCaptureWindow()
     {
         InitializeComponent();
         Opened += SpanAcrossAllScreens;
         LostFocus += OnLostFocus;
-
         KeyBindings.Add(new KeyBinding
         {
             Command = new RelayCommand(Close),
             Gesture = new KeyGesture(Key.Escape)
         });
-        // Topmost = true;
     }
-
+    
     private void OnLostFocus(object? sender, RoutedEventArgs e)
     {
         Close();

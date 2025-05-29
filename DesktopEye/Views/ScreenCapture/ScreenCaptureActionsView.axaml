@@ -4,8 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:DesktopEye.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="DesktopEye.Views.InteractionView"
-             x:DataType="viewModels:InteractionViewModel">
+             x:Class="DesktopEye.Views.ScreenCapture.ScreenCaptureActionsView"
+             x:DataType="viewModels:ScreenCaptureActionsViewModel">
     <Grid RowDefinitions="*,*">
         <Image Grid.Row="0" Source="{Binding Bitmap}" />
         <TextBlock Grid.Row="1" />

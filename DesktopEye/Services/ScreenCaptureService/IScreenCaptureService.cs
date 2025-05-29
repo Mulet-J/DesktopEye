@@ -1,8 +1,8 @@
-using Avalonia.Media.Imaging;
+using SkiaSharp;
 
 namespace DesktopEye.Services.ScreenCaptureService;
 
 public interface IScreenCaptureService
 {
-    public Bitmap CaptureScreen();
+    public SKBitmap CaptureScreen();
 }

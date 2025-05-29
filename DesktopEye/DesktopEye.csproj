@@ -55,13 +55,21 @@
             <AutoGen>True</AutoGen>
             <DependentUpon>Resources.resx</DependentUpon>
         </Compile>
-        <Compile Update="Views\Capture\FullScreenWindow.axaml.cs">
-            <DependentUpon>FullScreenWindow.axaml</DependentUpon>
-            <SubType>Code</SubType>
+        <Compile Update="Views\ScreenCapture\ScreenCaptureView.axaml.cs">
+          <DependentUpon>ScreenCaptureView.axaml</DependentUpon>
+          <SubType>Code</SubType>
         </Compile>
-        <Compile Update="Views\Capture\ImageView.axaml.cs">
-            <DependentUpon>ImageView.axaml</DependentUpon>
-            <SubType>Code</SubType>
+        <Compile Update="Views\ScreenCapture\ScreenCaptureWindow.axaml.cs">
+          <DependentUpon>ScreenCaptureWindow.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\ScreenCapture\ScreenCaptureActionsView.axaml.cs">
+          <DependentUpon>ScreenCaptureActionsView.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\ScreenCapture\ScreenCaptureActionsWindow.axaml.cs">
+          <DependentUpon>ScreenCaptureActionsWindow.axaml</DependentUpon>
+          <SubType>Code</SubType>
         </Compile>
     </ItemGroup>
 </Project>

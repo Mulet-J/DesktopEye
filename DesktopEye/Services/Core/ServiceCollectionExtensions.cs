@@ -9,12 +9,14 @@ public static class ServiceCollectionExtensions
     // https://docs.avaloniaui.net/docs/guides/implementation-guides/how-to-implement-dependency-injection
     public static IServiceCollection AddCommonServices(this IServiceCollection services)
     {
+        //Singleton services
         services.AddSingleton<IOcrService, TesseractOcrService>();
-
-        services.AddTransient<ImageViewModel>();
+        // Transient services
+        services.AddTransient<ScreenCaptureViewModel>();
         services.AddTransient<MainViewModel>();
         services.AddTransient<SettingsViewModel>();
-        services.AddTransient<InteractionViewModel>();
+        services.AddTransient<ScreenCaptureActionsViewModel>();
+        // return the service collection to allow for method chaining
         return services;
     }
 }
