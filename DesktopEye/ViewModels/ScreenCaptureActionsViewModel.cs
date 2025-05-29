@@ -11,12 +11,10 @@ public partial class ScreenCaptureActionsViewModel : ViewModelBase
 {
     [ObservableProperty] private Bitmap? _bitmap;
     [ObservableProperty] private string? _ocrText;
-    [ObservableProperty] private SKBitmap? _skBitmap;
 
-    public ScreenCaptureActionsViewModel(SKBitmap bitmap)
+    public ScreenCaptureActionsViewModel(Bitmap bitmap)
     {
-        SkBitmap = bitmap;
-        Bitmap = bitmap.ToAvaloniaBitmap();
+        Bitmap = bitmap;
         var ocr = new TesseractOcrService([Language.English]);
         OcrText = ocr.BitmapToText(bitmap);
     }

@@ -14,19 +14,17 @@ public partial class ScreenCaptureViewModel : ViewModelBase
 {
     [ObservableProperty] private Bitmap? _bitmap;
     [ObservableProperty] private Rect? _selection;
-    [ObservableProperty] private SKBitmap? _skBitmap;
 
-    public ScreenCaptureViewModel(SKBitmap bitmap)
+    public ScreenCaptureViewModel(Bitmap bitmap)
     {
-        SkBitmap = bitmap;
-        Bitmap = bitmap.ToAvaloniaBitmap();
+        Bitmap = bitmap;
     }
     
     [RelayCommand]
     private void ProcessSelection()
     {
         if (!Selection.HasValue) return;
-        var cropedBitmap = SkBitmap.CropBitmap(Selection.Value.TopLeft, Selection.Value.BottomRight);
+        var cropedBitmap = Bitmap.CropBitmap(Selection.Value.TopLeft, Selection.Value.BottomRight);
         var window = new ScreenCaptureActionsWindow
         {
             DataContext = new ScreenCaptureActionsViewModel(cropedBitmap)
