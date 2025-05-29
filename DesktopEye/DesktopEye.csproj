@@ -20,51 +20,29 @@
             <IncludeAssets Condition="'$(Configuration)' != 'Debug'">None</IncludeAssets>
             <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection"/>
         <PackageReference Include="CommunityToolkit.Mvvm"/>
         <PackageReference Include="Microsoft.Extensions.DependencyInjection"/>
         <PackageReference Include="SkiaSharp"/>
-        <PackageReference Include="SkiaSharp.NativeAssets.Linux"/>
-        <PackageReference Include="SkiaSharp.NativeAssets.macOS"/>
-        <PackageReference Include="SkiaSharp.NativeAssets.Win32"/>
         <PackageReference Include="Tesseract"/>
-        <PackageReference Include="SkiaSharp"/>
         <PackageReference Include="Tmds.DBus"/>
-        <DotNetCliToolReference Include="Tmds.DBus.Tool" Version="0.5.0"/>
     </ItemGroup>
 
     <ItemGroup>
-        <EmbeddedResource Update="Resources\Strings.resx">
+        <Folder Include="Languages\"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Update="Languages\Resources.resx">
             <Generator>PublicResXFileCodeGenerator</Generator>
-            <LastGenOutput>Strings.Designer.cs</LastGenOutput>
+            <LastGenOutput>Resources.Designer.cs</LastGenOutput>
         </EmbeddedResource>
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Update="Resources\Strings.Designer.cs">
+        <Compile Update="Languages\Resources.Designer.cs">
             <DesignTime>True</DesignTime>
             <AutoGen>True</AutoGen>
-            <DependentUpon>Strings.resx</DependentUpon>
-        </Compile>
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection"/>
-        <PackageReference Include="SkiaSharp"/>
-        <PackageReference Include="Tesseract"/>
-        <PackageReference Include="Tmds.DBus"/>
-        <DotNetCliToolReference Include="Tmds.DBus.Tool" Version="0.5.0"/>
-    </ItemGroup>
-
-    <ItemGroup>
-        <EmbeddedResource Update="Resources\Strings.resx">
-            <Generator>PublicResXFileCodeGenerator</Generator>
-            <LastGenOutput>Strings.Designer.cs</LastGenOutput>
-        </EmbeddedResource>
-    </ItemGroup>
-
-    <ItemGroup>
-        <Compile Update="Resources\Strings.Designer.cs">
-            <DesignTime>True</DesignTime>
-            <AutoGen>True</AutoGen>
-            <DependentUpon>Strings.resx</DependentUpon>
+            <DependentUpon>Resources.resx</DependentUpon>
         </Compile>
     </ItemGroup>
 </Project>

@@ -5,7 +5,6 @@ using CommunityToolkit.Mvvm.Input;
 using DesktopEye.Helpers;
 using DesktopEye.Views;
 using SkiaSharp;
-using Point = Avalonia.Point;
 
 namespace DesktopEye.ViewModels;
 
@@ -22,12 +21,10 @@ public partial class ImageViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private void ProcessSelection(Point[] points)
+    private void ProcessSelection()
     {
-        var startPoint = points[0];
-        var endPoint = points[1];
-
-        var cropedBitmap = SkBitmap.CropBitmap(startPoint, endPoint);
+        if (!Selection.HasValue) return;
+        var cropedBitmap = SkBitmap.CropBitmap(Selection.Value.TopLeft, Selection.Value.BottomRight);
         var window = new InteractionWindow
         {
             DataContext = new InteractionViewModel(cropedBitmap)
