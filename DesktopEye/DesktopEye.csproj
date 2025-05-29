@@ -25,10 +25,17 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="FastText.NetWrapper" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection"/>
+        <PackageReference Include="Microsoft.ML.OnnxRuntime" />
         <PackageReference Include="Microsoft.NET.Test.Sdk"/>
         <PackageReference Include="OpenCvSharp4"/>
+        <PackageReference Include="pythonnet" />
+        <PackageReference Include="SciSharp.TensorFlow.Redist" />
+        <PackageReference Include="SciSharp.TensorFlowHub" />
         <PackageReference Include="SkiaSharp"/>
+        <PackageReference Include="TensorFlow.Keras" />
+        <PackageReference Include="TensorFlow.NET" />
         <PackageReference Include="TesseractOCR"/>
         <PackageReference Include="Tmds.DBus"/>
         <PackageReference Include="xunit"/>
@@ -37,6 +44,10 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
     </ItemGroup>
+
+    <PropertyGroup>
+        <EnableUnsafeBinaryFormatterSerialization>true</EnableUnsafeBinaryFormatterSerialization>
+    </PropertyGroup>
 
     <ItemGroup>
         <Folder Include="Languages\"/>

@@ -36,6 +36,9 @@ public class AreaSelectionControl : UserControl
 
     public Rect SelectionRect => GetValue(SelectionRectProperty);
 
+    //TODO modify to adapt to users's screen
+    public double ScaleFactor => 1;
+
     private string SelectionDimensions => $"{(int)_selectionRect.Width}×{(int)_selectionRect.Height}";
 
     protected override void OnPointerPressed(PointerPressedEventArgs e)
@@ -241,7 +244,7 @@ public class AreaSelectionControl : UserControl
 
     public override void Render(DrawingContext context)
     {
-        SetValue(SelectionRectProperty, _selectionRect);
+        SetValue(SelectionRectProperty, _selectionRect * ScaleFactor);
         var brush = new SolidColorBrush(Color.FromArgb(100, 30, 30, 30), 60);
         if (_selectionRect is { Width: > 0, Height: > 0 })
         {

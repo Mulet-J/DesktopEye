@@ -8,6 +8,8 @@
              x:DataType="viewModels:ScreenCaptureActionsViewModel">
     <Grid RowDefinitions="*,*">
         <Image Grid.Row="0" Source="{Binding Bitmap}" />
-        <TextBlock Grid.Row="1" />
+        <TextBlock Grid.Row="1" Text="{Binding OcrText}"/>
+        <TextBlock Grid.Row="2" Text="{Binding InferredLanguage}"></TextBlock>
+        <TextBlock Grid.Row="3" Text="{Binding TranslatedText}"></TextBlock>
     </Grid>
 </UserControl>

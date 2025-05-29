@@ -13,7 +13,7 @@ public class TesseractOcrService : IOcrService
     public TesseractOcrService(List<Language> languages)
     {
         //TODO make tessdata folder dynamic
-        _engine = new Engine("C:\\Ecole\\DesktopEye\\DesktopEye.Windows\\.testData", languages);
+        _engine = new Engine("C:\\Users\\Rémi\\Documents", languages);
     }
 
     public string BitmapToText(Bitmap bitmap)
