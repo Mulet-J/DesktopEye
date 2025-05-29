@@ -241,6 +241,7 @@ public class AreaSelectionControl : UserControl
 
     public override void Render(DrawingContext context)
     {
+        SetValue(SelectionRectProperty, _selectionRect);
         var brush = new SolidColorBrush(Color.FromArgb(100, 30, 30, 30), 60);
         if (_selectionRect is { Width: > 0, Height: > 0 })
         {
