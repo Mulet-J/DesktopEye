@@ -1,11 +1,11 @@
 using System;
-using SkiaSharp;
+using Avalonia.Media.Imaging;
 
 namespace DesktopEye.Services.ScreenCaptureService;
 
 public class MacOsScreenCaptureService : IScreenCaptureService
 {
-    public SKBitmap CaptureScreen()
+    public Bitmap CaptureScreen()
     {
         // TODO
         throw new NotImplementedException();

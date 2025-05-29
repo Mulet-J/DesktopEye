@@ -9,6 +9,26 @@ namespace DesktopEye.Extensions;
 
 public static class ImageFormatExtension
 {
+    #region Bitmap
+
+    public static Image ToTesseractImage(this Bitmap bitmap)
+    {
+        if (bitmap == null)
+            throw new ArgumentNullException(nameof(bitmap));
+
+        // Convert Avalonia Bitmap to PNG byte array
+        using (var memoryStream = new MemoryStream())
+        {
+            bitmap.Save(memoryStream);
+            var pngBytes = memoryStream.ToArray();
+
+            // Load the PNG data into Tesseract Image
+            return Image.LoadFromMemory(pngBytes);
+        }
+    }
+
+    #endregion
+
     #region SKBitmap
 
     public static Bitmap ToAvaloniaBitmap(this SKBitmap skBitmap)

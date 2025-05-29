@@ -2,15 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using Avalonia.Media.Imaging;
 using DesktopEye.Services.ScreenCaptureService;
-using SkiaSharp;
 using Tmds.DBus;
 
 namespace DesktopEye.Linux.Services;
 
 public class LinuxScreenCaptureService : IScreenCaptureService
 {
-    public SKBitmap CaptureScreen()
+    public Bitmap CaptureScreen()
     {
         var a = CaptureWorkspaceFromXdgPortal().GetAwaiter().GetResult();
         var bitmap = LoadBitmapFromUri(a);
@@ -19,7 +19,7 @@ public class LinuxScreenCaptureService : IScreenCaptureService
     }
 
     /// <summary>
-    ///     Returns a SKBitmap of the user's workspace using the XDG portal's desktop screenshot method.
+    ///     Returns a Bitmap of the user's workspace using the XDG portal's desktop screenshot method.
     /// </summary>
     private async Task<Uri> CaptureWorkspaceFromXdgPortal()
     {
@@ -61,9 +61,9 @@ public class LinuxScreenCaptureService : IScreenCaptureService
         return uri;
     }
 
-    private SKBitmap LoadBitmapFromUri(Uri uri)
+    private Bitmap LoadBitmapFromUri(Uri uri)
     {
-        var bitmap = SKBitmap.Decode(uri.LocalPath);
+        var bitmap = new Bitmap(uri.AbsolutePath);
         // remove file once properly loaded
         File.Delete(uri.LocalPath);
         return bitmap;

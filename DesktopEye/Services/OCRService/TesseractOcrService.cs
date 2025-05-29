@@ -1,6 +1,6 @@
 using System.Collections.Generic;
+using Avalonia.Media.Imaging;
 using DesktopEye.Extensions;
-using SkiaSharp;
 using TesseractOCR;
 using TesseractOCR.Enums;
 
@@ -16,11 +16,12 @@ public class TesseractOcrService : IOcrService
         _engine = new Engine("/usr/share/tessdata/", languages);
     }
 
-    public string BitmapToText(SKBitmap bitmap)
+    public string BitmapToText(Bitmap bitmap)
     {
         var picture = bitmap.ToTesseractImage();
         using var page = _engine.Process(picture);
         var text = page.Text;
+
         return text;
     }
 }

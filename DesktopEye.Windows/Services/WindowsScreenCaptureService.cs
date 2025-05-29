@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
+using Avalonia.Media.Imaging;
 using DesktopEye.Services.ScreenCaptureService;
 using SkiaSharp;
 
@@ -23,7 +24,7 @@ public class WindowsScreenCaptureService : IScreenCaptureService
     ///     Captures the entire user's workspace (all monitors) as a SkiaSharp bitmap
     /// </summary>
     /// <returns>SKBitmap containing the captured workspace</returns>
-    public SKBitmap CaptureScreen()
+    public Bitmap CaptureScreen()
     {
         // Get the virtual screen dimensions (all monitors combined)
         var x = GetSystemMetrics(SM_XVIRTUALSCREEN);
@@ -73,7 +74,7 @@ public class WindowsScreenCaptureService : IScreenCaptureService
     /// <summary>
     ///     Internal method to capture a screen region directly to SkiaSharp bitmap
     /// </summary>
-    private static SKBitmap CaptureScreen(int x, int y, int width, int height)
+    private static Bitmap CaptureScreen(int x, int y, int width, int height)
     {
         // Get desktop window and device context
         var desktopWindow = GetDesktopWindow();
@@ -114,10 +115,10 @@ public class WindowsScreenCaptureService : IScreenCaptureService
     /// <summary>
     ///     Converts a Windows HBITMAP directly to a SkiaSharp bitmap using GetDIBits
     /// </summary>
-    private static SKBitmap ConvertToSkiaBitmapDirect(IntPtr hdc, IntPtr hBitmap, int width, int height)
+    private static Bitmap ConvertToSkiaBitmapDirect(IntPtr hdc, IntPtr hBitmap, int width, int height)
     {
         // Create SkiaSharp bitmap
-        var skBitmap = new SKBitmap(width, height, SKColorType.Bgra8888, SKAlphaType.Opaque);
+        var bitmap = new SKBitmap(width, height, SKColorType.Bgra8888, SKAlphaType.Opaque);
 
         // Setup BITMAPINFO structure
         var bmi = new BITMAPINFO();
@@ -134,19 +135,19 @@ public class WindowsScreenCaptureService : IScreenCaptureService
         bmi.bmiHeader.biClrImportant = 0;
 
         // Get pixel data directly from Windows bitmap
-        var pixelPtr = skBitmap.GetPixels();
+        var pixelPtr = bitmap.GetPixels();
 
         var result = GetDIBits(hdc, hBitmap, 0, (uint)height, pixelPtr, ref bmi, DIB_RGB_COLORS);
 
         if (result == 0)
         {
-            skBitmap.Dispose();
+            bitmap.Dispose();
             throw new InvalidOperationException("Failed to get bitmap pixel data");
         }
 
         // The pixel data is now directly in the SkiaSharp bitmap
         // Windows gives us BGRA format which matches SkiaSharp's Bgra8888 format
-        return skBitmap;
+        return bitmap;
     }
 
     // BITMAPINFO structure
