@@ -3,13 +3,14 @@ using System.Globalization;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 
 namespace DesktopEye.Controls;
 
 // TODO: Ajouter une toolbar avec les actions possibles sous la zone de sélection
 // TODO?: Ajouter un encadré d'aide à l'écran
-public partial class AreaSelectionControl : UserControl
+public class AreaSelectionControl : UserControl
 {
     private const int HandleSize = 10;
 
@@ -27,6 +28,7 @@ public partial class AreaSelectionControl : UserControl
 
     public AreaSelectionControl()
     {
+        AvaloniaXamlLoader.Load(this);
         // Does not work at all without the following line
         Background = new SolidColorBrush(Color.FromArgb(0, 0, 0, 0), 100.0);
         _selectionRect = new Rect(0, 0, 0, 0);
@@ -146,9 +148,9 @@ public partial class AreaSelectionControl : UserControl
                 _ => Cursor
             };
         else if (!_isSelectingArea && _selectionRect.Contains(_position))
-            Cursor = new Cursor(StandardCursorType.Hand);
-        else
             Cursor = new Cursor(StandardCursorType.DragMove);
+        else
+            Cursor = new Cursor(StandardCursorType.Cross);
     }
 
     protected override void OnPointerReleased(PointerReleasedEventArgs e)

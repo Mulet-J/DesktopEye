@@ -21,10 +21,21 @@
             <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
         </PackageReference>
         <PackageReference Include="CommunityToolkit.Mvvm"/>
+        <PackageReference Include="coverlet.collector">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
         <PackageReference Include="Microsoft.Extensions.DependencyInjection"/>
+        <PackageReference Include="Microsoft.NET.Test.Sdk"/>
+        <PackageReference Include="OpenCvSharp4"/>
         <PackageReference Include="SkiaSharp"/>
-        <PackageReference Include="Tesseract"/>
+        <PackageReference Include="TesseractOCR"/>
         <PackageReference Include="Tmds.DBus"/>
+        <PackageReference Include="xunit"/>
+        <PackageReference Include="xunit.runner.visualstudio">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
     </ItemGroup>
 
     <ItemGroup>
@@ -43,6 +54,14 @@
             <DesignTime>True</DesignTime>
             <AutoGen>True</AutoGen>
             <DependentUpon>Resources.resx</DependentUpon>
+        </Compile>
+        <Compile Update="Views\Capture\FullScreenWindow.axaml.cs">
+            <DependentUpon>FullScreenWindow.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\Capture\ImageView.axaml.cs">
+            <DependentUpon>ImageView.axaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
     </ItemGroup>
 </Project>

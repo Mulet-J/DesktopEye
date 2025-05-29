@@ -16,6 +16,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DesktopEye.Windows", "Deskt
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DesktopEye.MacOS", "DesktopEye.MacOS\DesktopEye.MacOS.csproj", "{128AF898-A49C-4C9A-AE21-F21A6A80995A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DesktopEye.Tests", "DesktopEye.Tests\DesktopEye.Tests.csproj", "{B50855B6-573B-47F5-9F47-0E0B995E9A54}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,6 +40,10 @@ Global
 		{128AF898-A49C-4C9A-AE21-F21A6A80995A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{128AF898-A49C-4C9A-AE21-F21A6A80995A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{128AF898-A49C-4C9A-AE21-F21A6A80995A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B50855B6-573B-47F5-9F47-0E0B995E9A54}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B50855B6-573B-47F5-9F47-0E0B995E9A54}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B50855B6-573B-47F5-9F47-0E0B995E9A54}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B50855B6-573B-47F5-9F47-0E0B995E9A54}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

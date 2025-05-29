@@ -1,6 +1,6 @@
 ﻿using Avalonia.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
-using DesktopEye.Helpers;
+using DesktopEye.Extensions;
 using DesktopEye.Services.ScreenCaptureService;
 
 namespace DesktopEye.ViewModels;

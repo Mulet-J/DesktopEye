@@ -1,7 +1,9 @@
+using System;
 using Avalonia;
 using Avalonia.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using DesktopEye.Extensions;
 using DesktopEye.Helpers;
 using DesktopEye.Views;
 using SkiaSharp;
@@ -30,5 +32,11 @@ public partial class ImageViewModel : ViewModelBase
             DataContext = new InteractionViewModel(cropedBitmap)
         };
         window.Show();
+    }
+
+    [RelayCommand]
+    private void Test()
+    {
+        Console.WriteLine("aze");
     }
 }

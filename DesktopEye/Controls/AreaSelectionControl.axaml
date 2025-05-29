@@ -1,7 +1,20 @@
-<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d"
-             x:Class="DesktopEye.Controls.AreaSelectionControl">
-</UserControl>
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                    xmlns:controls="clr-namespace:DesktopEye.Controls"
+                    mc:Ignorable="d"
+                    d:DesignHeight="600"
+                    d:DesignWidth="800"
+                    x:Class="DesktopEye.Controls.AreaSelectionControl">
+    <Design.PreviewWith>
+        <Panel>
+            <Grid>
+                <Image x:Name="ImageControl" Source="../Assets/cheems.png" Stretch="Fill" />
+                <controls:AreaSelectionControl
+                    Width="{Binding Bounds.Width, ElementName=ImageControl}"
+                    Height="{Binding Bounds.Height, ElementName=ImageControl}" />
+            </Grid>
+        </Panel>
+    </Design.PreviewWith>
+</ResourceDictionary>

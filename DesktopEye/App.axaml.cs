@@ -9,6 +9,7 @@ using Avalonia.Platform;
 using DesktopEye.Services.ScreenCaptureService;
 using DesktopEye.ViewModels;
 using DesktopEye.Views;
+using DesktopEye.Views.Capture;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DesktopEye;

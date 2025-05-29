@@ -1,17 +1,26 @@
-using DesktopEye.Helpers;
+using System.Collections.Generic;
+using DesktopEye.Extensions;
 using SkiaSharp;
-using Tesseract;
+using TesseractOCR;
+using TesseractOCR.Enums;
 
 namespace DesktopEye.Services.OCRService;
 
 public class TesseractOcrService : IOcrService
 {
-    public static void a(SKBitmap bitmap)
+    private readonly Engine _engine;
+
+    public TesseractOcrService(List<Language> languages)
     {
-        var picture = bitmap.ToTesseractPix();
-        using var engine = new TesseractEngine("/usr/share/tessdata/", "eng", EngineMode.Default);
-        using var page = engine.Process(picture);
-        var text = page.GetText();
-        ;
+        //TODO make tessdata folder dynamic
+        _engine = new Engine("/usr/share/tessdata/", languages);
+    }
+
+    public string BitmapToText(SKBitmap bitmap)
+    {
+        var picture = bitmap.ToTesseractImage();
+        using var page = _engine.Process(picture);
+        var text = page.Text;
+        return text;
     }
 }
