@@ -3,20 +3,24 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32811.315
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DesktopEye", "DesktopEye\DesktopEye.csproj", "{EBFA8512-1EA5-4D8C-B4AC-AB5B48A6D568}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DesktopEye.Common", "DesktopEye.Common\DesktopEye.Common.csproj", "{EBFA8512-1EA5-4D8C-B4AC-AB5B48A6D568}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3DA99C4E-89E3-4049-9C22-0A7EC60D83D8}"
 	ProjectSection(SolutionItems) = preProject
 		Directory.Packages.props = Directory.Packages.props
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DesktopEye.Linux", "DesktopEye.Linux\DesktopEye.Linux.csproj", "{A056CC38-7279-412B-8556-A1ADE5AC1D29}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DesktopEye.Desktop.Linux", "DesktopEye.Desktop.Linux\DesktopEye.Desktop.Linux.csproj", "{A056CC38-7279-412B-8556-A1ADE5AC1D29}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DesktopEye.Windows", "DesktopEye.Windows\DesktopEye.Windows.csproj", "{3C2ABA89-896F-4DA4-96AE-30EB4DE7BB6A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DesktopEye.Desktop.Windows", "DesktopEye.Desktop.Windows\DesktopEye.Desktop.Windows.csproj", "{3C2ABA89-896F-4DA4-96AE-30EB4DE7BB6A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DesktopEye.MacOS", "DesktopEye.MacOS\DesktopEye.MacOS.csproj", "{128AF898-A49C-4C9A-AE21-F21A6A80995A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DesktopEye.Desktop.MacOS", "DesktopEye.Desktop.MacOS\DesktopEye.Desktop.MacOS.csproj", "{128AF898-A49C-4C9A-AE21-F21A6A80995A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DesktopEye.Tests", "DesktopEye.Tests\DesktopEye.Tests.csproj", "{B50855B6-573B-47F5-9F47-0E0B995E9A54}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DesktopEye.Common.Tests", "DesktopEye.Common.Tests\DesktopEye.Common.Tests.csproj", "{B50855B6-573B-47F5-9F47-0E0B995E9A54}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DesktopEye.ML", "DesktopEye.ML\DesktopEye.ML.csproj", "{B409AC7B-1F1B-40B4-BBC9-E6A8C8BA74FF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DesktopEye.ML.Tests", "DesktopEye.ML.Tests\DesktopEye.ML.Tests.csproj", "{DA04D29A-B524-484D-9511-7FFB6BB2F231}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -44,6 +48,14 @@ Global
 		{B50855B6-573B-47F5-9F47-0E0B995E9A54}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B50855B6-573B-47F5-9F47-0E0B995E9A54}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B50855B6-573B-47F5-9F47-0E0B995E9A54}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B409AC7B-1F1B-40B4-BBC9-E6A8C8BA74FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B409AC7B-1F1B-40B4-BBC9-E6A8C8BA74FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B409AC7B-1F1B-40B4-BBC9-E6A8C8BA74FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B409AC7B-1F1B-40B4-BBC9-E6A8C8BA74FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DA04D29A-B524-484D-9511-7FFB6BB2F231}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA04D29A-B524-484D-9511-7FFB6BB2F231}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA04D29A-B524-484D-9511-7FFB6BB2F231}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA04D29A-B524-484D-9511-7FFB6BB2F231}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
