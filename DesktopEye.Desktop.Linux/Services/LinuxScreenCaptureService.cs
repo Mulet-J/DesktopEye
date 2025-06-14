@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Avalonia.Media.Imaging;
-using DesktopEye.Common.Services.ScreenCaptureService;
+using DesktopEye.Common.Services.ScreenCapture;
 using Tmds.DBus;
 
 namespace DesktopEye.Desktop.Linux.Services;
@@ -12,7 +12,7 @@ public class LinuxScreenCaptureService : IScreenCaptureService
 {
     public Bitmap CaptureScreen()
     {
-        var a = CaptureWorkspaceFromXdgPortal().GetAwaiter().GetResult();
+        var a = CaptureWorkspaceFromXdgPortalAsync().GetAwaiter().GetResult();
         var bitmap = LoadBitmapFromUri(a);
         // PortalProgram.Main();
         return bitmap;
@@ -21,7 +21,7 @@ public class LinuxScreenCaptureService : IScreenCaptureService
     /// <summary>
     ///     Returns a Bitmap of the user's workspace using the XDG portal's desktop screenshot method.
     /// </summary>
-    private async Task<Uri> CaptureWorkspaceFromXdgPortal()
+    private async Task<Uri> CaptureWorkspaceFromXdgPortalAsync()
     {
         var connection = new Connection(Address.Session);
         await connection.ConnectAsync().ConfigureAwait(false);

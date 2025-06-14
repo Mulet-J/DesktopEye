@@ -2,7 +2,7 @@
 using Avalonia;
 using DesktopEye.Common;
 using DesktopEye.Common.Services.Core;
-using DesktopEye.Common.Services.ScreenCaptureService;
+using DesktopEye.Common.Services.ScreenCapture;
 using DesktopEye.Desktop.Windows.Services;
 using Microsoft.Extensions.DependencyInjection;
 

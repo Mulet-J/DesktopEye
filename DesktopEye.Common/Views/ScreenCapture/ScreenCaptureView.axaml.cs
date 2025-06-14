@@ -4,8 +4,8 @@ using Avalonia.Controls.Shapes;
 using Avalonia.Input;
 using Avalonia.Media;
 using CommunityToolkit.Mvvm.Input;
-using DesktopEye.Common.ViewModels;
 using Point = Avalonia.Point;
+using ScreenCaptureViewModel = DesktopEye.Common.ViewModels.ScreenCapture.ScreenCaptureViewModel;
 
 namespace DesktopEye.Common.Views.ScreenCapture;
 

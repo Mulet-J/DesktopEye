@@ -31,7 +31,7 @@ public class TrayIconManager : IDisposable
             var menu = new NativeMenu();
 
             var showItem = new NativeMenuItem("Afficher");
-            showItem.Click += (s, e) => ShowApplication();
+            showItem.Click += (_, _) => ShowApplication();
             menu.Add(showItem);
 
             var exitItem = new NativeMenuItem("Quitter");
@@ -45,7 +45,7 @@ public class TrayIconManager : IDisposable
                 Menu = menu
             };
 
-            _trayIcon.Clicked += (s, e) => ShowApplication();
+            _trayIcon.Clicked += (_, _) => ShowApplication();
 
             _trayIcon.IsVisible = true;
         }

@@ -1,21 +1,27 @@
 ﻿using System;
 using CommunityToolkit.Mvvm.Input;
-using DesktopEye.Common.Services.ScreenCaptureService;
+using DesktopEye.Common.ViewModels.Base;
+using DesktopEye.Common.ViewModels.ScreenCapture;
 using DesktopEye.Common.Views.ScreenCapture;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DesktopEye.Common.ViewModels;
 
-public partial class MainViewModel(IServiceProvider serviceProviderProvider) : ViewModelBase
+public partial class MainViewModel : ViewModelBase
 {
+    private readonly IServiceProvider _services;
+
+    public MainViewModel(IServiceProvider services)
+    {
+        _services = services;
+    }
+
     [RelayCommand]
     private void CaptureRegion()
     {
-        var bitmap = serviceProviderProvider.GetService<IScreenCaptureService>()?.CaptureScreen();
-        if (bitmap == null) return;
         var fullScreenWindow = new ScreenCaptureWindow
         {
-            DataContext = new ScreenCaptureViewModel(bitmap)
+            DataContext = _services.GetService<ScreenCaptureViewModel>()
         };
         fullScreenWindow.Show();
     }

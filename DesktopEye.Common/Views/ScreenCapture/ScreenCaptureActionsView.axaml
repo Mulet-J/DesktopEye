@@ -2,12 +2,37 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:viewModels1="clr-namespace:DesktopEye.Common.ViewModels"
+             xmlns:res="clr-namespace:DesktopEye.Common.Resources"
+             xmlns:screenCapture="clr-namespace:DesktopEye.Common.ViewModels.ScreenCapture"
+             xmlns:design="clr-namespace:DesktopEye.Common.ViewModels.ScreenCapture.Design"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="DesktopEye.Common.Views.ScreenCapture.ScreenCaptureActionsView"
-             x:DataType="viewModels1:ScreenCaptureActionsViewModel">
+             x:DataType="screenCapture:ScreenCaptureActionsViewModel">
+
+    <Design.DataContext>
+        <design:DesignScreenCaptureActionsViewModel />
+    </Design.DataContext>
+
     <Grid RowDefinitions="*,*,*,*">
-        <Image Grid.Row="0" Source="{Binding Bitmap}" />
+        <Grid Grid.Row="0" ColumnDefinitions="*,*">
+            <Image Grid.Column="0" Source="{Binding Bitmap}" />
+            <StackPanel Grid.Column="1">
+                <Button Command="{Binding ExtractText}"
+                        Content="{x:Static res:Resources_Common.Button_ExtractText}" />
+                <ComboBox ItemsSource="{Binding AvailableOcrTypes}"
+                          SelectedItem="{Binding CurrentOcrType}" />
+                <Button Command="{Binding InferLanguage}"
+                        Content="{x:Static res:Resources_Common.Button_InferLanguage}" />
+                <ComboBox ItemsSource="{Binding AvailableClassifierTypes}"
+                          SelectedItem="{Binding CurrentClassifierType}" />
+                <Button Command="{Binding Translate}"
+                        Content="{x:Static res:Resources_Common.Button_Translate}" />
+                <ComboBox ItemsSource="{Binding AvailableTranslationTypes}"
+                          SelectedItem="{Binding CurrentTranslationType}" />
+                <ComboBox ItemsSource="{Binding AvailableLanguages}"
+                          SelectedItem="{Binding TargetLanguage}" />
+            </StackPanel>
+        </Grid>
         <TextBlock Grid.Row="1" Text="{Binding OcrText}" />
         <TextBlock Grid.Row="2" Text="{Binding InferredLanguage}" />
         <TextBlock Grid.Row="3" Text="{Binding TranslatedText}" />

@@ -28,8 +28,13 @@
         </PackageReference>
         <PackageReference Include="FastText.NetWrapper"/>
         <PackageReference Include="Microsoft.Extensions.DependencyInjection"/>
+        <PackageReference Include="Microsoft.Extensions.Http"/>
+        <PackageReference Include="Microsoft.Extensions.Logging"/>
+        <PackageReference Include="Microsoft.Extensions.Logging.Console"/>
         <PackageReference Include="Microsoft.ML.OnnxRuntime"/>
         <PackageReference Include="Microsoft.NET.Test.Sdk"/>
+        <PackageReference Include="Moq"/>
+        <PackageReference Include="NTextCat"/>
         <PackageReference Include="OpenCvSharp4"/>
         <PackageReference Include="pythonnet"/>
         <PackageReference Include="SciSharp.TensorFlow.Redist"/>
@@ -50,22 +55,21 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Folder Include="Languages\"/>
-    </ItemGroup>
-
-    <ItemGroup>
-        <EmbeddedResource Update="Languages\Resources.resx">
+        <EmbeddedResource Update="Resources\Resources_Tray.resx">
             <Generator>PublicResXFileCodeGenerator</Generator>
-            <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+            <LastGenOutput>Resources.Tray.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\Resources_Languages.resx">
+            <Generator>PublicResXFileCodeGenerator</Generator>
+            <LastGenOutput>Resources.Languages.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\Resources_Common.resx">
+            <Generator>PublicResXFileCodeGenerator</Generator>
+            <LastGenOutput>Resources_Common.Designer.cs</LastGenOutput>
         </EmbeddedResource>
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Update="Languages\Resources.Designer.cs">
-            <DesignTime>True</DesignTime>
-            <AutoGen>True</AutoGen>
-            <DependentUpon>Resources.resx</DependentUpon>
-        </Compile>
         <Compile Update="Views\ScreenCapture\ScreenCaptureView.axaml.cs">
             <DependentUpon>ScreenCaptureView.axaml</DependentUpon>
             <SubType>Code</SubType>
@@ -81,6 +85,21 @@
         <Compile Update="Views\ScreenCapture\ScreenCaptureActionsWindow.axaml.cs">
             <DependentUpon>ScreenCaptureActionsWindow.axaml</DependentUpon>
             <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Resources\Resources_Tray.Designer.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>Resources_Tray.resx</DependentUpon>
+        </Compile>
+        <Compile Update="Resources\Resources_Languages.Designer.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>Resources_Languages.resx</DependentUpon>
+        </Compile>
+        <Compile Update="Resources\Resources_Common.Designer.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>Resources_Common.resx</DependentUpon>
         </Compile>
     </ItemGroup>
 </Project>

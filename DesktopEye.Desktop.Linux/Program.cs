@@ -2,7 +2,10 @@
 using Avalonia;
 using DesktopEye.Common;
 using DesktopEye.Common.Services.Core;
-using DesktopEye.Common.Services.ScreenCaptureService;
+using DesktopEye.Common.Services.OCR;
+using DesktopEye.Common.Services.ScreenCapture;
+using DesktopEye.Common.Services.TextClassifier;
+using DesktopEye.Common.Services.Translation;
 using DesktopEye.Desktop.Linux.Services;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -33,8 +36,15 @@ internal static class Program
         services.AddCommonServices();
         services.AddPlatformServices();
 
-
         var serviceProvider = services.BuildServiceProvider();
+
+        // Warm up services
+        // TODO find a proper way to force load the models without blocking the thread
+        var warmer = serviceProvider.GetService<ServicesWarmer>();
+        warmer?
+            .AddService<IOcrManager>()
+            .AddService<ITextClassifierManager>()
+            .AddService<ITranslationManager>();
 
         return AppBuilder.Configure(() => new App(serviceProvider))
             .UsePlatformDetect()
