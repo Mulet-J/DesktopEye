@@ -2,6 +2,7 @@ using DesktopEye.Common.Classes;
 using DesktopEye.Common.Services.ApplicationPath;
 using DesktopEye.Common.Services.Conda;
 using DesktopEye.Common.Services.Download;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
 
@@ -10,13 +11,24 @@ namespace DesktopEye.Common.Tests.Services.Conda;
 public class CondaTest
 {
     private readonly CondaService _condaService;
+    private readonly IHttpClientFactory _httpClientFactory;
 
     public CondaTest()
     {
+        var services = new ServiceCollection();
+        services.AddHttpClient("DesktopEyeClient", client =>
+        {
+            client.DefaultRequestHeaders.Add("User-Agent", "DesktopEye/1.0");
+        });
+    
+        // Build the service provider and get the HttpClientFactory
+        var serviceProvider = services.BuildServiceProvider();
+        _httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
+        
         IPathService pathService = new PathService();
         ILogger<DownloadService> loggerService = new Logger<DownloadService>(new LoggerFactory());
-        var httpClient = new HttpClient();
-        IDownloadService downloadService = new DownloadService(httpClient, loggerService);
+        
+        IDownloadService downloadService = new DownloadService(_httpClientFactory, loggerService);
         var condaLogger = new Mock<ILogger<CondaService>>();
         _condaService = new CondaService(pathService, downloadService, condaLogger.Object);
     }

@@ -13,9 +13,9 @@ public class DownloadService : IDownloadService
     private readonly HttpClient _httpClient;
     private readonly ILogger<DownloadService> _logger;
 
-    public DownloadService(HttpClient httpClient, ILogger<DownloadService> logger)
+    public DownloadService(IHttpClientFactory httpClientFactory, ILogger<DownloadService> logger)
     {
-        _httpClient = httpClient;
+        _httpClient = httpClientFactory.CreateClient("DesktopEyeClient");
         _logger = logger;
     }
 

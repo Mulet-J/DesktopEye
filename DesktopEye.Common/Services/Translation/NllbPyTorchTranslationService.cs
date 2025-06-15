@@ -30,6 +30,9 @@ public class NllbPyTorchTranslationService : ITranslationService, IDisposable
         _modelDirectory = pathService.ModelsDirectory;
         _runtimeManager = runtimeManager;
         _runtimeManager.StartRuntime(this);
+        // TODO improve this
+        _ = CondaInstallDependenciesAsync().Result;
+        LoadRequired();
     }
 
     public void Dispose()
@@ -120,9 +123,13 @@ public class NllbPyTorchTranslationService : ITranslationService, IDisposable
     {
         using (Py.GIL())
         {
+            dynamic sys = Py.Import("sys");
+            Console.WriteLine(sys?.path);
+            
             dynamic transformers = Py.Import("transformers");
             var autoTokenizer = transformers.GetAttr("AutoTokenizer");
-            return autoTokenizer.from_pretrained(modelName, cache_dir: _modelDirectory);
+            var a = autoTokenizer.from_pretrained(modelName, cache_dir: _modelDirectory);
+            return a;
         }
     }
 
@@ -139,9 +146,12 @@ public class NllbPyTorchTranslationService : ITranslationService, IDisposable
 
     private async Task<bool> CondaInstallDependenciesAsync()
     {
-        var res = await _condaService.InstallPackageUsingCondaAsync(PythonDependencies);
-        if (!res) throw new PythonException("Could not install dependencies");
+        // var res = await _condaService.InstallPackageUsingCondaAsync(PythonDependencies);
+        // if (!res) throw new PythonException("Could not install dependencies");
 
+        var res = await _condaService.InstallPackageUsingPipAsync(["transformers", "torch"], "base");
+        if (!res)
+            throw new PythonException("Could not install dependencies");
         return true;
     }
 

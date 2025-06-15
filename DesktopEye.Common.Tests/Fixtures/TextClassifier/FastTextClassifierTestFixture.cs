@@ -18,6 +18,6 @@ public class FastTextClassifierTestFixture : IDisposable
 
     public void Dispose()
     {
-        throw new NotImplementedException();
+        return;
     }
 }

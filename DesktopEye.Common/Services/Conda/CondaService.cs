@@ -504,7 +504,7 @@ public class CondaService : ICondaService
         {
             foreach (var package in packages)
             {
-                var success = await InstallPackageUsingPipAsync(package, environmentName);
+                var success = await InstallPackageUsingPipAsync(package);
                 if (!success)
                 {
                     _logger.LogError("Failed to install pip package: {Package}", package);

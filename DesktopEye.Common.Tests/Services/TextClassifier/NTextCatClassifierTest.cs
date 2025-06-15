@@ -2,6 +2,7 @@ using DesktopEye.Common.Enums;
 using DesktopEye.Common.Services.ApplicationPath;
 using DesktopEye.Common.Services.Download;
 using DesktopEye.Common.Services.TextClassifier;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
 
@@ -10,12 +11,22 @@ namespace DesktopEye.Common.Tests.Services.TextClassifier;
 public class NTextCatClassifierTest
 {
     private readonly NTextCatClassifierService _nTextCatClassifierService;
+    private readonly IHttpClientFactory _httpClientFactory;
 
     public NTextCatClassifierTest()
     {
-        var httpClient = new HttpClient();
+        var services = new ServiceCollection();
+        services.AddHttpClient("DesktopEyeClient", client =>
+        {
+            client.DefaultRequestHeaders.Add("User-Agent", "DesktopEye/1.0");
+        });
+    
+        // Build the service provider and get the HttpClientFactory
+        var serviceProvider = services.BuildServiceProvider();
+        _httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
+        var httpClient = _httpClientFactory.CreateClient("DesktopEyeClient");
         var downloadLogger = new Mock<ILogger<DownloadService>>();
-        var downloadService = new DownloadService(httpClient, downloadLogger.Object);
+        var downloadService = new DownloadService(_httpClientFactory, downloadLogger.Object);
         var nTextCatLogger = new Mock<ILogger<NTextCatClassifierService>>();
 
         // Create required dependencies

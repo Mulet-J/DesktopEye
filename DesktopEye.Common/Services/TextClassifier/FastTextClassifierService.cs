@@ -22,7 +22,7 @@ public class FastTextClassifierService : ITextClassifierService, IDisposable
         _logger = logger;
         _fastText = new FastTextWrapper();
 
-        var path = Path.Combine(pathService.LocalAppDataDirectory, "FastText", "model.bin");
+        var path = Path.Combine(pathService.ModelsDirectory, "FastText", "model.bin");
         _logger.LogInformation("Initializing FastTextClassifierService with model path: {ModelPath}", path);
 
         try

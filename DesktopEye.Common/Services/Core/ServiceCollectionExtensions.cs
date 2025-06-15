@@ -1,3 +1,4 @@
+using System.Net.Http;
 using DesktopEye.Common.Services.ApplicationPath;
 using DesktopEye.Common.Services.Conda;
 using DesktopEye.Common.Services.Download;
@@ -39,7 +40,10 @@ public static class ServiceCollectionExtensions
         // Translator
         services.AddTransient<NllbPyTorchTranslationService>();
         // Scoped services
-        services.AddHttpClient();
+        services.AddHttpClient("DesktopEyeClient", client =>
+        {
+            client.DefaultRequestHeaders.Add("User-Agent", "DesktopEye/1.0");
+        });
         services.AddScoped<IDownloadService, DownloadService>();
 
         AddViewModels(services);

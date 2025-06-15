@@ -12,5 +12,6 @@ public interface ICondaService
     Task<bool> InstallMinicondaAsync();
     Task<bool> InstallPackageUsingCondaAsync(CondaInstallInstruction instruction, string? environmentName = null);
     Task<bool> InstallPackageUsingCondaAsync(List<CondaInstallInstruction> instruction, string? environmentName = null);
+    Task<bool> InstallPackageUsingPipAsync(List<string> packages, string? environmentName = null);
     Task<string> ExecuteCondaCommandAsync(string command, string? environmentName = null);
 }
