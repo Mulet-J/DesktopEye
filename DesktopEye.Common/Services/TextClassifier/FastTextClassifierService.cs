@@ -1,16 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
-using DesktopEye.Common.Enums;
 using DesktopEye.Common.Exceptions;
+using DesktopEye.Common.Interfaces;
 using DesktopEye.Common.Services.ApplicationPath;
 using FastText.NetWrapper;
 using Microsoft.Extensions.Logging;
+using Language = DesktopEye.Common.Enums.Language;
+using LanguageHelper = DesktopEye.Common.Helpers.LanguageHelper;
 
 namespace DesktopEye.Common.Services.TextClassifier;
 
-public class FastTextClassifierService : ITextClassifierService, IDisposable
+public class FastTextClassifierService : ITextClassifierService, ILoadable
 {
     private readonly FastTextWrapper _fastText;
     private readonly ILogger<FastTextClassifierService> _logger;
@@ -60,14 +63,13 @@ public class FastTextClassifierService : ITextClassifierService, IDisposable
         GC.SuppressFinalize(this);
     }
 
-    public string Name => "FastText";
-
     public Language ClassifyText(string text)
     {
         if (string.IsNullOrWhiteSpace(text))
         {
             _logger.LogWarning("Attempted to classify null or empty text");
-            return Language.Unknown;
+            //TODO
+            throw new Exception();
         }
 
         _logger.LogDebug("Classifying text with length: {TextLength}", text.Length);
@@ -85,24 +87,29 @@ public class FastTextClassifierService : ITextClassifierService, IDisposable
         catch (LanguageException ex)
         {
             _logger.LogWarning(ex, "Language classification failed for text with length: {TextLength}", text.Length);
-            return Language.Unknown;
+            throw;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Unexpected error during text classification for text with length: {TextLength}",
                 text.Length);
-            return Language.Unknown;
+            throw;
         }
-    }
-
-    public async Task<Language> ClassifyTextAsync(string text)
-    {
-        return await Task.Run(() => ClassifyText(text));
     }
 
     public List<(Language language, double confidence)> ClassifyTextWithProbabilities(string text)
     {
         _logger.LogWarning("ClassifyTextWithProbabilities method is not implemented");
+        throw new NotImplementedException();
+    }
+
+    public Task<Language> ClassifyTextAsync(string text, CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<bool> LoadRequiredAsync(string? modelName = null, CancellationToken cancellationToken = default)
+    {
         throw new NotImplementedException();
     }
 
@@ -114,14 +121,17 @@ public class FastTextClassifierService : ITextClassifierService, IDisposable
         {
             // Format is either "__label__xxx_Latn" or "__label__xx"
             string formatted;
+            Language result;
             if (language.Length == 17)
             {
                 formatted = language.Substring(9, 2);
+                result = LanguageHelper.From639_3ToLanguage(formatted);
                 _logger.LogDebug("Extracted language code from long format: {LanguageCode}", formatted);
             }
             else if (language.Length == 11)
             {
                 formatted = language.Substring(9);
+                result = LanguageHelper.From639_1ToLanguage(formatted);
                 _logger.LogDebug("Extracted language code from short format: {LanguageCode}", formatted);
             }
             else
@@ -130,18 +140,6 @@ public class FastTextClassifierService : ITextClassifierService, IDisposable
                     language.Length);
                 throw new LanguageException();
             }
-
-            var result = formatted switch
-            {
-                "en" => Language.English,
-                "fr" => Language.French,
-                "de" => Language.German,
-                "es" => Language.Spanish,
-                _ => Language.Unknown
-            };
-
-            if (result == Language.Unknown)
-                _logger.LogWarning("Unknown language code encountered: {LanguageCode}", formatted);
 
             return result;
         }

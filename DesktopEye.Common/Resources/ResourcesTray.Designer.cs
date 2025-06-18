@@ -14,21 +14,21 @@ namespace DesktopEye.Common.Resources {
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class Resources_Common {
+    public class ResourcesTray {
         
         private static System.Resources.ResourceManager resourceMan;
         
         private static System.Globalization.CultureInfo resourceCulture;
         
         [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Resources_Common() {
+        internal ResourcesTray() {
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
         public static System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.Equals(null, resourceMan)) {
-                    System.Resources.ResourceManager temp = new System.Resources.ResourceManager("DesktopEye.Common.Resources.Resources_Common", typeof(Resources_Common).Assembly);
+                    System.Resources.ResourceManager temp = new System.Resources.ResourceManager("DesktopEye.Common.Resources.ResourcesTray", typeof(ResourcesTray).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -45,21 +45,21 @@ namespace DesktopEye.Common.Resources {
             }
         }
         
-        public static string Button_ExtractText {
+        public static string Exit {
             get {
-                return ResourceManager.GetString("Button_ExtractText", resourceCulture);
+                return ResourceManager.GetString("Exit", resourceCulture);
             }
         }
         
-        public static string Button_InferLanguage {
+        public static string OpenMainWindow {
             get {
-                return ResourceManager.GetString("Button_InferLanguage", resourceCulture);
+                return ResourceManager.GetString("OpenMainWindow", resourceCulture);
             }
         }
         
-        public static string Button_Translate {
+        public static string Settings {
             get {
-                return ResourceManager.GetString("Button_Translate", resourceCulture);
+                return ResourceManager.GetString("Settings", resourceCulture);
             }
         }
     }

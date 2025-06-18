@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<root>
+    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata"
+                id="root"
+                xmlns="">
+        <xsd:element name="root" msdata:IsDataSet="true">
+
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <data name="English" xml:space="preserve">
+        <value>English</value>
+    </data>
+    <data name="Spanish" xml:space="preserve">
+        <value>Spanish</value>
+    </data>
+    <data name="French" xml:space="preserve">
+        <value>French</value>
+    </data>
+    <data name="German" xml:space="preserve">
+        <value>German</value>
+    </data>
+    <data name="Chinese" xml:space="preserve">
+        <value>Chinese</value>
+    </data>
+    <data name="Japanese" xml:space="preserve">
+        <value>Japanese</value>
+    </data>
+    <data name="Korean" xml:space="preserve">
+        <value>Korean</value>
+    </data>
+    <data name="Portuguese" xml:space="preserve">
+        <value>Portuguese</value>
+    </data>
+    <data name="Italian" xml:space="preserve">
+        <value>Italian</value>
+    </data>
+    <data name="Dutch" xml:space="preserve">
+        <value>Dutch</value>
+    </data>
+    <data name="Russian" xml:space="preserve">
+        <value>Russian</value>
+    </data>
+    <data name="Arabic" xml:space="preserve">
+        <value>Arabic</value>
+    </data>
+    <data name="Hindi" xml:space="preserve">
+        <value>Hindi</value>
+    </data>
+    <data name="Swedish" xml:space="preserve">
+        <value>Swedish</value>
+    </data>
+    <data name="Norwegian" xml:space="preserve">
+        <value>Norwegian</value>
+    </data>
+    <data name="Danish" xml:space="preserve">
+        <value>Danish</value>
+    </data>
+    <data name="Finnish" xml:space="preserve">
+        <value>Finnish</value>
+    </data>
+    <data name="Polish" xml:space="preserve">
+        <value>Polish</value>
+    </data>
+    <data name="Turkish" xml:space="preserve">
+        <value>Turkish</value>
+    </data>
+    <data name="Thai" xml:space="preserve">
+        <value>Thai</value>
+    </data>
+    <data name="Vietnamese" xml:space="preserve">
+        <value>Vietnamese</value>
+    </data>
+    <data name="Indonesian" xml:space="preserve">
+        <value>Indonesian</value>
+    </data>
+    <data name="Unknown" xml:space="preserve">
+        <value>Unknown</value>
+    </data>
+    <data name="Netherlands" xml:space="preserve">
+        <value>Netherlands</value>
+    </data>
+</root>

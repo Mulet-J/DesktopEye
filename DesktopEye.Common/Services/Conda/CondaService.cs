@@ -394,6 +394,39 @@ public class CondaService : ICondaService
         }
     }
 
+    public async Task<bool> InstallPackageUsingPipAsync(List<string> packages, string? environmentName = null)
+    {
+        if (packages.Count == 0)
+        {
+            _logger.LogWarning("No packages provided for pip installation");
+            return false;
+        }
+
+        _logger.LogInformation("Installing {Count} pip package(s): {Packages} in environment: {Environment}",
+            packages.Count, string.Join(", ", packages), environmentName ?? "base");
+
+        try
+        {
+            foreach (var package in packages)
+            {
+                var success = await InstallPackageUsingPipAsync(package);
+                if (!success)
+                {
+                    _logger.LogError("Failed to install pip package: {Package}", package);
+                    return false;
+                }
+            }
+
+            _logger.LogInformation("Successfully installed all pip packages");
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error installing pip packages: {Packages}", string.Join(", ", packages));
+            return false;
+        }
+    }
+
     public async Task<bool> InstallPackageUsingPipAsync(string package, string? environmentName = null)
     {
         if (string.IsNullOrWhiteSpace(package))
@@ -489,39 +522,6 @@ public class CondaService : ICondaService
         }
     }
 
-    public async Task<bool> InstallPackageUsingPipAsync(List<string> packages, string? environmentName = null)
-    {
-        if (packages.Count == 0)
-        {
-            _logger.LogWarning("No packages provided for pip installation");
-            return false;
-        }
-
-        _logger.LogInformation("Installing {Count} pip package(s): {Packages} in environment: {Environment}",
-            packages.Count, string.Join(", ", packages), environmentName ?? "base");
-
-        try
-        {
-            foreach (var package in packages)
-            {
-                var success = await InstallPackageUsingPipAsync(package);
-                if (!success)
-                {
-                    _logger.LogError("Failed to install pip package: {Package}", package);
-                    return false;
-                }
-            }
-
-            _logger.LogInformation("Successfully installed all pip packages");
-            return true;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error installing pip packages: {Packages}", string.Join(", ", packages));
-            return false;
-        }
-    }
-
     private string GetPlatformString()
     {
         string platform;
@@ -582,7 +582,8 @@ public class CondaService : ICondaService
             else
             {
                 process.StartInfo.FileName = "bash";
-                process.StartInfo.Arguments = $"{installerPath} -b -p {installDirectory}";
+                process.StartInfo.Arguments =
+                    $"\"{installerPath}\" -b -p \"{Path.GetFullPath(installDirectory)}\"";
                 _logger.LogDebug("Unix installer command: {FileName} {Arguments}", process.StartInfo.FileName,
                     process.StartInfo.Arguments);
             }

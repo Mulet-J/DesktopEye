@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Avalonia.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DesktopEye.Common.Enums;
+using DesktopEye.Common.Helpers;
 using DesktopEye.Common.Services.OCR;
 using DesktopEye.Common.Services.TextClassifier;
 using DesktopEye.Common.Services.Translation;
@@ -42,9 +43,9 @@ public partial class ScreenCaptureActionsViewModel : ViewModelBase
         _ocrManager = ocrManager;
         _classifierManager = classifierManager;
         _translationManager = translationManager;
-        _currentOcrType = _ocrManager.GetCurrentOcrType();
-        _currentClassifierType = _classifierManager.GetCurrentClassifierType();
-        _currentTranslationType = _translationManager.GetCurrentTranslatorType();
+        _currentOcrType = _ocrManager.CurrentServiceType;
+        _currentClassifierType = _classifierManager.CurrentServiceType;
+        _currentTranslationType = _translationManager.CurrentServiceType;
     }
     //TODO use Manager SwitchTo here
 
@@ -58,7 +59,7 @@ public partial class ScreenCaptureActionsViewModel : ViewModelBase
         if (Bitmap == null)
             return;
 
-        OcrText = await _ocrManager.GetTextFromBitmapAsync(Bitmap, [Language.English]);
+        OcrText = await _ocrManager.GetTextFromBitmapAsync(Bitmap, LanguageHelper.GetAllLanguages());
     }
 
     public async Task InferLanguage()

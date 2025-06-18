@@ -1,11 +1,11 @@
+using System.Threading;
 using System.Threading.Tasks;
 using DesktopEye.Common.Enums;
+using DesktopEye.Common.Services.Base;
 
 namespace DesktopEye.Common.Services.TextClassifier;
 
-public interface ITextClassifierManager
+public interface ITextClassifierManager : IBaseServiceManager<ITextClassifierService, ClassifierType>
 {
-    Task SwitchToAsync(ClassifierType classifierType);
-    Task<Language> ClassifyTextAsync(string text);
-    ClassifierType GetCurrentClassifierType();
+    Task<Language> ClassifyTextAsync(string text, CancellationToken cancellationToken = default);
 }

@@ -2,105 +2,65 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using DesktopEye.Common.Enums;
-using Microsoft.Extensions.DependencyInjection;
+using DesktopEye.Common.Services.Base;
+using Microsoft.Extensions.Logging;
 
 namespace DesktopEye.Common.Services.TextClassifier;
 
-public class TextClassifierManager : ITextClassifierManager
+public class TextClassifierManager : BaseServiceManager<ITextClassifierService, ClassifierType>,
+    ITextClassifierManager
 {
-    private readonly object _lock = new();
-    private readonly SemaphoreSlim _semaphore = new(1, 1);
-    private readonly IServiceProvider _services;
-    private ITextClassifierService? _currentClassifier;
-    private ClassifierType _currentClassifierType;
-
-    public TextClassifierManager(IServiceProvider services)
+    public TextClassifierManager(IServiceProvider services, ILogger<TextClassifierManager>? logger = null)
+        : base(services, logger)
     {
-        _services = services;
-        // Initialize with a default classifier
-        SwitchTo(ClassifierType.NTextCat);
     }
 
-    public async Task SwitchToAsync(ClassifierType classifierType)
+    /// <summary>
+    ///     Gets the current classifier type
+    /// </summary>
+    /// <returns>Current classifier type</returns>
+    public ClassifierType GetCurrentClassifierType => CurrentServiceType;
+
+    #region ServiceFuncs
+
+    protected override ClassifierType GetDefaultServiceType()
     {
-        await _semaphore.WaitAsync();
-        try
-        {
-            if (_currentClassifierType == classifierType && _currentClassifier != null)
-                return; // Already using this classifier
-
-            // Dispose previous classifier if it implements IDisposable
-            if (_currentClassifier is IDisposable disposable)
-                disposable.Dispose();
-
-            // Create new classifier instance
-            _currentClassifier = classifierType switch
-            {
-                ClassifierType.FastText => _services.GetRequiredService<FastTextClassifierService>(),
-                ClassifierType.NTextCat => _services.GetRequiredService<NTextCatClassifierService>(),
-                _ => throw new ArgumentException($"Unsupported classifier type: {classifierType}")
-            };
-
-            _currentClassifierType = classifierType;
-        }
-        finally
-        {
-            _semaphore.Release();
-        }
+        return ClassifierType.NTextCat;
     }
 
+    #endregion
+
+    #region Classification
+
+    /// <summary>
+    ///     Classifies text asynchronously using the current classifier
+    /// </summary>
+    /// <param name="text">Text to classify</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>Detected language</returns>
+    public async Task<Language> ClassifyTextAsync(string text, CancellationToken cancellationToken = default)
+    {
+        return await ExecuteWithServiceAsync(async (service, ct) =>
+        {
+            Logger?.LogDebug("Classifying text using {ClassifierType}", CurrentServiceType);
+            return await service.ClassifyTextAsync(text, ct);
+        }, cancellationToken);
+    }
+
+
+    /// <summary>
+    ///     Classifies text synchronously using the current classifier
+    /// </summary>
+    /// <param name="text">Text to classify</param>
+    /// <returns>Detected language</returns>
     public Language ClassifyText(string text)
     {
-        lock (_lock)
+        return ExecuteWithService(service =>
         {
-            if (_currentClassifier == null)
-                throw new InvalidOperationException("No classifier is currently selected");
-
-            return _currentClassifier.ClassifyText(text);
-        }
+            Logger?.LogDebug("Classifying text using {ClassifierType}", CurrentServiceType);
+            return service.ClassifyText(text);
+        });
     }
 
-    public async Task<Language> ClassifyTextAsync(string text)
-    {
-        await _semaphore.WaitAsync();
-        try
-        {
-            if (_currentClassifier == null)
-                throw new InvalidOperationException("No translator is currently selected");
-
-            return await _currentClassifier.ClassifyTextAsync(text);
-        }
-        finally
-        {
-            _semaphore.Release();
-        }
-    }
-
-    public ClassifierType GetCurrentClassifierType()
-    {
-        return _currentClassifierType;
-    }
-
-    private void SwitchTo(ClassifierType classifierType)
-    {
-        lock (_lock)
-        {
-            if (_currentClassifierType == classifierType && _currentClassifier != null)
-                return; // Already using this classifier
-
-            // Dispose previous classifier if it implements IDisposable
-            if (_currentClassifier is IDisposable disposable)
-                disposable.Dispose();
-
-            // Create new classifier instance
-            _currentClassifier = classifierType switch
-            {
-                ClassifierType.FastText => _services.GetRequiredService<FastTextClassifierService>(),
-                ClassifierType.NTextCat => _services.GetRequiredService<NTextCatClassifierService>(),
-                _ => throw new ArgumentException($"Unsupported classifier type: {classifierType}")
-            };
-
-            _currentClassifierType = classifierType;
-        }
-    }
+    #endregion
 }

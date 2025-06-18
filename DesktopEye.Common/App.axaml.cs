@@ -7,7 +7,11 @@ using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using Avalonia.Platform;
 using DesktopEye.Common.Resources;
+using DesktopEye.Common.Services.Core;
+using DesktopEye.Common.Services.OCR;
 using DesktopEye.Common.Services.ScreenCapture;
+using DesktopEye.Common.Services.TextClassifier;
+using DesktopEye.Common.Services.Translation;
 using DesktopEye.Common.ViewModels;
 using DesktopEye.Common.Views;
 using DesktopEye.Common.Views.ScreenCapture;
@@ -25,11 +29,19 @@ public class App : Application
     public App(IServiceProvider services)
     {
         _services = services;
+        PreloadServices();
     }
 
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
+    }
+
+    private void PreloadServices()
+    {
+        // Preload services, obviously only pass singletons here
+        var preloader = _services.GetRequiredService<ServicesPreloader>();
+        preloader.PreloadServices(typeof(IOcrManager), typeof(ITextClassifierManager), typeof(ITranslationManager));
     }
 
     public override void OnFrameworkInitializationCompleted()
@@ -66,17 +78,17 @@ public class App : Application
 
         var menu = new NativeMenu();
 
-        var mainWindowString = Resources_Tray.OpenMainWindow;
+        var mainWindowString = ResourcesTray.OpenMainWindow;
         var mainWindowMenuItem = new NativeMenuItem(mainWindowString);
         mainWindowMenuItem.Click += ShowMainWindow;
 
         var gcMenuItem = new NativeMenuItem("GC");
         gcMenuItem.Click += GarbageCollect;
 
-        var settingsString = Resources_Tray.Settings;
+        var settingsString = ResourcesTray.Settings;
         var settingsMenuItem = new NativeMenuItem(settingsString);
 
-        var exitString = Resources_Tray.Exit;
+        var exitString = ResourcesTray.Exit;
         var exitMenuItem = new NativeMenuItem(exitString);
         exitMenuItem.Click += ExitApp;
 

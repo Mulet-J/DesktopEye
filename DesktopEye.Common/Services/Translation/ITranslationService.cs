@@ -1,13 +1,18 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 using DesktopEye.Common.Enums;
 
 namespace DesktopEye.Common.Services.Translation;
 
-public interface ITranslationService
+public interface ITranslationService : IDisposable
 {
-    string Translate(string input, Language sourceLanguage, Language targetLanguage);
-    Task<string> TranslateAsync(string input, Language sourceLanguage, Language targetLanguage);
-    bool LoadRequired(string modelName);
-    Task<bool> LoadRequiredAsync();
-    Task<bool> LoadRequiredAsync(string modelName);
+    string Translate(string text, Language sourceLanguage, Language targetLanguage);
+
+    Task<string> TranslateAsync(string text, Language sourceLanguage, Language targetLanguage,
+        CancellationToken cancellationToken = default);
+
+    Task<bool> LoadRequiredAsync(string? modelName = null, CancellationToken cancellationToken = default);
+
+    bool LoadRequired(string? modelName = null);
 }

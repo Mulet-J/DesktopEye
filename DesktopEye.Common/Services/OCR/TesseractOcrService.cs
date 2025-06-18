@@ -2,15 +2,17 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Media.Imaging;
-using DesktopEye.Common.Enums;
 using DesktopEye.Common.Exceptions;
 using DesktopEye.Common.Extensions;
 using DesktopEye.Common.Services.ApplicationPath;
 using DesktopEye.Common.Services.Download;
 using Microsoft.Extensions.Logging;
 using TesseractOCR;
+using TesseractOCR.Enums;
+using Language = DesktopEye.Common.Enums.Language;
 
 namespace DesktopEye.Common.Services.OCR;
 
@@ -24,13 +26,20 @@ public class TesseractOcrService : IOcrService, IDisposable
     private readonly IDownloadService _downloadService;
     private readonly ILogger<TesseractOcrService> _logger;
     private readonly string _modelsFolderPath;
+    private readonly IPathService _pathService;
+
     private Engine? _engine;
+
+    private Engine? _osdEngine;
+    // private string ModelsFolderPath => Path.Combine(_pathService.ModelsDirectory, ModelsFolderName);
 
     public TesseractOcrService(IPathService pathService, IDownloadService downloadService,
         ILogger<TesseractOcrService> logger)
     {
+        _pathService = pathService ?? throw new ArgumentNullException(nameof(pathService));
         _downloadService = downloadService ?? throw new ArgumentNullException(nameof(downloadService));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
         _modelsFolderPath = Path.Combine(pathService.ModelsDirectory, ModelsFolderName);
 
         _logger.LogInformation("TesseractOcrService initialized with models folder path: {ModelsFolderPath}",
@@ -64,10 +73,10 @@ public class TesseractOcrService : IOcrService, IDisposable
                 throw new InvalidOperationException("OCR engine is not initialized. Call SetEngine first.");
             }
 
-            var picture = bitmap.ToTesseractImage();
+            var image = bitmap.ToTesseractImage();
             _logger.LogDebug("Bitmap converted to Tesseract image format");
 
-            using var page = _engine.Process(picture);
+            using var page = _engine.Process(image);
             var text = page.Text;
 
             _logger.LogInformation("OCR text extraction completed successfully. Extracted {TextLength} characters",
@@ -81,6 +90,28 @@ public class TesseractOcrService : IOcrService, IDisposable
         {
             _logger.LogError(ex, "Failed to extract text from bitmap");
             throw;
+        }
+    }
+
+    public Task<bool> LoadRequiredAsync(string? modelName = null, CancellationToken cancellationToken = default)
+    {
+        _osdEngine = new Engine(_modelsFolderPath, [TesseractOCR.Enums.Language.English]);
+        return Task.FromResult(true);
+    }
+
+    private async Task DetectLanguageWithOSD(Bitmap bitmap)
+    {
+        if (_osdEngine == null)
+            throw new Exception($"Tried to run OCR with an unintialized engine {nameof(_osdEngine)}");
+
+        var image = bitmap.ToTesseractImage();
+
+        _osdEngine.DefaultPageSegMode = PageSegMode.OsdOnly;
+        using (var page = _osdEngine.Process(image, PageSegMode.OsdOnly))
+        {
+            page.DetectOrientationAndScript(out var orientation, out var orientationConfidence, out var scriptName,
+                out var scriptConfidence);
+            ;
         }
     }
 
@@ -141,7 +172,7 @@ public class TesseractOcrService : IOcrService, IDisposable
 
     private async Task<bool> DownloadModelAsync(TesseractOCR.Enums.Language language)
     {
-        var stringValue = language.GetStringValue();
+        var stringValue = LanguageHelper.EnumToString(language);
         var modelName = $"{stringValue}.traineddata";
         var modelPath = Path.Combine(_modelsFolderPath, modelName);
 
@@ -160,7 +191,7 @@ public class TesseractOcrService : IOcrService, IDisposable
 
             // Ensure the models folder exists
             Directory.CreateDirectory(_modelsFolderPath);
-            _logger.LogDebug("Created models directory: {ModelsFolderPath}", _modelsFolderPath);
+            _logger.LogDebug("Created models directory: {_modelsFolderPath}", _modelsFolderPath);
 
             // Replace [language] placeholder with actual language code
             var downloadUrl = DownloadUrl.Replace("[language]", stringValue.ToLowerInvariant());
@@ -230,10 +261,20 @@ public class TesseractOcrService : IOcrService, IDisposable
     {
         return language switch
         {
+            Language.Danish => TesseractOCR.Enums.Language.Danish,
+            Language.German => TesseractOCR.Enums.Language.German,
             Language.English => TesseractOCR.Enums.Language.English,
             Language.French => TesseractOCR.Enums.Language.French,
-            Language.German => TesseractOCR.Enums.Language.German,
+            Language.Italian => TesseractOCR.Enums.Language.Italian,
+            Language.Japanese => TesseractOCR.Enums.Language.Japanese,
+            Language.Korean => TesseractOCR.Enums.Language.Korean,
+            Language.Dutch => TesseractOCR.Enums.Language.Dutch,
+            Language.Norwegian => TesseractOCR.Enums.Language.Norwegian,
+            Language.Portuguese => TesseractOCR.Enums.Language.Portuguese,
+            Language.Russian => TesseractOCR.Enums.Language.Russian,
             Language.Spanish => TesseractOCR.Enums.Language.SpanishCastilian,
+            Language.Swedish => TesseractOCR.Enums.Language.Swedish,
+            Language.Chinese => TesseractOCR.Enums.Language.ChineseSimplified,
             _ => throw new LanguageException($"Unsupported language: {language}")
         };
     }

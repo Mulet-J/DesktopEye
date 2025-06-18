@@ -55,17 +55,17 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <EmbeddedResource Update="Resources\Resources_Tray.resx">
+        <EmbeddedResource Update="Resources\ResourcesTray.resx">
             <Generator>PublicResXFileCodeGenerator</Generator>
-            <LastGenOutput>Resources.Tray.Designer.cs</LastGenOutput>
+            <LastGenOutput>ResourcesTray.Designer.cs</LastGenOutput>
         </EmbeddedResource>
-        <EmbeddedResource Update="Resources\Resources_Languages.resx">
+        <EmbeddedResource Update="Resources\ResourcesLanguages.resx">
             <Generator>PublicResXFileCodeGenerator</Generator>
-            <LastGenOutput>Resources.Languages.Designer.cs</LastGenOutput>
+            <LastGenOutput>ResourcesLanguages.Designer.cs</LastGenOutput>
         </EmbeddedResource>
-        <EmbeddedResource Update="Resources\Resources_Common.resx">
+        <EmbeddedResource Update="Resources\ResourcesCommon.resx">
             <Generator>PublicResXFileCodeGenerator</Generator>
-            <LastGenOutput>Resources_Common.Designer.cs</LastGenOutput>
+            <LastGenOutput>ResourcesCommon.Designer.cs</LastGenOutput>
         </EmbeddedResource>
     </ItemGroup>
 
@@ -86,20 +86,20 @@
             <DependentUpon>ScreenCaptureActionsWindow.axaml</DependentUpon>
             <SubType>Code</SubType>
         </Compile>
-        <Compile Update="Resources\Resources_Tray.Designer.cs">
+        <Compile Update="Resources\ResourcesTray.Designer.cs">
             <DesignTime>True</DesignTime>
             <AutoGen>True</AutoGen>
-            <DependentUpon>Resources_Tray.resx</DependentUpon>
+            <DependentUpon>ResourcesTray.resx</DependentUpon>
         </Compile>
-        <Compile Update="Resources\Resources_Languages.Designer.cs">
+        <Compile Update="Resources\ResourcesLanguages.Designer.cs">
             <DesignTime>True</DesignTime>
             <AutoGen>True</AutoGen>
-            <DependentUpon>Resources_Languages.resx</DependentUpon>
+            <DependentUpon>ResourcesLanguages.resx</DependentUpon>
         </Compile>
-        <Compile Update="Resources\Resources_Common.Designer.cs">
+        <Compile Update="Resources\ResourcesCommon.Designer.cs">
             <DesignTime>True</DesignTime>
             <AutoGen>True</AutoGen>
-            <DependentUpon>Resources_Common.resx</DependentUpon>
+            <DependentUpon>ResourcesCommon.resx</DependentUpon>
         </Compile>
     </ItemGroup>
 </Project>

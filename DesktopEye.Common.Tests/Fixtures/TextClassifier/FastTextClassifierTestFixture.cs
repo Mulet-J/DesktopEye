@@ -18,6 +18,7 @@ public class FastTextClassifierTestFixture : IDisposable
 
     public void Dispose()
     {
-        return;
+        ClassifierService.Dispose();
+        GC.SuppressFinalize(this);
     }
 }

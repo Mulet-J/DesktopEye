@@ -1,4 +1,4 @@
-using System.Net.Http;
+using DesktopEye.Common.Enums;
 using DesktopEye.Common.Services.ApplicationPath;
 using DesktopEye.Common.Services.Conda;
 using DesktopEye.Common.Services.Download;
@@ -19,7 +19,11 @@ public static class ServiceCollectionExtensions
     // https://docs.avaloniaui.net/docs/guides/implementation-guides/how-to-implement-dependency-injection
     public static IServiceCollection AddCommonServices(this IServiceCollection services)
     {
-        services.AddLogging(config => { config.AddConsole(); });
+        services.AddLogging(config =>
+        {
+            config.AddConsole();
+            config.SetMinimumLevel(LogLevel.Trace);
+        });
         //Singleton services
         // services.AddSingleton<IOcrService, TesseractOcrService>();
         services.AddSingleton<IPathService, PathService>();
@@ -30,20 +34,18 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IOcrManager, OcrManager>();
         services.AddSingleton<ITextClassifierManager, TextClassifierManager>();
         services.AddSingleton<ITranslationManager, TranslationManager>();
-        services.AddSingleton<ServicesWarmer>();
+        services.AddSingleton<ServicesPreloader>();
         // Transient services
         // Ocr
-        services.AddTransient<TesseractOcrService>();
+        services.AddKeyedTransient<IOcrService, TesseractOcrService>(OcrType.Tesseract);
         // Classifier
-        services.AddTransient<FastTextClassifierService>();
-        services.AddTransient<NTextCatClassifierService>();
+        services.AddKeyedTransient<ITextClassifierService, FastTextClassifierService>(ClassifierType.FastText);
+        services.AddKeyedTransient<ITextClassifierService, NTextCatClassifierService>(ClassifierType.NTextCat);
         // Translator
-        services.AddTransient<NllbPyTorchTranslationService>();
+        services.AddKeyedTransient<ITranslationService, NllbPyTorchTranslationService>(TranslationType.Nllb);
         // Scoped services
-        services.AddHttpClient("DesktopEyeClient", client =>
-        {
-            client.DefaultRequestHeaders.Add("User-Agent", "DesktopEye/1.0");
-        });
+        services.AddHttpClient("DesktopEyeClient",
+            client => { client.DefaultRequestHeaders.Add("User-Agent", "DesktopEye/1.0"); });
         services.AddScoped<IDownloadService, DownloadService>();
 
         AddViewModels(services);
@@ -59,9 +61,4 @@ public static class ServiceCollectionExtensions
         services.AddTransient<ScreenCaptureViewModel>();
         services.AddTransient<ScreenCaptureActionsViewModel>();
     }
-
-    // private static void AddViews(this IServiceCollection services)
-    // {
-    //     
-    // }
 }

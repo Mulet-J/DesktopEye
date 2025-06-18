@@ -63,7 +63,8 @@ public class PythonRuntimeManager : IPythonRuntimeManager
                     Runtime.PythonDLL = _condaService.PythonDllPath;
                     PythonEngine.PythonHome = pathToVirtualEnv;
                     PythonEngine.Initialize();
-                    // PythonEngine.BeginAllowThreads();
+                    // Required to allow async functions to use the GIL
+                    PythonEngine.BeginAllowThreads();
                     _logger.LogInformation("Python runtime initialized successfully");
                 }
 

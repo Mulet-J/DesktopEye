@@ -14,21 +14,21 @@ namespace DesktopEye.Common.Resources {
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class Resources_Languages {
+    public class ResourcesCommon {
         
         private static System.Resources.ResourceManager resourceMan;
         
         private static System.Globalization.CultureInfo resourceCulture;
         
         [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Resources_Languages() {
+        internal ResourcesCommon() {
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
         public static System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.Equals(null, resourceMan)) {
-                    System.Resources.ResourceManager temp = new System.Resources.ResourceManager("DesktopEye.Common.Resources.Resources_Languages", typeof(Resources_Languages).Assembly);
+                    System.Resources.ResourceManager temp = new System.Resources.ResourceManager("DesktopEye.Common.Resources.ResourcesCommon", typeof(ResourcesCommon).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -45,33 +45,21 @@ namespace DesktopEye.Common.Resources {
             }
         }
         
-        public static string English {
+        public static string Button_ExtractText {
             get {
-                return ResourceManager.GetString("English", resourceCulture);
+                return ResourceManager.GetString("Button_ExtractText", resourceCulture);
             }
         }
         
-        public static string Spanish {
+        public static string Button_InferLanguage {
             get {
-                return ResourceManager.GetString("Spanish", resourceCulture);
+                return ResourceManager.GetString("Button_InferLanguage", resourceCulture);
             }
         }
         
-        public static string French {
+        public static string Button_Translate {
             get {
-                return ResourceManager.GetString("French", resourceCulture);
-            }
-        }
-        
-        public static string German {
-            get {
-                return ResourceManager.GetString("German", resourceCulture);
-            }
-        }
-        
-        public static string Unknown {
-            get {
-                return ResourceManager.GetString("Unknown", resourceCulture);
+                return ResourceManager.GetString("Button_Translate", resourceCulture);
             }
         }
     }

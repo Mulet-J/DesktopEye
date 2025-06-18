@@ -2,108 +2,67 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using DesktopEye.Common.Enums;
-using Microsoft.Extensions.DependencyInjection;
+using DesktopEye.Common.Services.Base;
+using Microsoft.Extensions.Logging;
 
 namespace DesktopEye.Common.Services.Translation;
 
-public class TranslationManager : ITranslationManager
+public class TranslationManager : BaseServiceManager<ITranslationService, TranslationType>, ITranslationManager
 {
-    private readonly object _lock = new();
-    private readonly SemaphoreSlim _semaphore = new(1, 1);
-    private readonly IServiceProvider _services;
-    private ITranslationService? _currentTranslator;
-    private TranslationType _currentTranslatorType;
-
-    public TranslationManager(IServiceProvider services)
+    public TranslationManager(IServiceProvider services, ILogger<TranslationManager>? logger = null)
+        : base(services, logger)
     {
-        _services = services;
-        SwitchTo(TranslationType.Nllb);
     }
 
-    public async Task SwitchToAsync(TranslationType translatorType)
+    /// <summary>
+    ///     Gets the current translator type
+    /// </summary>
+    public TranslationType GetCurrentTranslatorType => CurrentServiceType;
+
+    /// <summary>
+    ///     Translates text using the current translator
+    /// </summary>
+    /// <param name="input">Text to translate</param>
+    /// <param name="sourceLanguage">Source language</param>
+    /// <param name="targetLanguage">Target language</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>Translated text</returns>
+    public async Task<string> TranslateAsync(string input, Language sourceLanguage, Language targetLanguage,
+        CancellationToken cancellationToken = default)
     {
-        await _semaphore.WaitAsync();
-        try
+        if (string.IsNullOrWhiteSpace(input))
         {
-            if (_currentTranslatorType == translatorType && _currentTranslator != null)
-                return;
-
-            if (_currentTranslator is IDisposable disposable)
-                disposable.Dispose();
-
-            _currentTranslator = translatorType switch
-            {
-                TranslationType.Nllb => _services.GetService<NllbPyTorchTranslationService>(),
-                _ => throw new ArgumentException($"Unsupported ocr type: {translatorType}")
-            };
-
-            _currentTranslatorType = translatorType;
+            Logger?.LogDebug("Empty input provided for translation");
+            return string.Empty;
         }
-        finally
+
+        return await ExecuteWithServiceAsync(async (service, ct) =>
         {
-            _semaphore.Release();
-        }
+            Logger?.LogDebug("Translating text from {SourceLanguage} to {TargetLanguage} using {TranslatorType}",
+                sourceLanguage, targetLanguage, CurrentServiceType);
+
+            return await service.TranslateAsync(input, sourceLanguage, targetLanguage, ct);
+        }, cancellationToken);
     }
 
-    public async Task<string> TranslateAsync(string input, Language sourceLanguage, Language targetLanguage)
+    /// <summary>
+    ///     Preloads the model for the current translator
+    /// </summary>
+    /// <param name="modelName">Optional specific model name to load</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>True if preloading was successful</returns>
+    public async Task<bool> LoadCurrentModelAsync(string? modelName = null,
+        CancellationToken cancellationToken = default)
     {
-        await _semaphore.WaitAsync();
-        try
+        return await ExecuteWithServiceAsync(async (service, ct) =>
         {
-            if (_currentTranslator == null)
-                throw new InvalidOperationException("No translator is currently selected");
-
-            return await _currentTranslator.TranslateAsync(input, sourceLanguage, targetLanguage);
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            throw;
-        }
-        finally
-        {
-            _semaphore.Release();
-        }
+            Logger?.LogDebug("Preloading model for current translator: {TranslatorType}", CurrentServiceType);
+            return await service.LoadRequiredAsync(modelName, ct);
+        }, cancellationToken);
     }
 
-    public TranslationType GetCurrentTranslatorType()
+    protected override TranslationType GetDefaultServiceType()
     {
-        return _currentTranslatorType;
-    }
-
-    public async Task InitializeService()
-    {
-        await _currentTranslator.LoadRequiredAsync();
-    }
-
-    public string Translate(string input, Language sourceLanguage, Language targetLanguage)
-    {
-        lock (_lock)
-        {
-            if (_currentTranslator == null)
-                throw new InvalidOperationException("No translator is currently selected");
-
-            return _currentTranslator.Translate(input, sourceLanguage, targetLanguage);
-        }
-    }
-
-    private void SwitchTo(TranslationType translatorType)
-    {
-        lock (_lock)
-        {
-            if (_currentTranslatorType == translatorType && _currentTranslator != null)
-                return;
-
-            if (_currentTranslator is IDisposable disposable)
-                disposable.Dispose();
-
-            _currentTranslator = translatorType switch
-            {
-                TranslationType.Nllb => _services.GetService<NllbPyTorchTranslationService>(),
-                _ => throw new ArgumentException($"Unsupported ocr type: {translatorType}")
-            };
-
-            _currentTranslatorType = translatorType;
-        }
+        return TranslationType.Nllb;
     }
 }

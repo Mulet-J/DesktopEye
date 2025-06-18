@@ -22,9 +22,11 @@ public class NllbPyTorchTranslationTestFixture : IDisposable
         var runtimeManagerLogger = new Mock<ILogger<PythonRuntimeManager>>();
         IPythonRuntimeManager runtimeManager =
             new PythonRuntimeManager(pathService, condaService, runtimeManagerLogger.Object);
+        var serviceLogger = new Mock<ILogger<NllbPyTorchTranslationService>>();
 
         // Create service
-        TranslationService = new NllbPyTorchTranslationService(condaService, pathService, runtimeManager);
+        TranslationService =
+            new NllbPyTorchTranslationService(condaService, pathService, runtimeManager, serviceLogger.Object);
         _ = TranslationService.LoadRequired();
     }
 
