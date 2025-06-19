@@ -5,7 +5,7 @@
              xmlns:res="clr-namespace:DesktopEye.Common.Resources"
              xmlns:screenCapture="clr-namespace:DesktopEye.Common.ViewModels.ScreenCapture"
              xmlns:design="clr-namespace:DesktopEye.Common.ViewModels.ScreenCapture.Design"
-             mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="700"
+             mc:Ignorable="d" d:DesignWidth="1400" d:DesignHeight="800"
              x:Class="DesktopEye.Common.Views.ScreenCapture.ScreenCaptureActionsView"
              x:DataType="screenCapture:ScreenCaptureActionsViewModel">
 
@@ -14,302 +14,410 @@
     </Design.DataContext>
 
     <UserControl.Styles>
-        <!-- Styles pour les boutons avec thème violet -->
-        <Style Selector="Button.primary">
-            <Setter Property="Background" Value="#6200EE" />
-            <Setter Property="Foreground" Value="White" />
-            <Setter Property="BorderBrush" Value="#7E3FF2" />
-            <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="CornerRadius" Value="12" />
-            <Setter Property="Padding" Value="16,10" />
-            <Setter Property="FontWeight" Value="SemiBold" />
-            <Setter Property="HorizontalContentAlignment" Value="Center" />
-            <Setter Property="VerticalContentAlignment" Value="Center" />
-            <Setter Property="MinHeight" Value="45" />
+        <!-- Style onglets avec thème sombre violet -->
+        <Style Selector="Button.tab">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="#AAAAAA" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="CornerRadius" Value="0" />
+            <Setter Property="Padding" Value="20,16" />
+            <Setter Property="FontWeight" Value="Medium" />
+            <Setter Property="FontSize" Value="14" />
             <Setter Property="Cursor" Value="Hand" />
             <Setter Property="Transitions">
                 <Transitions>
-                    <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.2" />
+                    <BrushTransition Property="Foreground" Duration="0:0:0.2" />
                     <BrushTransition Property="Background" Duration="0:0:0.2" />
                 </Transitions>
             </Setter>
         </Style>
-        <Style Selector="Button.primary:pointerover">
-            <Setter Property="Background" Value="#7E3FF2" />
-            <Setter Property="RenderTransform" Value="scale(1.05)" />
+        <Style Selector="Button.tab:pointerover">
+            <Setter Property="Foreground" Value="#6200EE" />
+            <Setter Property="Background" Value="#1A1A1A" />
         </Style>
-        <Style Selector="Button.primary:pressed">
-            <Setter Property="RenderTransform" Value="scale(0.95)" />
-        </Style>
-
-        <!-- Bouton de fermeture glassmorphism -->
-        <Style Selector="Button.glass">
-            <Setter Property="Background">
-                <Setter.Value>
-                    <SolidColorBrush Color="#40FFFFFF" />
-                </Setter.Value>
-            </Setter>
-            <Setter Property="Foreground" Value="White" />
-            <Setter Property="BorderBrush">
-                <Setter.Value>
-                    <SolidColorBrush Color="#60FFFFFF" />
-                </Setter.Value>
-            </Setter>
-            <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="CornerRadius" Value="12" />
-            <Setter Property="Transitions">
-                <Transitions>
-                    <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.2" />
-                    <BrushTransition Property="Background" Duration="0:0:0.2" />
-                </Transitions>
-            </Setter>
-        </Style>
-        <Style Selector="Button.glass:pointerover">
-            <Setter Property="Background">
-                <Setter.Value>
-                    <SolidColorBrush Color="#60FFFFFF" />
-                </Setter.Value>
-            </Setter>
-            <Setter Property="RenderTransform" Value="scale(1.05)" />
+        <Style Selector="Button.tab.active">
+            <Setter Property="Foreground" Value="#6200EE" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Background" Value="#1A1A1A" />
         </Style>
 
-        <!-- Styles pour les ComboBox avec thème violet -->
-        <Style Selector="ComboBox.modern">
-            <Setter Property="Background" Value="#2A2A2A" />
-            <Setter Property="Foreground" Value="White" />
-            <Setter Property="BorderBrush" Value="#6200EE" />
-            <Setter Property="BorderThickness" Value="2" />
-            <Setter Property="CornerRadius" Value="8" />
-            <Setter Property="Padding" Value="12,8" />
-            <Setter Property="MinHeight" Value="40" />
-        </Style>
-        <Style Selector="ComboBox.modern:pointerover">
-            <Setter Property="Background" Value="#333333" />
-            <Setter Property="BorderBrush" Value="#7E3FF2" />
-        </Style>
-
-        <!-- Panel avec gradient violet -->
-        <Style Selector="Border.violet-panel">
+        <!-- Style cards principales avec thème sombre -->
+        <Style Selector="Border.translate-card">
             <Setter Property="Background">
                 <Setter.Value>
                     <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
-                        <GradientStop Offset="0" Color="#2A1F1F" />
-                        <GradientStop Offset="1" Color="#2D2D3A" />
+                        <GradientStop Offset="0" Color="#1A1A1A" />
+                        <GradientStop Offset="1" Color="#2A1F2A" />
                     </LinearGradientBrush>
                 </Setter.Value>
             </Setter>
             <Setter Property="BorderBrush" Value="#6200EE" />
-            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="BorderThickness" Value="2" />
             <Setter Property="CornerRadius" Value="16" />
-            <Setter Property="Padding" Value="24" />
+            <Setter Property="Padding" Value="0" />
         </Style>
 
-        <!-- Panel glassmorphism pour les résultats -->
-        <Style Selector="Border.glass-panel">
+        <!-- Style zone de texte sombre -->
+        <Style Selector="Border.text-area">
             <Setter Property="Background">
                 <Setter.Value>
-                    <SolidColorBrush Color="#20FFFFFF" />
+                    <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+                        <GradientStop Offset="0" Color="#0F0F0F" />
+                        <GradientStop Offset="1" Color="#1F1F1F" />
+                    </LinearGradientBrush>
                 </Setter.Value>
             </Setter>
-            <Setter Property="BorderBrush">
-                <Setter.Value>
-                    <SolidColorBrush Color="#30FFFFFF" />
-                </Setter.Value>
-            </Setter>
+            <Setter Property="BorderBrush" Value="#333333" />
             <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="CornerRadius" Value="16" />
+            <Setter Property="CornerRadius" Value="12" />
             <Setter Property="Padding" Value="20" />
+            <Setter Property="MinHeight" Value="160" />
         </Style>
 
-        <!-- Styles pour les titres -->
-        <Style Selector="TextBlock.title">
-            <Setter Property="FontSize" Value="16" />
+        <!-- ComboBox style violet -->
+        <Style Selector="ComboBox.google-style">
+            <Setter Property="Background" Value="#2A2A2A" />
+            <Setter Property="Foreground" Value="#6200EE" />
+            <Setter Property="BorderBrush" Value="#6200EE" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="12,8" />
+            <Setter Property="FontWeight" Value="Medium" />
+            <Setter Property="FontSize" Value="14" />
+        </Style>
+        <Style Selector="ComboBox.google-style:pointerover">
+            <Setter Property="Background" Value="#333333" />
+            <Setter Property="BorderBrush" Value="#7E3FF2" />
+        </Style>
+
+        <!-- Bouton fermer avec thème violet -->
+        <Style Selector="Button.close-btn">
+            <Setter Property="Background">
+                <Setter.Value>
+                    <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+                        <GradientStop Offset="0" Color="#40FF0000" />
+                        <GradientStop Offset="1" Color="#60FF0000" />
+                    </LinearGradientBrush>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="CornerRadius" Value="20" />
+            <Setter Property="Width" Value="40" />
+            <Setter Property="Height" Value="40" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Background" Duration="0:0:0.2" />
+                    <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.2" />
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="Button.close-btn:pointerover">
+            <Setter Property="Background">
+                <Setter.Value>
+                    <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+                        <GradientStop Offset="0" Color="#80FF0000" />
+                        <GradientStop Offset="1" Color="#A0FF0000" />
+                    </LinearGradientBrush>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="RenderTransform" Value="scale(1.1)" />
+        </Style>
+
+        <!-- Styles de texte avec thème sombre -->
+        <Style Selector="TextBlock.section-title">
+            <Setter Property="FontSize" Value="18" />
             <Setter Property="FontWeight" Value="SemiBold" />
             <Setter Property="Foreground" Value="White" />
-            <Setter Property="Margin" Value="0,0,0,12" />
+            <Setter Property="Margin" Value="0,0,0,8" />
         </Style>
 
-        <!-- Styles pour les labels -->
-        <Style Selector="TextBlock.label">
-            <Setter Property="FontSize" Value="12" />
-            <Setter Property="FontWeight" Value="Medium" />
-            <Setter Property="Foreground" Value="#E0E0E0" />
-            <Setter Property="Margin" Value="0,0,0,4" />
-        </Style>
-
-        <!-- Styles pour le contenu -->
-        <Style Selector="TextBlock.content">
+        <Style Selector="TextBlock.content-text">
+            <Setter Property="FontSize" Value="16" />
             <Setter Property="Foreground" Value="White" />
             <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="LineHeight" Value="26" />
+        </Style>
+
+        <Style Selector="TextBlock.language-name">
             <Setter Property="FontSize" Value="14" />
+            <Setter Property="FontWeight" Value="Medium" />
+            <Setter Property="Foreground" Value="#6200EE" />
+        </Style>
+
+        <!-- Indicateur de chargement violet -->
+        <Style Selector="Border.loading-indicator">
+            <Setter Property="Background" Value="#1A6200EE" />
+            <Setter Property="BorderBrush" Value="#6200EE" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="Padding" Value="8,4" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
         </Style>
     </UserControl.Styles>
 
     <Grid>
-        <!-- Fond overlay transparent avec blur -->
+        <!-- Fond overlay invisible -->
         <Grid.Background>
-            <SolidColorBrush Color="#80000000" />
+            <SolidColorBrush Color="#90000000" />
         </Grid.Background>
 
-        <!-- Conteneur principal plus grand -->
-        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="40">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-
-            <!-- Section principale avec image et contrôles -->
-            <Grid Grid.Row="0" ColumnDefinitions="*,30,Auto">
+        <!-- Layout principal inversé : Image (gauche) et Contexte (droite) -->
+        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+              Margin="60">
+            
+            <!-- Deux colonnes inversées : Image (gauche) et Contexte (droite) -->
+            <Grid ColumnDefinitions="1*,40,1*">
                 
-                <!-- Image centrale plus grande à gauche -->
-                <Border Grid.Column="0" Classes="violet-panel"
-                        HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                        MinWidth="700" MinHeight="500">
+                <!-- Colonne gauche : Zone d'image -->
+                <Border Grid.Column="0" Classes="translate-card" 
+                        HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    
                     <Grid RowDefinitions="Auto,*">
-                        <TextBlock Grid.Row="0" Classes="title" Text="📸 Capture d'écran" HorizontalAlignment="Center" FontSize="20" Margin="0,0,0,20" />
                         
-                        <!-- Conteneur de l'image qui prend tout l'espace restant -->
-                        <Border Grid.Row="1" CornerRadius="12" ClipToBounds="True" 
-                                Background="#15FFFFFF" 
-                                HorizontalAlignment="Stretch"
-                                VerticalAlignment="Stretch">
+                        <!-- En-tête image avec thème violet -->
+                        <Border Grid.Row="0" CornerRadius="12,12,0,0" 
+                                BorderBrush="#6200EE" BorderThickness="0,0,0,2" Padding="20,16">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+                                    <GradientStop Offset="0" Color="#1A1A1A" />
+                                    <GradientStop Offset="1" Color="#2A1F2A" />
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Ellipse Width="12" Height="12" Fill="#6200EE" Margin="0,0,12,0" />
+                                <TextBlock Text="📸 Capture d'écran" 
+                                           FontSize="18" FontWeight="SemiBold" Foreground="White" />
+                            </StackPanel>
+                        </Border>
+                        
+                        <!-- Zone d'image avec thème sombre -->
+                        <Border Grid.Row="1" Margin="20" CornerRadius="12" 
+                                ClipToBounds="True">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+                                    <GradientStop Offset="0" Color="#0A0A0A" />
+                                    <GradientStop Offset="1" Color="#1A1A1A" />
+                                </LinearGradientBrush>
+                            </Border.Background>
                             <Image Source="{Binding Bitmap}" 
-                                   Stretch="UniformToFill"
+                                   Stretch="Uniform"
                                    HorizontalAlignment="Center"
                                    VerticalAlignment="Center" />
                         </Border>
                     </Grid>
                 </Border>
-
-                <!-- Panel des actions à droite -->
-                <Border Grid.Column="2" Classes="violet-panel" VerticalAlignment="Stretch" Width="350">
-                    <StackPanel Spacing="25">
-                        <TextBlock Classes="title" Text="⚡ Actions" HorizontalAlignment="Center" FontSize="20" />
-
-                        <!-- Section OCR -->
-                        <StackPanel Spacing="10">
-                            <TextBlock Classes="label" Text="🔍 Extraction de texte (OCR)" FontSize="14" />
-                            <ComboBox Classes="modern" 
-                                      ItemsSource="{Binding AvailableOcrTypes}"
-                                      SelectedItem="{Binding CurrentOcrType}"
-                                      HorizontalAlignment="Stretch" />
-                            <Button Classes="primary" 
-                                    Click="OnExtractTextClick"
-                                    Content="{x:Static res:ResourcesCommon.Button_ExtractText}"
-                                    HorizontalAlignment="Stretch"
-                                    FontSize="15" />
-                        </StackPanel>
-
-                        <!-- Section Classification -->
-                        <StackPanel Spacing="10">
-                            <TextBlock Classes="label" Text="🌐 Détection de langue" FontSize="14" />
-                            <ComboBox Classes="modern"
-                                      ItemsSource="{Binding AvailableClassifierTypes}"
-                                      SelectedItem="{Binding CurrentClassifierType}"
-                                      HorizontalAlignment="Stretch" />
-                            <Button Classes="primary"
-                                    Click="OnInferLanguageClick"
-                                    Content="{x:Static res:ResourcesCommon.Button_InferLanguage}"
-                                    HorizontalAlignment="Stretch"
-                                    FontSize="15" />
-                        </StackPanel>
-
-                        <!-- Section Traduction -->
-                        <StackPanel Spacing="10">
-                            <TextBlock Classes="label" Text="🔄 Traduction" FontSize="14" />
-                            <ComboBox Classes="modern"
-                                      ItemsSource="{Binding AvailableTranslationTypes}"
-                                      SelectedItem="{Binding CurrentTranslationType}"
-                                      HorizontalAlignment="Stretch" />
-                            <TextBlock Classes="label" Text="Langue cible" FontSize="12" />
-                            <ComboBox Classes="modern"
-                                      ItemsSource="{Binding AvailableLanguages}"
-                                      SelectedItem="{Binding TargetLanguage}"
-                                      HorizontalAlignment="Stretch" />
-                            <Button Classes="primary"
-                                    Click="OnTranslateClick"
-                                    Content="{x:Static res:ResourcesCommon.Button_Translate}"
-                                    HorizontalAlignment="Stretch"
-                                    FontSize="15" />
-                        </StackPanel>
-                    </StackPanel>
+                
+                <!-- Colonne droite : Zone contextuelle avec thème violet -->
+                <Border Grid.Column="2" Classes="translate-card" 
+                        HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+                            <GradientStop Offset="0" Color="#1A1A1A" />
+                            <GradientStop Offset="1" Color="#2A1F2A" />
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    
+                    <Grid RowDefinitions="Auto,*">
+                        
+                        <!-- En-tête avec onglets de résultats - Style violet -->
+                        <Border Grid.Row="0" CornerRadius="12,12,0,0" 
+                                BorderBrush="#6200EE" BorderThickness="0,0,0,2" Padding="0">
+                            
+                            <Grid RowDefinitions="Auto,Auto">
+                                
+                                <!-- Barre d'onglets avec thème sombre -->
+                                <StackPanel Grid.Row="0" Orientation="Horizontal" 
+                                            Background="#2A2A2A" Margin="0">
+                                    <Button x:Name="TextTabButton" Classes="tab active" 
+                                            Content="📝 Texte extrait" Click="OnTextTabClick" />
+                                    <Button x:Name="TranslationTabButton" Classes="tab" 
+                                            Content="🔄 Traduction" Click="OnTranslationTabClick" />
+                                </StackPanel>
+                                
+                                <!-- Sélecteur de langue avec thème violet -->
+                                <Grid Grid.Row="1" ColumnDefinitions="*,Auto,*" 
+                                      Background="#1A1A1A" Margin="20,16">
+                                    
+                                    <!-- Langue détectée -->
+                                    <StackPanel Grid.Column="0" Orientation="Horizontal" 
+                                                VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding InferredLanguage, FallbackValue='Détection...'}" 
+                                                   FontSize="14" FontWeight="Medium" Foreground="#6200EE" />
+                                        <Border Classes="loading-indicator" 
+                                                IsVisible="{Binding IsDetectingLanguage}" Margin="12,0,0,0">
+                                            <TextBlock Text="⏳" FontSize="12" Foreground="#6200EE" />
+                                        </Border>
+                                    </StackPanel>
+                                    
+                                    <!-- Icône d'échange avec thème violet -->
+                                    <Button Grid.Column="1" Background="Transparent" 
+                                            BorderThickness="0" Padding="12">
+                                        <Path Data="M 6,2 L 10,6 L 6,10 M 2,6 L 10,6 M 10,14 L 6,18 L 10,22 M 14,18 L 6,18" 
+                                              Stroke="#6200EE" StrokeThickness="2" />
+                                    </Button>
+                                    
+                                    <!-- Langue cible -->
+                                    <ComboBox Grid.Column="2" Classes="google-style"
+                                              ItemsSource="{Binding AvailableLanguages}"
+                                              SelectedItem="{Binding TargetLanguage}"
+                                              HorizontalAlignment="Right"
+                                              Foreground="#6200EE" FontWeight="Medium" />
+                                </Grid>
+                            </Grid>
+                        </Border>
+                        
+                        <!-- Zone de contenu avec onglets - Thème sombre violet -->
+                        <Grid Grid.Row="1">
+                            
+                            <!-- Onglet Texte extrait -->
+                            <Grid x:Name="TextTabContent" Margin="20">
+                                <Grid RowDefinitions="*,Auto">
+                                    
+                                    <!-- Zone de texte avec thème sombre -->
+                                    <Border Grid.Row="0" Classes="text-area">
+                                        <Border.Background>
+                                            <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+                                                <GradientStop Offset="0" Color="#0F0F0F" />
+                                                <GradientStop Offset="1" Color="#1F1F1F" />
+                                            </LinearGradientBrush>
+                                        </Border.Background>
+                                        <Grid>
+                                            <!-- Texte extrait -->
+                                            <TextBlock Classes="content-text" 
+                                                       Text="{Binding OcrText, FallbackValue=''}"
+                                                       IsVisible="{Binding HasOcrText}"
+                                                       Foreground="White" />
+                                            
+                                            <!-- État de chargement OCR -->
+                                            <StackPanel IsVisible="{Binding IsExtractingText}" 
+                                                        HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                <TextBlock Text="🔍" FontSize="32" HorizontalAlignment="Center" />
+                                                <TextBlock Text="Extraction du texte..." 
+                                                           FontSize="16" Foreground="#6200EE" FontWeight="Medium"
+                                                           HorizontalAlignment="Center" Margin="0,12,0,0" />
+                                            </StackPanel>
+                                            
+                                            <!-- Message initial -->
+                                            <StackPanel IsVisible="{Binding ShowInitialMessage}" 
+                                                        HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                <TextBlock Text="✨" FontSize="40" HorizontalAlignment="Center" />
+                                                <TextBlock Text="Analyse automatique en cours..." 
+                                                           FontSize="18" Foreground="#6200EE" FontWeight="SemiBold"
+                                                           HorizontalAlignment="Center" Margin="0,16,0,0" />
+                                                <TextBlock Text="Veuillez patienter pendant que nous analysons votre capture" 
+                                                           FontSize="14" Foreground="#AAAAAA" 
+                                                           HorizontalAlignment="Center" Margin="0,8,0,0" TextWrapping="Wrap" />
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+                                    
+                                    <!-- Actions de texte avec thème violet -->
+                                    <StackPanel Grid.Row="1" Orientation="Horizontal" 
+                                                HorizontalAlignment="Right" Margin="0,16,0,0" Spacing="12">
+                                        <Button Background="#2A2A2A" BorderBrush="#6200EE" BorderThickness="1"
+                                                CornerRadius="8" Padding="12,8" ToolTip.Tip="Copier le texte">
+                                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                                <Path Data="M 2,2 L 2,14 L 14,14 L 14,2 Z M 4,4 L 12,4 L 12,12 L 4,12 Z" 
+                                                      Fill="#6200EE" Width="16" Height="16" />
+                                                <TextBlock Text="Copier" Foreground="#6200EE" FontWeight="Medium" />
+                                            </StackPanel>
+                                        </Button>
+                                        <Button Background="#2A2A2A" BorderBrush="#6200EE" BorderThickness="1"
+                                                CornerRadius="8" Padding="12,8" ToolTip.Tip="Synthèse vocale">
+                                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                                <Path Data="M 2,6 L 6,6 L 10,2 L 10,14 L 6,10 L 2,10 Z M 12,4 L 12,12 M 14,2 L 14,14" 
+                                                      Fill="#6200EE" Width="16" Height="16" />
+                                                <TextBlock Text="Écouter" Foreground="#6200EE" FontWeight="Medium" />
+                                            </StackPanel>
+                                        </Button>
+                                    </StackPanel>
+                                </Grid>
+                            </Grid>
+                            
+                            <!-- Onglet Traduction -->
+                            <Grid x:Name="TranslationTabContent" Margin="20" IsVisible="False">
+                                <Grid RowDefinitions="*,Auto">
+                                    
+                                    <!-- Zone de traduction avec thème sombre -->
+                                    <Border Grid.Row="0" Classes="text-area">
+                                        <Border.Background>
+                                            <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+                                                <GradientStop Offset="0" Color="#0F0F0F" />
+                                                <GradientStop Offset="1" Color="#1F1F1F" />
+                                            </LinearGradientBrush>
+                                        </Border.Background>
+                                        <Grid>
+                                            <!-- Texte traduit -->
+                                            <TextBlock Classes="content-text" 
+                                                       Text="{Binding TranslatedText, FallbackValue=''}"
+                                                       IsVisible="{Binding HasTranslatedText}"
+                                                       Foreground="White" />
+                                            
+                                            <!-- État de chargement traduction -->
+                                            <StackPanel IsVisible="{Binding IsTranslating}" 
+                                                        HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                <TextBlock Text="🔄" FontSize="32" HorizontalAlignment="Center" />
+                                                <TextBlock Text="Traduction en cours..." 
+                                                           FontSize="16" Foreground="#6200EE" FontWeight="Medium"
+                                                           HorizontalAlignment="Center" Margin="0,12,0,0" />
+                                            </StackPanel>
+                                            
+                                            <!-- Message d'attente -->
+                                            <StackPanel IsVisible="{Binding ShowTranslationWaitMessage}" 
+                                                        HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                <TextBlock Text="⏳" FontSize="32" HorizontalAlignment="Center" />
+                                                <TextBlock Text="En attente de l'extraction du texte..." 
+                                                           FontSize="16" Foreground="#6200EE" FontWeight="Medium"
+                                                           HorizontalAlignment="Center" Margin="0,12,0,0" />
+                                                <TextBlock Text="La traduction commencera automatiquement" 
+                                                           FontSize="14" Foreground="#AAAAAA" 
+                                                           HorizontalAlignment="Center" Margin="0,8,0,0" />
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+                                    
+                                    <!-- Actions de traduction avec thème violet -->
+                                    <StackPanel Grid.Row="1" Orientation="Horizontal" 
+                                                HorizontalAlignment="Right" Margin="0,16,0,0" Spacing="12">
+                                        <Button Background="#2A2A2A" BorderBrush="#6200EE" BorderThickness="1"
+                                                CornerRadius="8" Padding="12,8" ToolTip.Tip="Copier la traduction">
+                                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                                <Path Data="M 2,2 L 2,14 L 14,14 L 14,2 Z M 4,4 L 12,4 L 12,12 L 4,12 Z" 
+                                                      Fill="#6200EE" Width="16" Height="16" />
+                                                <TextBlock Text="Copier" Foreground="#6200EE" FontWeight="Medium" />
+                                            </StackPanel>
+                                        </Button>
+                                        <Button Background="#2A2A2A" BorderBrush="#6200EE" BorderThickness="1"
+                                                CornerRadius="8" Padding="12,8" ToolTip.Tip="Synthèse vocale">
+                                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                                <Path Data="M 2,6 L 6,6 L 10,2 L 10,14 L 6,10 L 2,10 Z M 12,4 L 12,12 M 14,2 L 14,14" 
+                                                      Fill="#6200EE" Width="16" Height="16" />
+                                                <TextBlock Text="Écouter" Foreground="#6200EE" FontWeight="Medium" />
+                                            </StackPanel>
+                                        </Button>
+                                    </StackPanel>
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                    </Grid>
                 </Border>
             </Grid>
-
-            <!-- Section des résultats en bas plus large -->
-            <Border Grid.Row="1" Classes="glass-panel" Margin="0,30,0,0" 
-                    HorizontalAlignment="Stretch" MinHeight="180">
-                <Grid ColumnDefinitions="1*,30,1*,30,1*"
-                      HorizontalAlignment="Stretch">
-                    
-                    <!-- Texte extrait -->
-                    <StackPanel Grid.Column="0">
-                        <TextBlock Classes="title" Text="📝 Texte extrait" HorizontalAlignment="Center" FontSize="18" />
-                        <Border Background="#20FFFFFF" 
-                                CornerRadius="10" 
-                                Padding="16"
-                                MinHeight="120"
-                                MaxHeight="140">
-                            <ScrollViewer VerticalScrollBarVisibility="Auto">
-                                <TextBlock Classes="content" 
-                                           Text="{Binding OcrText, FallbackValue='Aucun texte extrait pour le moment...'}"
-                                           TextWrapping="Wrap"
-                                           FontSize="14" />
-                            </ScrollViewer>
-                        </Border>
-                    </StackPanel>
-
-                    <!-- Langue détectée -->
-                    <StackPanel Grid.Column="2">
-                        <TextBlock Classes="title" Text="🌍 Langue détectée" HorizontalAlignment="Center" FontSize="18" />
-                        <Border Background="#20FFFFFF" 
-                                CornerRadius="10" 
-                                Padding="16"
-                                MinHeight="120">
-                            <TextBlock Classes="content" 
-                                       Text="{Binding InferredLanguage, FallbackValue='Non détectée'}"
-                                       HorizontalAlignment="Center"
-                                       VerticalAlignment="Center"
-                                       FontWeight="SemiBold"
-                                       FontSize="18" />
-                        </Border>
-                    </StackPanel>
-
-                    <!-- Texte traduit -->
-                    <StackPanel Grid.Column="4">
-                        <TextBlock Classes="title" Text="🔄 Traduction" HorizontalAlignment="Center" FontSize="18" />
-                        <Border Background="#20FFFFFF" 
-                                CornerRadius="10" 
-                                Padding="16"
-                                MinHeight="120"
-                                MaxHeight="140">
-                            <ScrollViewer VerticalScrollBarVisibility="Auto">
-                                <TextBlock Classes="content" 
-                                           Text="{Binding TranslatedText, FallbackValue='Aucune traduction disponible...'}"
-                                           TextWrapping="Wrap"
-                                           FontSize="14" />
-                            </ScrollViewer>
-                        </Border>
-                    </StackPanel>
-                </Grid>
-            </Border>
         </Grid>
 
-        <!-- Bouton de fermeture en haut à droite -->
-        <Button Classes="glass" 
+        <!-- Bouton fermer avec style violet -->
+        <Button Classes="close-btn" 
                 HorizontalAlignment="Right" 
                 VerticalAlignment="Top" 
-                Margin="20" 
-                Width="40" 
-                Height="40"
-                Click="OnCloseClick"
-                Padding="0">
+                Margin="40"
+                Click="OnCloseClick">
             <Path Data="M 8,8 L 16,16 M 8,16 L 16,8" 
                   Stroke="White" 
-                  StrokeThickness="2" 
+                  StrokeThickness="2.5" 
                   Stretch="Uniform"
-                  Width="16" 
-                  Height="16" />
+                  Width="14" 
+                  Height="14" />
         </Button>
     </Grid>
 </UserControl>

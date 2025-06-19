@@ -17,22 +17,28 @@ public class DesignScreenCaptureActionsViewModel : ScreenCaptureActionsViewModel
         new Mock<ITranslationManager>().Object
     )
     {
-        // Set mock data for design-time preview
-        OcrText = "This is sample extracted text from an image that would be processed by the OCR engine.";
+        OcrText = "Welcome to DesktopEye! This powerful OCR tool can extract text from any screenshot with remarkable accuracy. Whether you're working with documents, images, or web content, our advanced AI technology ensures precise text recognition across multiple languages.";
         InferredLanguage = Language.English;
-        TranslatedText = "Este es un texto de ejemplo extraído de una imagen que sería procesado por el motor OCR.";
-        TargetLanguage = Language.Spanish;
+        TranslatedText = "Bienvenue sur DesktopEye ! Cet outil OCR puissant peut extraire du texte de n'importe quelle capture d'écran avec une précision remarquable. Que vous travailliez avec des documents, des images ou du contenu web, notre technologie IA avancée garantit une reconnaissance de texte précise dans plusieurs langues.";
+        TargetLanguage = Language.French;
+        
+        HasOcrText = true;
+        HasInferredLanguage = true;
+        HasTranslatedText = true;
+        IsExtractingText = false;
+        IsDetectingLanguage = false;
+        IsTranslating = false;
+        ShowInitialMessage = false;
+        ShowTranslationWaitMessage = false;
 
-        // You can also create a mock bitmap if needed
-        Bitmap = CreateMockBitmap(); // Implement this method if you need a sample image
+        // Image de démonstration
+        Bitmap = CreateMockBitmap();
     }
 
-    // Optional: Create a mock bitmap for design-time
     private Bitmap CreateMockBitmap()
     {
-        // Create a simple colored bitmap for preview
         var writeableBitmap = new WriteableBitmap(
-            new PixelSize(200, 100),
+            new PixelSize(500, 350),
             new Vector(96, 96),
             PixelFormat.Bgra8888,
             AlphaFormat.Premul);

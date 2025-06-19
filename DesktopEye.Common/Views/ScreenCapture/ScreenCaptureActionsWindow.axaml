@@ -4,13 +4,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:screenCapture="clr-namespace:DesktopEye.Common.Views.ScreenCapture"
         xmlns:viewModels="clr-namespace:DesktopEye.Common.ViewModels.ScreenCapture"
-        mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="700"
+        mc:Ignorable="d" d:DesignWidth="1400" d:DesignHeight="800"
         x:Class="DesktopEye.Common.Views.ScreenCapture.ScreenCaptureActionsWindow"
         x:DataType="viewModels:ScreenCaptureActionsViewModel"
         Title="Desktop Eye - Actions"
         Icon="/Assets/avalonia-logo.ico"
-        Width="1000" Height="700"
-        MinWidth="800" MinHeight="600"
+        Width="1400" Height="800"
+        MinWidth="1200" MinHeight="700"
         ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaChromeHints="NoChrome"
         ExtendClientAreaTitleBarHeightHint="-1"
@@ -20,6 +20,6 @@
         WindowStartupLocation="CenterScreen"
         WindowState="Maximized">
 
-    <!-- Contenu principal sans bordures ni décoration -->
+    <!-- Contenu principal overlay invisible -->
     <screenCapture:ScreenCaptureActionsView />
 </Window>

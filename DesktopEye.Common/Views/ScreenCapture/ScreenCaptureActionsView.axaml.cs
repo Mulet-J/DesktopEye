@@ -1,6 +1,5 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using DesktopEye.Common.ViewModels.ScreenCapture;
 
 namespace DesktopEye.Common.Views.ScreenCapture;
 
@@ -11,33 +10,42 @@ public partial class ScreenCaptureActionsView : UserControl
         InitializeComponent();
     }
 
-    private async void OnExtractTextClick(object? sender, RoutedEventArgs e)
+    private void OnTextTabClick(object? sender, RoutedEventArgs e)
     {
-        if (DataContext is ScreenCaptureActionsViewModel viewModel)
+        // Activer l'onglet Texte
+        var textTab = this.FindControl<Button>("TextTabButton");
+        var translationTab = this.FindControl<Button>("TranslationTabButton");
+        var textContent = this.FindControl<Grid>("TextTabContent");
+        var translationContent = this.FindControl<Grid>("TranslationTabContent");
+
+        if (textTab != null && translationTab != null && textContent != null && translationContent != null)
         {
-            await viewModel.ExtractText();
+            textTab.Classes.Add("active");
+            translationTab.Classes.Remove("active");
+            textContent.IsVisible = true;
+            translationContent.IsVisible = false;
         }
     }
 
-    private async void OnInferLanguageClick(object? sender, RoutedEventArgs e)
+    private void OnTranslationTabClick(object? sender, RoutedEventArgs e)
     {
-        if (DataContext is ScreenCaptureActionsViewModel viewModel)
-        {
-            await viewModel.InferLanguage();
-        }
-    }
+        // Activer l'onglet Traduction
+        var textTab = this.FindControl<Button>("TextTabButton");
+        var translationTab = this.FindControl<Button>("TranslationTabButton");
+        var textContent = this.FindControl<Grid>("TextTabContent");
+        var translationContent = this.FindControl<Grid>("TranslationTabContent");
 
-    private async void OnTranslateClick(object? sender, RoutedEventArgs e)
-    {
-        if (DataContext is ScreenCaptureActionsViewModel viewModel)
+        if (textTab != null && translationTab != null && textContent != null && translationContent != null)
         {
-            await viewModel.Translate();
+            textTab.Classes.Remove("active");
+            translationTab.Classes.Add("active");
+            textContent.IsVisible = false;
+            translationContent.IsVisible = true;
         }
     }
 
     private void OnCloseClick(object? sender, RoutedEventArgs e)
     {
-        // Fermer la fenêtre parente
         var window = TopLevel.GetTopLevel(this) as Window;
         window?.Close();
     }
