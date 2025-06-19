@@ -40,12 +40,24 @@ public class NTextCatClassifierTest
     //
     //     Assert.Equal(expected, actual);
     // }
+    
+    [Fact]
+    public async Task PreloadModelAsync_ShouldLoadModel()
+    {
+        // Act
+        await _nTextCatClassifierService.LoadRequiredAsync();
+
+        // Assert
+        Assert.True(_nTextCatClassifierService.IsModelLoaded);
+    }
 
     [Fact]
     public void ClassifyText_French_shouldReturnFrench()
     {
         var inputText = "Ceci est un texte en français.";
         var expectedLanguage = Language.French;
+        
+        _ = _nTextCatClassifierService.LoadRequiredAsync();
 
         var actualLanguage = _nTextCatClassifierService.ClassifyText(inputText);
 
@@ -57,6 +69,8 @@ public class NTextCatClassifierTest
     {
         var inputText = "This is a text in English.";
         var expectedLanguage = Language.English;
+        
+        _ = _nTextCatClassifierService.LoadRequiredAsync();
 
         var actualLanguage = _nTextCatClassifierService.ClassifyText(inputText);
 
@@ -68,6 +82,8 @@ public class NTextCatClassifierTest
     {
         var inputText = "Ceci est un texte en français.";
         var expectedLanguage = Language.French;
+        
+        _ = _nTextCatClassifierService.LoadRequiredAsync();
 
         var actualLanguage = _nTextCatClassifierService.ClassifyTextWithProbabilities(inputText);
 
