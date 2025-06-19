@@ -34,4 +34,11 @@ public partial class ScreenCaptureActionsView : UserControl
             await viewModel.Translate();
         }
     }
+
+    private void OnCloseClick(object? sender, RoutedEventArgs e)
+    {
+        // Fermer la fenêtre parente
+        var window = TopLevel.GetTopLevel(this) as Window;
+        window?.Close();
+    }
 }

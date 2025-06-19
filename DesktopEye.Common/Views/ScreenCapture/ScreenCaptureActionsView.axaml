@@ -14,123 +14,181 @@
     </Design.DataContext>
 
     <UserControl.Styles>
-        <!-- Styles pour les boutons principaux -->
+        <!-- Styles pour les boutons avec thème violet -->
         <Style Selector="Button.primary">
             <Setter Property="Background" Value="#6200EE" />
             <Setter Property="Foreground" Value="White" />
-            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="BorderBrush" Value="#7E3FF2" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="12" />
             <Setter Property="Padding" Value="16,10" />
             <Setter Property="FontWeight" Value="SemiBold" />
             <Setter Property="HorizontalContentAlignment" Value="Center" />
             <Setter Property="VerticalContentAlignment" Value="Center" />
-            <Setter Property="MinHeight" Value="40" />
+            <Setter Property="MinHeight" Value="45" />
             <Setter Property="Cursor" Value="Hand" />
             <Setter Property="Transitions">
                 <Transitions>
-                    <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.15" />
+                    <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.2" />
+                    <BrushTransition Property="Background" Duration="0:0:0.2" />
                 </Transitions>
             </Setter>
         </Style>
         <Style Selector="Button.primary:pointerover">
             <Setter Property="Background" Value="#7E3FF2" />
-            <Setter Property="RenderTransform" Value="scale(1.02)" />
+            <Setter Property="RenderTransform" Value="scale(1.05)" />
         </Style>
         <Style Selector="Button.primary:pressed">
-            <Setter Property="RenderTransform" Value="scale(0.98)" />
+            <Setter Property="RenderTransform" Value="scale(0.95)" />
         </Style>
 
-        <!-- Styles pour les ComboBox -->
+        <!-- Bouton de fermeture glassmorphism -->
+        <Style Selector="Button.glass">
+            <Setter Property="Background">
+                <Setter.Value>
+                    <SolidColorBrush Color="#40FFFFFF" />
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="BorderBrush">
+                <Setter.Value>
+                    <SolidColorBrush Color="#60FFFFFF" />
+                </Setter.Value>
+            </Setter>
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="12" />
+            <Setter Property="Transitions">
+                <Transitions>
+                    <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.2" />
+                    <BrushTransition Property="Background" Duration="0:0:0.2" />
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="Button.glass:pointerover">
+            <Setter Property="Background">
+                <Setter.Value>
+                    <SolidColorBrush Color="#60FFFFFF" />
+                </Setter.Value>
+            </Setter>
+            <Setter Property="RenderTransform" Value="scale(1.05)" />
+        </Style>
+
+        <!-- Styles pour les ComboBox avec thème violet -->
         <Style Selector="ComboBox.modern">
-            <Setter Property="Background" Value="#2D2D2D" />
+            <Setter Property="Background" Value="#2A2A2A" />
             <Setter Property="Foreground" Value="White" />
             <Setter Property="BorderBrush" Value="#6200EE" />
-            <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="BorderThickness" Value="2" />
+            <Setter Property="CornerRadius" Value="8" />
             <Setter Property="Padding" Value="12,8" />
-            <Setter Property="MinHeight" Value="36" />
+            <Setter Property="MinHeight" Value="40" />
         </Style>
         <Style Selector="ComboBox.modern:pointerover">
             <Setter Property="Background" Value="#333333" />
             <Setter Property="BorderBrush" Value="#7E3FF2" />
         </Style>
 
-        <!-- Styles pour les cartes de contenu -->
-        <Style Selector="Border.card">
-            <Setter Property="Background" Value="#2A2A2A" />
-            <Setter Property="CornerRadius" Value="12" />
-            <Setter Property="BorderBrush" Value="#404040" />
+        <!-- Panel avec gradient violet -->
+        <Style Selector="Border.violet-panel">
+            <Setter Property="Background">
+                <Setter.Value>
+                    <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+                        <GradientStop Offset="0" Color="#2A1F1F" />
+                        <GradientStop Offset="1" Color="#2D2D3A" />
+                    </LinearGradientBrush>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="BorderBrush" Value="#6200EE" />
             <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="16" />
+            <Setter Property="Padding" Value="24" />
+        </Style>
+
+        <!-- Panel glassmorphism pour les résultats -->
+        <Style Selector="Border.glass-panel">
+            <Setter Property="Background">
+                <Setter.Value>
+                    <SolidColorBrush Color="#20FFFFFF" />
+                </Setter.Value>
+            </Setter>
+            <Setter Property="BorderBrush">
+                <Setter.Value>
+                    <SolidColorBrush Color="#30FFFFFF" />
+                </Setter.Value>
+            </Setter>
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="16" />
             <Setter Property="Padding" Value="20" />
         </Style>
 
-        <!-- Styles pour les TextBlock de titre -->
+        <!-- Styles pour les titres -->
         <Style Selector="TextBlock.title">
-            <Setter Property="FontSize" Value="18" />
+            <Setter Property="FontSize" Value="16" />
             <Setter Property="FontWeight" Value="SemiBold" />
             <Setter Property="Foreground" Value="White" />
             <Setter Property="Margin" Value="0,0,0,12" />
-        </Style>
-
-        <!-- Styles pour les TextBlock de contenu -->
-        <Style Selector="TextBlock.content">
-            <Setter Property="Foreground" Value="#E0E0E0" />
-            <Setter Property="TextWrapping" Value="Wrap" />
-            <Setter Property="LineHeight" Value="20" />
-            <Setter Property="FontSize" Value="14" />
         </Style>
 
         <!-- Styles pour les labels -->
         <Style Selector="TextBlock.label">
             <Setter Property="FontSize" Value="12" />
             <Setter Property="FontWeight" Value="Medium" />
-            <Setter Property="Foreground" Value="#CCCCCC" />
+            <Setter Property="Foreground" Value="#E0E0E0" />
             <Setter Property="Margin" Value="0,0,0,4" />
+        </Style>
+
+        <!-- Styles pour le contenu -->
+        <Style Selector="TextBlock.content">
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="FontSize" Value="14" />
         </Style>
     </UserControl.Styles>
 
     <Grid>
-        <!-- Fond dégradé -->
+        <!-- Fond overlay transparent avec blur -->
         <Grid.Background>
-            <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
-                <GradientStop Offset="0" Color="#1F1F1F" />
-                <GradientStop Offset="1" Color="#2D2D2D" />
-            </LinearGradientBrush>
+            <SolidColorBrush Color="#80000000" />
         </Grid.Background>
 
-        <ScrollViewer Padding="24" VerticalScrollBarVisibility="Auto">
-            <Grid ColumnDefinitions="1*,1*" RowDefinitions="Auto,*" MaxWidth="1200">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1*" MaxWidth="400" />
-                    <ColumnDefinition Width="20" />
-                    <ColumnDefinition Width="1*" />
-                </Grid.ColumnDefinitions>
+        <!-- Conteneur principal plus grand -->
+        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="40">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
 
-                <!-- Section de l'image capturée -->
-                <Border Grid.Column="0" Grid.Row="0" Classes="card" Margin="0,0,0,20">
-                    <StackPanel>
-                        <TextBlock Classes="title" Text="Capture d'écran" />
+            <!-- Section principale avec image et contrôles -->
+            <Grid Grid.Row="0" ColumnDefinitions="*,30,Auto">
+                
+                <!-- Image centrale plus grande à gauche -->
+                <Border Grid.Column="0" Classes="violet-panel"
+                        HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                        MinWidth="700" MinHeight="500">
+                    <Grid RowDefinitions="Auto,*">
+                        <TextBlock Grid.Row="0" Classes="title" Text="📸 Capture d'écran" HorizontalAlignment="Center" FontSize="20" Margin="0,0,0,20" />
                         
-                        <!-- Conteneur de l'image avec aspect ratio préservé -->
-                        <Border CornerRadius="8" ClipToBounds="True" 
-                                Background="#1A1A1A" 
-                                HorizontalAlignment="Center"
-                                MaxHeight="300">
+                        <!-- Conteneur de l'image qui prend tout l'espace restant -->
+                        <Border Grid.Row="1" CornerRadius="12" ClipToBounds="True" 
+                                Background="#15FFFFFF" 
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch">
                             <Image Source="{Binding Bitmap}" 
-                                   Stretch="Uniform"
+                                   Stretch="UniformToFill"
                                    HorizontalAlignment="Center"
                                    VerticalAlignment="Center" />
                         </Border>
-                    </StackPanel>
+                    </Grid>
                 </Border>
 
-                <!-- Section des contrôles -->
-                <Border Grid.Column="0" Grid.Row="1" Classes="card">
-                    <StackPanel Spacing="20">
-                        <TextBlock Classes="title" Text="Actions disponibles" />
+                <!-- Panel des actions à droite -->
+                <Border Grid.Column="2" Classes="violet-panel" VerticalAlignment="Stretch" Width="350">
+                    <StackPanel Spacing="25">
+                        <TextBlock Classes="title" Text="⚡ Actions" HorizontalAlignment="Center" FontSize="20" />
 
                         <!-- Section OCR -->
-                        <StackPanel Spacing="8">
-                            <TextBlock Classes="label" Text="Extraction de texte (OCR)" />
+                        <StackPanel Spacing="10">
+                            <TextBlock Classes="label" Text="🔍 Extraction de texte (OCR)" FontSize="14" />
                             <ComboBox Classes="modern" 
                                       ItemsSource="{Binding AvailableOcrTypes}"
                                       SelectedItem="{Binding CurrentOcrType}"
@@ -138,12 +196,13 @@
                             <Button Classes="primary" 
                                     Click="OnExtractTextClick"
                                     Content="{x:Static res:ResourcesCommon.Button_ExtractText}"
-                                    HorizontalAlignment="Stretch" />
+                                    HorizontalAlignment="Stretch"
+                                    FontSize="15" />
                         </StackPanel>
 
                         <!-- Section Classification -->
-                        <StackPanel Spacing="8">
-                            <TextBlock Classes="label" Text="Détection de langue" />
+                        <StackPanel Spacing="10">
+                            <TextBlock Classes="label" Text="🌐 Détection de langue" FontSize="14" />
                             <ComboBox Classes="modern"
                                       ItemsSource="{Binding AvailableClassifierTypes}"
                                       SelectedItem="{Binding CurrentClassifierType}"
@@ -151,17 +210,18 @@
                             <Button Classes="primary"
                                     Click="OnInferLanguageClick"
                                     Content="{x:Static res:ResourcesCommon.Button_InferLanguage}"
-                                    HorizontalAlignment="Stretch" />
+                                    HorizontalAlignment="Stretch"
+                                    FontSize="15" />
                         </StackPanel>
 
                         <!-- Section Traduction -->
-                        <StackPanel Spacing="8">
-                            <TextBlock Classes="label" Text="Traduction" />
+                        <StackPanel Spacing="10">
+                            <TextBlock Classes="label" Text="🔄 Traduction" FontSize="14" />
                             <ComboBox Classes="modern"
                                       ItemsSource="{Binding AvailableTranslationTypes}"
                                       SelectedItem="{Binding CurrentTranslationType}"
                                       HorizontalAlignment="Stretch" />
-                            <TextBlock Classes="label" Text="Langue cible" />
+                            <TextBlock Classes="label" Text="Langue cible" FontSize="12" />
                             <ComboBox Classes="modern"
                                       ItemsSource="{Binding AvailableLanguages}"
                                       SelectedItem="{Binding TargetLanguage}"
@@ -169,55 +229,87 @@
                             <Button Classes="primary"
                                     Click="OnTranslateClick"
                                     Content="{x:Static res:ResourcesCommon.Button_Translate}"
-                                    HorizontalAlignment="Stretch" />
+                                    HorizontalAlignment="Stretch"
+                                    FontSize="15" />
                         </StackPanel>
                     </StackPanel>
                 </Border>
+            </Grid>
 
-                <!-- Section des résultats -->
-                <StackPanel Grid.Column="2" Grid.RowSpan="2" Spacing="20">
+            <!-- Section des résultats en bas plus large -->
+            <Border Grid.Row="1" Classes="glass-panel" Margin="0,30,0,0" 
+                    HorizontalAlignment="Stretch" MinHeight="180">
+                <Grid ColumnDefinitions="1*,30,1*,30,1*"
+                      HorizontalAlignment="Stretch">
+                    
                     <!-- Texte extrait -->
-                    <Border Classes="card">
-                        <StackPanel>
-                            <TextBlock Classes="title" Text="Texte extrait" />
-                            <ScrollViewer MaxHeight="150" VerticalScrollBarVisibility="Auto">
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Classes="title" Text="📝 Texte extrait" HorizontalAlignment="Center" FontSize="18" />
+                        <Border Background="#20FFFFFF" 
+                                CornerRadius="10" 
+                                Padding="16"
+                                MinHeight="120"
+                                MaxHeight="140">
+                            <ScrollViewer VerticalScrollBarVisibility="Auto">
                                 <TextBlock Classes="content" 
                                            Text="{Binding OcrText, FallbackValue='Aucun texte extrait pour le moment...'}"
-                                           Background="#1A1A1A"
-                                           Padding="12"/>
+                                           TextWrapping="Wrap"
+                                           FontSize="14" />
                             </ScrollViewer>
-                        </StackPanel>
-                    </Border>
+                        </Border>
+                    </StackPanel>
 
                     <!-- Langue détectée -->
-                    <Border Classes="card">
-                        <StackPanel>
-                            <TextBlock Classes="title" Text="Langue détectée" />
-                            <Border Background="#1A1A1A" 
-                                    CornerRadius="6" 
-                                    Padding="12">
-                                <TextBlock Classes="content" 
-                                           Text="{Binding InferredLanguage, FallbackValue='Aucune langue détectée'}"
-                                           HorizontalAlignment="Center"
-                                           FontWeight="Medium" />
-                            </Border>
-                        </StackPanel>
-                    </Border>
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Classes="title" Text="🌍 Langue détectée" HorizontalAlignment="Center" FontSize="18" />
+                        <Border Background="#20FFFFFF" 
+                                CornerRadius="10" 
+                                Padding="16"
+                                MinHeight="120">
+                            <TextBlock Classes="content" 
+                                       Text="{Binding InferredLanguage, FallbackValue='Non détectée'}"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       FontWeight="SemiBold"
+                                       FontSize="18" />
+                        </Border>
+                    </StackPanel>
 
                     <!-- Texte traduit -->
-                    <Border Classes="card">
-                        <StackPanel>
-                            <TextBlock Classes="title" Text="Traduction" />
-                            <ScrollViewer MaxHeight="150" VerticalScrollBarVisibility="Auto">
+                    <StackPanel Grid.Column="4">
+                        <TextBlock Classes="title" Text="🔄 Traduction" HorizontalAlignment="Center" FontSize="18" />
+                        <Border Background="#20FFFFFF" 
+                                CornerRadius="10" 
+                                Padding="16"
+                                MinHeight="120"
+                                MaxHeight="140">
+                            <ScrollViewer VerticalScrollBarVisibility="Auto">
                                 <TextBlock Classes="content" 
                                            Text="{Binding TranslatedText, FallbackValue='Aucune traduction disponible...'}"
-                                           Background="#1A1A1A"
-                                           Padding="12" />
+                                           TextWrapping="Wrap"
+                                           FontSize="14" />
                             </ScrollViewer>
-                        </StackPanel>
-                    </Border>
-                </StackPanel>
-            </Grid>
-        </ScrollViewer>
+                        </Border>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- Bouton de fermeture en haut à droite -->
+        <Button Classes="glass" 
+                HorizontalAlignment="Right" 
+                VerticalAlignment="Top" 
+                Margin="20" 
+                Width="40" 
+                Height="40"
+                Click="OnCloseClick"
+                Padding="0">
+            <Path Data="M 8,8 L 16,16 M 8,16 L 16,8" 
+                  Stroke="White" 
+                  StrokeThickness="2" 
+                  Stretch="Uniform"
+                  Width="16" 
+                  Height="16" />
+        </Button>
     </Grid>
 </UserControl>
