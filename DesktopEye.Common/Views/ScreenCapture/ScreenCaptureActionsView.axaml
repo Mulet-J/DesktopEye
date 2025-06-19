@@ -5,7 +5,7 @@
              xmlns:res="clr-namespace:DesktopEye.Common.Resources"
              xmlns:screenCapture="clr-namespace:DesktopEye.Common.ViewModels.ScreenCapture"
              xmlns:design="clr-namespace:DesktopEye.Common.ViewModels.ScreenCapture.Design"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="700"
              x:Class="DesktopEye.Common.Views.ScreenCapture.ScreenCaptureActionsView"
              x:DataType="screenCapture:ScreenCaptureActionsViewModel">
 
@@ -13,28 +13,211 @@
         <design:DesignScreenCaptureActionsViewModel />
     </Design.DataContext>
 
-    <Grid RowDefinitions="*,*,*,*">
-        <Grid Grid.Row="0" ColumnDefinitions="*,*">
-            <Image Grid.Column="0" Source="{Binding Bitmap}" />
-            <StackPanel Grid.Column="1">
-                <Button Command="{Binding ExtractText}"
-                        Content="{x:Static res:ResourcesCommon.Button_ExtractText}" />
-                <ComboBox ItemsSource="{Binding AvailableOcrTypes}"
-                          SelectedItem="{Binding CurrentOcrType}" />
-                <Button Command="{Binding InferLanguage}"
-                        Content="{x:Static res:ResourcesCommon.Button_InferLanguage}" />
-                <ComboBox ItemsSource="{Binding AvailableClassifierTypes}"
-                          SelectedItem="{Binding CurrentClassifierType}" />
-                <Button Command="{Binding Translate}"
-                        Content="{x:Static res:ResourcesCommon.Button_Translate}" />
-                <ComboBox ItemsSource="{Binding AvailableTranslationTypes}"
-                          SelectedItem="{Binding CurrentTranslationType}" />
-                <ComboBox ItemsSource="{Binding AvailableLanguages}"
-                          SelectedItem="{Binding TargetLanguage}" />
-            </StackPanel>
-        </Grid>
-        <TextBlock Grid.Row="1" Text="{Binding OcrText}" />
-        <TextBlock Grid.Row="2" Text="{Binding InferredLanguage}" />
-        <TextBlock Grid.Row="3" Text="{Binding TranslatedText}" />
+    <UserControl.Styles>
+        <!-- Styles pour les boutons principaux -->
+        <Style Selector="Button.primary">
+            <Setter Property="Background" Value="#6200EE" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="16,10" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="MinHeight" Value="40" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Transitions">
+                <Transitions>
+                    <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.15" />
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="Button.primary:pointerover">
+            <Setter Property="Background" Value="#7E3FF2" />
+            <Setter Property="RenderTransform" Value="scale(1.02)" />
+        </Style>
+        <Style Selector="Button.primary:pressed">
+            <Setter Property="RenderTransform" Value="scale(0.98)" />
+        </Style>
+
+        <!-- Styles pour les ComboBox -->
+        <Style Selector="ComboBox.modern">
+            <Setter Property="Background" Value="#2D2D2D" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="BorderBrush" Value="#6200EE" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="Padding" Value="12,8" />
+            <Setter Property="MinHeight" Value="36" />
+        </Style>
+        <Style Selector="ComboBox.modern:pointerover">
+            <Setter Property="Background" Value="#333333" />
+            <Setter Property="BorderBrush" Value="#7E3FF2" />
+        </Style>
+
+        <!-- Styles pour les cartes de contenu -->
+        <Style Selector="Border.card">
+            <Setter Property="Background" Value="#2A2A2A" />
+            <Setter Property="CornerRadius" Value="12" />
+            <Setter Property="BorderBrush" Value="#404040" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="20" />
+        </Style>
+
+        <!-- Styles pour les TextBlock de titre -->
+        <Style Selector="TextBlock.title">
+            <Setter Property="FontSize" Value="18" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Margin" Value="0,0,0,12" />
+        </Style>
+
+        <!-- Styles pour les TextBlock de contenu -->
+        <Style Selector="TextBlock.content">
+            <Setter Property="Foreground" Value="#E0E0E0" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="LineHeight" Value="20" />
+            <Setter Property="FontSize" Value="14" />
+        </Style>
+
+        <!-- Styles pour les labels -->
+        <Style Selector="TextBlock.label">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="FontWeight" Value="Medium" />
+            <Setter Property="Foreground" Value="#CCCCCC" />
+            <Setter Property="Margin" Value="0,0,0,4" />
+        </Style>
+    </UserControl.Styles>
+
+    <Grid>
+        <!-- Fond dégradé -->
+        <Grid.Background>
+            <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+                <GradientStop Offset="0" Color="#1F1F1F" />
+                <GradientStop Offset="1" Color="#2D2D2D" />
+            </LinearGradientBrush>
+        </Grid.Background>
+
+        <ScrollViewer Padding="24" VerticalScrollBarVisibility="Auto">
+            <Grid ColumnDefinitions="1*,1*" RowDefinitions="Auto,*" MaxWidth="1200">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*" MaxWidth="400" />
+                    <ColumnDefinition Width="20" />
+                    <ColumnDefinition Width="1*" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Section de l'image capturée -->
+                <Border Grid.Column="0" Grid.Row="0" Classes="card" Margin="0,0,0,20">
+                    <StackPanel>
+                        <TextBlock Classes="title" Text="Capture d'écran" />
+                        
+                        <!-- Conteneur de l'image avec aspect ratio préservé -->
+                        <Border CornerRadius="8" ClipToBounds="True" 
+                                Background="#1A1A1A" 
+                                HorizontalAlignment="Center"
+                                MaxHeight="300">
+                            <Image Source="{Binding Bitmap}" 
+                                   Stretch="Uniform"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center" />
+                        </Border>
+                    </StackPanel>
+                </Border>
+
+                <!-- Section des contrôles -->
+                <Border Grid.Column="0" Grid.Row="1" Classes="card">
+                    <StackPanel Spacing="20">
+                        <TextBlock Classes="title" Text="Actions disponibles" />
+
+                        <!-- Section OCR -->
+                        <StackPanel Spacing="8">
+                            <TextBlock Classes="label" Text="Extraction de texte (OCR)" />
+                            <ComboBox Classes="modern" 
+                                      ItemsSource="{Binding AvailableOcrTypes}"
+                                      SelectedItem="{Binding CurrentOcrType}"
+                                      HorizontalAlignment="Stretch" />
+                            <Button Classes="primary" 
+                                    Click="OnExtractTextClick"
+                                    Content="{x:Static res:ResourcesCommon.Button_ExtractText}"
+                                    HorizontalAlignment="Stretch" />
+                        </StackPanel>
+
+                        <!-- Section Classification -->
+                        <StackPanel Spacing="8">
+                            <TextBlock Classes="label" Text="Détection de langue" />
+                            <ComboBox Classes="modern"
+                                      ItemsSource="{Binding AvailableClassifierTypes}"
+                                      SelectedItem="{Binding CurrentClassifierType}"
+                                      HorizontalAlignment="Stretch" />
+                            <Button Classes="primary"
+                                    Click="OnInferLanguageClick"
+                                    Content="{x:Static res:ResourcesCommon.Button_InferLanguage}"
+                                    HorizontalAlignment="Stretch" />
+                        </StackPanel>
+
+                        <!-- Section Traduction -->
+                        <StackPanel Spacing="8">
+                            <TextBlock Classes="label" Text="Traduction" />
+                            <ComboBox Classes="modern"
+                                      ItemsSource="{Binding AvailableTranslationTypes}"
+                                      SelectedItem="{Binding CurrentTranslationType}"
+                                      HorizontalAlignment="Stretch" />
+                            <TextBlock Classes="label" Text="Langue cible" />
+                            <ComboBox Classes="modern"
+                                      ItemsSource="{Binding AvailableLanguages}"
+                                      SelectedItem="{Binding TargetLanguage}"
+                                      HorizontalAlignment="Stretch" />
+                            <Button Classes="primary"
+                                    Click="OnTranslateClick"
+                                    Content="{x:Static res:ResourcesCommon.Button_Translate}"
+                                    HorizontalAlignment="Stretch" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Section des résultats -->
+                <StackPanel Grid.Column="2" Grid.RowSpan="2" Spacing="20">
+                    <!-- Texte extrait -->
+                    <Border Classes="card">
+                        <StackPanel>
+                            <TextBlock Classes="title" Text="Texte extrait" />
+                            <ScrollViewer MaxHeight="150" VerticalScrollBarVisibility="Auto">
+                                <TextBlock Classes="content" 
+                                           Text="{Binding OcrText, FallbackValue='Aucun texte extrait pour le moment...'}"
+                                           Background="#1A1A1A"
+                                           Padding="12"/>
+                            </ScrollViewer>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Langue détectée -->
+                    <Border Classes="card">
+                        <StackPanel>
+                            <TextBlock Classes="title" Text="Langue détectée" />
+                            <Border Background="#1A1A1A" 
+                                    CornerRadius="6" 
+                                    Padding="12">
+                                <TextBlock Classes="content" 
+                                           Text="{Binding InferredLanguage, FallbackValue='Aucune langue détectée'}"
+                                           HorizontalAlignment="Center"
+                                           FontWeight="Medium" />
+                            </Border>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Texte traduit -->
+                    <Border Classes="card">
+                        <StackPanel>
+                            <TextBlock Classes="title" Text="Traduction" />
+                            <ScrollViewer MaxHeight="150" VerticalScrollBarVisibility="Auto">
+                                <TextBlock Classes="content" 
+                                           Text="{Binding TranslatedText, FallbackValue='Aucune traduction disponible...'}"
+                                           Background="#1A1A1A"
+                                           Padding="12" />
+                            </ScrollViewer>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Grid>
+        </ScrollViewer>
     </Grid>
 </UserControl>
