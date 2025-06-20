@@ -6,22 +6,42 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using Avalonia.Platform;
-using DesktopEye.Common.Services.ScreenCaptureService;
+using DesktopEye.Common.Resources;
+using DesktopEye.Common.Services.Core;
+using DesktopEye.Common.Services.OCR;
+using DesktopEye.Common.Services.ScreenCapture;
+using DesktopEye.Common.Services.TextClassifier;
+using DesktopEye.Common.Services.Translation;
 using DesktopEye.Common.ViewModels;
 using DesktopEye.Common.Views;
 using DesktopEye.Common.Views.ScreenCapture;
 using Microsoft.Extensions.DependencyInjection;
+using ScreenCaptureViewModel = DesktopEye.Common.ViewModels.ScreenCapture.ScreenCaptureViewModel;
 
 namespace DesktopEye.Common;
 
-public class App(IServiceProvider serviceProvider) : Application
+public class App : Application
 {
+    private readonly IServiceProvider _services;
     private Window? _mainWindow;
     private TrayIcon? _trayIcon;
+
+    public App(IServiceProvider services)
+    {
+        _services = services;
+        PreloadServices();
+    }
 
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
+    }
+
+    private void PreloadServices()
+    {
+        // Preload services, obviously only pass singletons here
+        var preloader = _services.GetRequiredService<ServicesPreloader>();
+        preloader.PreloadServices(typeof(IOcrManager), typeof(ITextClassifierManager), typeof(ITranslationManager));
     }
 
     public override void OnFrameworkInitializationCompleted()
@@ -31,7 +51,7 @@ public class App(IServiceProvider serviceProvider) : Application
             DisableAvaloniaDataAnnotationValidation();
             _mainWindow = new MainWindow
             {
-                DataContext = new MainViewModel(serviceProvider)
+                DataContext = _services.GetService<MainViewModel>()
             };
             desktop.ShutdownMode = ShutdownMode.OnExplicitShutdown;
             InitializeTrayIcon();
@@ -58,17 +78,18 @@ public class App(IServiceProvider serviceProvider) : Application
 
         var menu = new NativeMenu();
 
-        var mainWindowString = Languages.Resources.Tray_OpenMainWindow;
+        var mainWindowString = ResourcesTray.OpenMainWindow;
         var mainWindowMenuItem = new NativeMenuItem(mainWindowString);
         mainWindowMenuItem.Click += ShowMainWindow;
 
         var gcMenuItem = new NativeMenuItem("GC");
         gcMenuItem.Click += GarbageCollect;
 
-        var settingsString = Languages.Resources.Tray_Settings;
-        var settingsMenuItem = new NativeMenuItem(settingsString ?? "Settings");
-        var exitString = Languages.Resources.Tray_Exit;
-        var exitMenuItem = new NativeMenuItem(exitString ?? "Exit");
+        var settingsString = ResourcesTray.Settings;
+        var settingsMenuItem = new NativeMenuItem(settingsString);
+
+        var exitString = ResourcesTray.Exit;
+        var exitMenuItem = new NativeMenuItem(exitString);
         exitMenuItem.Click += ExitApp;
 
         var triggerItem = new NativeMenuItem("Screen Capture");
@@ -99,11 +120,11 @@ public class App(IServiceProvider serviceProvider) : Application
 
     private void TriggerCapture(object? sender, EventArgs e)
     {
-        var bitmap = serviceProvider.GetService<IScreenCaptureService>()?.CaptureScreen();
+        var bitmap = _services.GetService<IScreenCaptureService>()?.CaptureScreen();
         if (bitmap == null) return;
         var fullScreenWindow = new ScreenCaptureWindow
         {
-            DataContext = new ScreenCaptureViewModel(bitmap)
+            DataContext = _services.GetService<ScreenCaptureViewModel>()
         };
         fullScreenWindow.Show();
     }

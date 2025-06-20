@@ -2,9 +2,24 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:screenCapture1="clr-namespace:DesktopEye.Common.Views.ScreenCapture"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        xmlns:screenCapture="clr-namespace:DesktopEye.Common.Views.ScreenCapture"
+        xmlns:viewModels="clr-namespace:DesktopEye.Common.ViewModels.ScreenCapture"
+        mc:Ignorable="d" d:DesignWidth="1400" d:DesignHeight="800"
         x:Class="DesktopEye.Common.Views.ScreenCapture.ScreenCaptureActionsWindow"
-        Title="ScreenCaptureActionsWindow">
-    <screenCapture1:ScreenCaptureActionsView />
+        x:DataType="viewModels:ScreenCaptureActionsViewModel"
+        Title="Desktop Eye - Actions"
+        Icon="/Assets/avalonia-logo.ico"
+        Width="1400" Height="800"
+        MinWidth="1200" MinHeight="700"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="NoChrome"
+        ExtendClientAreaTitleBarHeightHint="-1"
+        SystemDecorations="None"
+        TransparencyLevelHint="Transparent"
+        Background="Transparent"
+        WindowStartupLocation="CenterScreen"
+        WindowState="Maximized">
+
+    <!-- Contenu principal overlay invisible -->
+    <screenCapture:ScreenCaptureActionsView />
 </Window>

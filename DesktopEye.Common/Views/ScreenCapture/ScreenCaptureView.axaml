@@ -2,16 +2,17 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:vm="clr-namespace:DesktopEye.Common.ViewModels"
              xmlns:controls="clr-namespace:DesktopEye.Common.Controls"
+             xmlns:screenCapture="clr-namespace:DesktopEye.Common.ViewModels.ScreenCapture"
+             xmlns:design="clr-namespace:DesktopEye.Common.ViewModels.ScreenCapture.Design"
              Focusable="True"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="DesktopEye.Common.Views.ScreenCapture.ScreenCaptureView"
-             x:DataType="vm:ScreenCaptureViewModel">
-    <!--Voir comment régler ce warning-->
-    <!-- <Design.DataContext> -->
-    <!--     <vm:ScreenCaptureViewModel /> -->
-    <!-- </Design.DataContext> -->
+             x:DataType="screenCapture:ScreenCaptureViewModel">
+
+    <Design.DataContext>
+        <design:DesignScreenCaptureViewModel />
+    </Design.DataContext>
     <Grid>
         <Image x:Name="ImageControl" Source="{Binding Bitmap}" Stretch="Fill" />
         <controls:AreaSelectionControl SelectionRect="{Binding Selection, Mode=TwoWay}"

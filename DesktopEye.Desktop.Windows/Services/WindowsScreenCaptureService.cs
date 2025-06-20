@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
-using DesktopEye.Common.Services.ScreenCaptureService;
+using DesktopEye.Common.Services.ScreenCapture;
 
 namespace DesktopEye.Desktop.Windows.Services;
 
