@@ -17,8 +17,9 @@
         SystemDecorations="None"
         TransparencyLevelHint="Transparent"
         Background="Transparent"
-        WindowStartupLocation="CenterScreen"
         WindowState="Maximized">
+    <!--Creates an issue on Linux with multiple screens-->
+    <!-- WindowStartupLocation="CenterScreen" -->
 
     <!-- Contenu principal overlay invisible -->
     <screenCapture:ScreenCaptureActionsView />
