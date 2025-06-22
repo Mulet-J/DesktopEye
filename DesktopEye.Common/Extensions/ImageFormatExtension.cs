@@ -11,47 +11,85 @@ public static class ImageFormatExtension
 {
     #region Bitmap
 
+    /// <summary>
+    ///     Convert to a tesseract compatible format
+    /// </summary>
+    /// <param name="bitmap"></param>
+    /// <returns></returns>
     public static Image ToTesseractImage(this Bitmap bitmap)
     {
-        if (bitmap == null)
-            throw new ArgumentNullException(nameof(bitmap));
+        ArgumentNullException.ThrowIfNull(bitmap);
 
-        // Convert Avalonia Bitmap to PNG byte array
-        using (var memoryStream = new MemoryStream())
-        {
-            bitmap.Save(memoryStream);
-            var pngBytes = memoryStream.ToArray();
+        using var stream = new MemoryStream();
 
-            // Load the PNG data into Tesseract Image
-            return Image.LoadFromMemory(pngBytes);
-        }
+        bitmap.Save(stream);
+        var pngBytes = stream.ToArray();
+
+        return Image.LoadFromMemory(pngBytes);
+    }
+
+    /// <summary>
+    ///     Convert to an OpenCV compatible format
+    /// </summary>
+    /// <param name="bitmap">The Avalonia bitmap to convert</param>
+    /// <param name="readMode">The color and depth convertion to apply</param>
+    /// <returns>OpenCvSharp Mat containing the image data</returns>
+    public static Mat ToMat(this Bitmap bitmap, ImreadModes readMode = ImreadModes.Unchanged)
+    {
+        ArgumentNullException.ThrowIfNull(bitmap);
+
+        using var stream = new MemoryStream();
+        // Save bitmap to memory stream as PNG (preserves quality and supports transparency)
+        bitmap.Save(stream);
+
+        // Convert memory stream to byte array
+        var imageBytes = stream.ToArray();
+
+        // Decode the image data using OpenCV
+        var mat = Cv2.ImDecode(imageBytes, readMode);
+
+        return mat;
     }
 
     #endregion
 
     #region SKBitmap
 
-    public static Bitmap ToAvaloniaBitmap(this SKBitmap skBitmap)
+    /// <summary>
+    ///     Convert to an Avalonia compatible bitmap
+    /// </summary>
+    /// <param name="bitmap"></param>
+    /// <returns></returns>
+    public static Bitmap ToAvaloniaBitmap(this SKBitmap bitmap)
     {
+        ArgumentNullException.ThrowIfNull(bitmap);
+
         using var stream = new MemoryStream();
-        skBitmap.Encode(stream, SKEncodedImageFormat.Jpeg, 100);
+        bitmap.Encode(stream, SKEncodedImageFormat.Png, 100);
         stream.Position = 0;
         return new Bitmap(stream);
     }
 
+    /// <summary>
+    ///     Convert to a tesseract compatible format
+    /// </summary>
+    /// <param name="bitmap"></param>
+    /// <returns></returns>
     public static Image ToTesseractImage(this SKBitmap bitmap)
     {
-        using var memStream = new MemoryStream();
-        // Encode the bitmap to PNG format
-        bitmap.Encode(memStream, SKEncodedImageFormat.Png, 100);
+        ArgumentNullException.ThrowIfNull(bitmap);
 
-        // Reset the position of the stream to the beginning
-        memStream.Position = 0;
-
-        // Create a Pix object from the memory stream
-        return Image.LoadFromMemory(memStream);
+        using var stream = new MemoryStream();
+        bitmap.Encode(stream, SKEncodedImageFormat.Png, 100);
+        stream.Position = 0;
+        return Image.LoadFromMemory(stream);
     }
 
+    /// <summary>
+    ///     Convert to an OpenCV compatible format
+    /// </summary>
+    /// <param name="bitmap"></param>
+    /// <returns></returns>
     public static Mat ToMat(this SKBitmap bitmap)
     {
         ArgumentNullException.ThrowIfNull(bitmap);

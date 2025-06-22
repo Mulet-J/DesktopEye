@@ -164,20 +164,20 @@
         </Grid.Background>
 
         <!-- Layout principal inversé : Image (gauche) et Contexte (droite) -->
-        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
               Margin="60">
-            
+
             <!-- Deux colonnes inversées : Image (gauche) et Contexte (droite) -->
             <Grid ColumnDefinitions="1*,40,1*">
-                
+
                 <!-- Colonne gauche : Zone d'image -->
-                <Border Grid.Column="0" Classes="translate-card" 
+                <Border Grid.Column="0" Classes="translate-card"
                         HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                    
+
                     <Grid RowDefinitions="Auto,*">
-                        
+
                         <!-- En-tête image avec thème violet -->
-                        <Border Grid.Row="0" CornerRadius="12,12,0,0" 
+                        <Border Grid.Row="0" CornerRadius="12,12,0,0"
                                 BorderBrush="#6200EE" BorderThickness="0,0,0,2" Padding="20,16">
                             <Border.Background>
                                 <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
@@ -187,13 +187,13 @@
                             </Border.Background>
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <Ellipse Width="12" Height="12" Fill="#6200EE" Margin="0,0,12,0" />
-                                <TextBlock Text="📸 Capture d'écran" 
+                                <TextBlock Text="📸 Capture d'écran"
                                            FontSize="18" FontWeight="SemiBold" Foreground="White" />
                             </StackPanel>
                         </Border>
-                        
+
                         <!-- Zone d'image avec thème sombre -->
-                        <Border Grid.Row="1" Margin="20" CornerRadius="12" 
+                        <Border Grid.Row="1" Margin="20" CornerRadius="12"
                                 ClipToBounds="True">
                             <Border.Background>
                                 <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
@@ -201,16 +201,16 @@
                                     <GradientStop Offset="1" Color="#1A1A1A" />
                                 </LinearGradientBrush>
                             </Border.Background>
-                            <Image Source="{Binding Bitmap}" 
+                            <Image Source="{Binding Bitmap}"
                                    Stretch="Uniform"
                                    HorizontalAlignment="Center"
                                    VerticalAlignment="Center" />
                         </Border>
                     </Grid>
                 </Border>
-                
+
                 <!-- Colonne droite : Zone contextuelle avec thème violet -->
-                <Border Grid.Column="2" Classes="translate-card" 
+                <Border Grid.Column="2" Classes="translate-card"
                         HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                     <Border.Background>
                         <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
@@ -218,46 +218,48 @@
                             <GradientStop Offset="1" Color="#2A1F2A" />
                         </LinearGradientBrush>
                     </Border.Background>
-                    
+
                     <Grid RowDefinitions="Auto,*">
-                        
+
                         <!-- En-tête avec onglets de résultats - Style violet -->
-                        <Border Grid.Row="0" CornerRadius="12,12,0,0" 
+                        <Border Grid.Row="0" CornerRadius="12,12,0,0"
                                 BorderBrush="#6200EE" BorderThickness="0,0,0,2" Padding="0">
-                            
+
                             <Grid RowDefinitions="Auto,Auto">
-                                
+
                                 <!-- Barre d'onglets avec thème sombre -->
-                                <StackPanel Grid.Row="0" Orientation="Horizontal" 
+                                <StackPanel Grid.Row="0" Orientation="Horizontal"
                                             Background="#2A2A2A" Margin="0">
-                                    <Button x:Name="TextTabButton" Classes="tab active" 
-                                            Content="📝 Texte extrait" Click="OnTextTabClick" />
-                                    <Button x:Name="TranslationTabButton" Classes="tab" 
+                                    <Button x:Name="TextTabButton" Classes="tab active"
+                                            Content="{x:Static res:ResourcesCommon.Button_ExtractText}"
+                                            Click="OnTextTabClick" />
+                                    <Button x:Name="TranslationTabButton" Classes="tab"
                                             Content="🔄 Traduction" Click="OnTranslationTabClick" />
                                 </StackPanel>
-                                
+
                                 <!-- Sélecteur de langue avec thème violet -->
-                                <Grid Grid.Row="1" ColumnDefinitions="*,Auto,*" 
+                                <Grid Grid.Row="1" ColumnDefinitions="*,Auto,*"
                                       Background="#1A1A1A" Margin="20,16">
-                                    
+
                                     <!-- Langue détectée -->
-                                    <StackPanel Grid.Column="0" Orientation="Horizontal" 
+                                    <StackPanel Grid.Column="0" Orientation="Horizontal"
                                                 VerticalAlignment="Center">
-                                        <TextBlock Text="{Binding InferredLanguage, FallbackValue='Détection...'}" 
+                                        <TextBlock Text="{Binding InferredLanguage, FallbackValue='Détection...'}"
                                                    FontSize="14" FontWeight="Medium" Foreground="#6200EE" />
-                                        <Border Classes="loading-indicator" 
+                                        <Border Classes="loading-indicator"
                                                 IsVisible="{Binding IsDetectingLanguage}" Margin="12,0,0,0">
                                             <TextBlock Text="⏳" FontSize="12" Foreground="#6200EE" />
                                         </Border>
                                     </StackPanel>
-                                    
+
                                     <!-- Icône d'échange avec thème violet -->
-                                    <Button Grid.Column="1" Background="Transparent" 
+                                    <Button Grid.Column="1" Background="Transparent"
                                             BorderThickness="0" Padding="12">
-                                        <Path Data="M 6,2 L 10,6 L 6,10 M 2,6 L 10,6 M 10,14 L 6,18 L 10,22 M 14,18 L 6,18" 
-                                              Stroke="#6200EE" StrokeThickness="2" />
+                                        <Path
+                                            Data="M 6,2 L 10,6 L 6,10 M 2,6 L 10,6 M 10,14 L 6,18 L 10,22 M 14,18 L 6,18"
+                                            Stroke="#6200EE" StrokeThickness="2" />
                                     </Button>
-                                    
+
                                     <!-- Langue cible -->
                                     <ComboBox Grid.Column="2" Classes="google-style"
                                               ItemsSource="{Binding AvailableLanguages}"
@@ -267,14 +269,14 @@
                                 </Grid>
                             </Grid>
                         </Border>
-                        
+
                         <!-- Zone de contenu avec onglets - Thème sombre violet -->
                         <Grid Grid.Row="1">
-                            
+
                             <!-- Onglet Texte extrait -->
                             <Grid x:Name="TextTabContent" Margin="20">
                                 <Grid RowDefinitions="*,Auto">
-                                    
+
                                     <!-- Zone de texte avec thème sombre -->
                                     <Border Grid.Row="0" Classes="text-area">
                                         <Border.Background>
@@ -285,61 +287,64 @@
                                         </Border.Background>
                                         <Grid>
                                             <!-- Texte extrait -->
-                                            <TextBlock Classes="content-text" 
+                                            <TextBlock Classes="content-text"
                                                        Text="{Binding OcrText, FallbackValue=''}"
                                                        IsVisible="{Binding HasOcrText}"
                                                        Foreground="White" />
-                                            
+
                                             <!-- État de chargement OCR -->
-                                            <StackPanel IsVisible="{Binding IsExtractingText}" 
+                                            <StackPanel IsVisible="{Binding IsExtractingText}"
                                                         HorizontalAlignment="Center" VerticalAlignment="Center">
                                                 <TextBlock Text="🔍" FontSize="32" HorizontalAlignment="Center" />
-                                                <TextBlock Text="Extraction du texte..." 
+                                                <TextBlock Text="Extraction du texte..."
                                                            FontSize="16" Foreground="#6200EE" FontWeight="Medium"
                                                            HorizontalAlignment="Center" Margin="0,12,0,0" />
                                             </StackPanel>
-                                            
+
                                             <!-- Message initial -->
-                                            <StackPanel IsVisible="{Binding ShowInitialMessage}" 
+                                            <StackPanel IsVisible="{Binding ShowInitialMessage}"
                                                         HorizontalAlignment="Center" VerticalAlignment="Center">
                                                 <TextBlock Text="✨" FontSize="40" HorizontalAlignment="Center" />
-                                                <TextBlock Text="Analyse automatique en cours..." 
+                                                <TextBlock Text="Analyse automatique en cours..."
                                                            FontSize="18" Foreground="#6200EE" FontWeight="SemiBold"
                                                            HorizontalAlignment="Center" Margin="0,16,0,0" />
-                                                <TextBlock Text="Veuillez patienter pendant que nous analysons votre capture" 
-                                                           FontSize="14" Foreground="#AAAAAA" 
-                                                           HorizontalAlignment="Center" Margin="0,8,0,0" TextWrapping="Wrap" />
+                                                <TextBlock
+                                                    Text="Veuillez patienter pendant que nous analysons votre capture"
+                                                    FontSize="14" Foreground="#AAAAAA"
+                                                    HorizontalAlignment="Center" Margin="0,8,0,0" TextWrapping="Wrap" />
                                             </StackPanel>
                                         </Grid>
                                     </Border>
-                                    
+
                                     <!-- Actions de texte avec thème violet -->
-                                    <StackPanel Grid.Row="1" Orientation="Horizontal" 
+                                    <StackPanel Grid.Row="1" Orientation="Horizontal"
                                                 HorizontalAlignment="Right" Margin="0,16,0,0" Spacing="12">
                                         <Button Background="#2A2A2A" BorderBrush="#6200EE" BorderThickness="1"
                                                 CornerRadius="8" Padding="12,8" ToolTip.Tip="Copier le texte">
                                             <StackPanel Orientation="Horizontal" Spacing="8">
-                                                <Path Data="M 2,2 L 2,14 L 14,14 L 14,2 Z M 4,4 L 12,4 L 12,12 L 4,12 Z" 
-                                                      Fill="#6200EE" Width="16" Height="16" />
+                                                <Path
+                                                    Data="M 2,2 L 2,14 L 14,14 L 14,2 Z M 4,4 L 12,4 L 12,12 L 4,12 Z"
+                                                    Fill="#6200EE" Width="16" Height="16" />
                                                 <TextBlock Text="Copier" Foreground="#6200EE" FontWeight="Medium" />
                                             </StackPanel>
                                         </Button>
                                         <Button Background="#2A2A2A" BorderBrush="#6200EE" BorderThickness="1"
                                                 CornerRadius="8" Padding="12,8" ToolTip.Tip="Synthèse vocale">
                                             <StackPanel Orientation="Horizontal" Spacing="8">
-                                                <Path Data="M 2,6 L 6,6 L 10,2 L 10,14 L 6,10 L 2,10 Z M 12,4 L 12,12 M 14,2 L 14,14" 
-                                                      Fill="#6200EE" Width="16" Height="16" />
+                                                <Path
+                                                    Data="M 2,6 L 6,6 L 10,2 L 10,14 L 6,10 L 2,10 Z M 12,4 L 12,12 M 14,2 L 14,14"
+                                                    Fill="#6200EE" Width="16" Height="16" />
                                                 <TextBlock Text="Écouter" Foreground="#6200EE" FontWeight="Medium" />
                                             </StackPanel>
                                         </Button>
                                     </StackPanel>
                                 </Grid>
                             </Grid>
-                            
+
                             <!-- Onglet Traduction -->
                             <Grid x:Name="TranslationTabContent" Margin="20" IsVisible="False">
                                 <Grid RowDefinitions="*,Auto">
-                                    
+
                                     <!-- Zone de traduction avec thème sombre -->
                                     <Border Grid.Row="0" Classes="text-area">
                                         <Border.Background>
@@ -350,50 +355,52 @@
                                         </Border.Background>
                                         <Grid>
                                             <!-- Texte traduit -->
-                                            <TextBlock Classes="content-text" 
+                                            <TextBlock Classes="content-text"
                                                        Text="{Binding TranslatedText, FallbackValue=''}"
                                                        IsVisible="{Binding HasTranslatedText}"
                                                        Foreground="White" />
-                                            
+
                                             <!-- État de chargement traduction -->
-                                            <StackPanel IsVisible="{Binding IsTranslating}" 
+                                            <StackPanel IsVisible="{Binding IsTranslating}"
                                                         HorizontalAlignment="Center" VerticalAlignment="Center">
                                                 <TextBlock Text="🔄" FontSize="32" HorizontalAlignment="Center" />
-                                                <TextBlock Text="Traduction en cours..." 
+                                                <TextBlock Text="Traduction en cours..."
                                                            FontSize="16" Foreground="#6200EE" FontWeight="Medium"
                                                            HorizontalAlignment="Center" Margin="0,12,0,0" />
                                             </StackPanel>
-                                            
+
                                             <!-- Message d'attente -->
-                                            <StackPanel IsVisible="{Binding ShowTranslationWaitMessage}" 
+                                            <StackPanel IsVisible="{Binding ShowTranslationWaitMessage}"
                                                         HorizontalAlignment="Center" VerticalAlignment="Center">
                                                 <TextBlock Text="⏳" FontSize="32" HorizontalAlignment="Center" />
-                                                <TextBlock Text="En attente de l'extraction du texte..." 
+                                                <TextBlock Text="En attente de l'extraction du texte..."
                                                            FontSize="16" Foreground="#6200EE" FontWeight="Medium"
                                                            HorizontalAlignment="Center" Margin="0,12,0,0" />
-                                                <TextBlock Text="La traduction commencera automatiquement" 
-                                                           FontSize="14" Foreground="#AAAAAA" 
+                                                <TextBlock Text="La traduction commencera automatiquement"
+                                                           FontSize="14" Foreground="#AAAAAA"
                                                            HorizontalAlignment="Center" Margin="0,8,0,0" />
                                             </StackPanel>
                                         </Grid>
                                     </Border>
-                                    
+
                                     <!-- Actions de traduction avec thème violet -->
-                                    <StackPanel Grid.Row="1" Orientation="Horizontal" 
+                                    <StackPanel Grid.Row="1" Orientation="Horizontal"
                                                 HorizontalAlignment="Right" Margin="0,16,0,0" Spacing="12">
                                         <Button Background="#2A2A2A" BorderBrush="#6200EE" BorderThickness="1"
                                                 CornerRadius="8" Padding="12,8" ToolTip.Tip="Copier la traduction">
                                             <StackPanel Orientation="Horizontal" Spacing="8">
-                                                <Path Data="M 2,2 L 2,14 L 14,14 L 14,2 Z M 4,4 L 12,4 L 12,12 L 4,12 Z" 
-                                                      Fill="#6200EE" Width="16" Height="16" />
+                                                <Path
+                                                    Data="M 2,2 L 2,14 L 14,14 L 14,2 Z M 4,4 L 12,4 L 12,12 L 4,12 Z"
+                                                    Fill="#6200EE" Width="16" Height="16" />
                                                 <TextBlock Text="Copier" Foreground="#6200EE" FontWeight="Medium" />
                                             </StackPanel>
                                         </Button>
                                         <Button Background="#2A2A2A" BorderBrush="#6200EE" BorderThickness="1"
                                                 CornerRadius="8" Padding="12,8" ToolTip.Tip="Synthèse vocale">
                                             <StackPanel Orientation="Horizontal" Spacing="8">
-                                                <Path Data="M 2,6 L 6,6 L 10,2 L 10,14 L 6,10 L 2,10 Z M 12,4 L 12,12 M 14,2 L 14,14" 
-                                                      Fill="#6200EE" Width="16" Height="16" />
+                                                <Path
+                                                    Data="M 2,6 L 6,6 L 10,2 L 10,14 L 6,10 L 2,10 Z M 12,4 L 12,12 M 14,2 L 14,14"
+                                                    Fill="#6200EE" Width="16" Height="16" />
                                                 <TextBlock Text="Écouter" Foreground="#6200EE" FontWeight="Medium" />
                                             </StackPanel>
                                         </Button>
@@ -407,16 +414,16 @@
         </Grid>
 
         <!-- Bouton fermer avec style violet -->
-        <Button Classes="close-btn" 
-                HorizontalAlignment="Right" 
-                VerticalAlignment="Top" 
+        <Button Classes="close-btn"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
                 Margin="40"
                 Click="OnCloseClick">
-            <Path Data="M 8,8 L 16,16 M 8,16 L 16,8" 
-                  Stroke="White" 
-                  StrokeThickness="2.5" 
+            <Path Data="M 8,8 L 16,16 M 8,16 L 16,8"
+                  Stroke="White"
+                  StrokeThickness="2.5"
                   Stretch="Uniform"
-                  Width="14" 
+                  Width="14"
                   Height="14" />
         </Button>
     </Grid>

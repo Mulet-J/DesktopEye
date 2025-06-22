@@ -32,20 +32,20 @@ public partial class ScreenCaptureActionsViewModel : ViewModelBase
     [ObservableProperty] private ClassifierType _currentClassifierType;
     [ObservableProperty] private OcrType _currentOcrType;
     [ObservableProperty] private TranslationType _currentTranslationType;
+    [ObservableProperty] private bool _hasInferredLanguage;
+    [ObservableProperty] private bool _hasOcrText;
+    [ObservableProperty] private bool _hasTranslatedText;
     [ObservableProperty] private Language? _inferredLanguage;
-    [ObservableProperty] private string? _ocrText;
-    [ObservableProperty] private Language? _targetLanguage;
-    [ObservableProperty] private string? _translatedText;
+    [ObservableProperty] private bool _isDetectingLanguage;
 
     // Nouvelles propriétés pour l'UI Google Translate
     [ObservableProperty] private bool _isExtractingText;
-    [ObservableProperty] private bool _isDetectingLanguage;
     [ObservableProperty] private bool _isTranslating;
-    [ObservableProperty] private bool _hasOcrText;
-    [ObservableProperty] private bool _hasInferredLanguage;
-    [ObservableProperty] private bool _hasTranslatedText;
+    [ObservableProperty] private string? _ocrText;
     [ObservableProperty] private bool _showInitialMessage = true;
     [ObservableProperty] private bool _showTranslationWaitMessage = true;
+    [ObservableProperty] private Language? _targetLanguage;
+    [ObservableProperty] private string? _translatedText;
 
     public ScreenCaptureActionsViewModel(IOcrManager ocrManager, ITextClassifierManager classifierManager,
         ITranslationManager translationManager)
@@ -56,7 +56,7 @@ public partial class ScreenCaptureActionsViewModel : ViewModelBase
         _currentOcrType = _ocrManager.CurrentServiceType;
         _currentClassifierType = _classifierManager.CurrentServiceType;
         _currentTranslationType = _translationManager.CurrentServiceType;
-        
+
         // Langue par défaut
         _targetLanguage = Language.French;
     }
@@ -72,15 +72,15 @@ public partial class ScreenCaptureActionsViewModel : ViewModelBase
     private async Task StartAutoAnalysis()
     {
         // Petite pause pour l'UX
-        await Task.Delay(500);
-        
+        // await Task.Delay(500);
+
         ShowInitialMessage = false;
         await ExtractText();
-        
+
         if (HasOcrText)
         {
             await InferLanguage();
-            
+
             if (HasInferredLanguage && TargetLanguage.HasValue)
             {
                 ShowTranslationWaitMessage = false;
@@ -131,7 +131,8 @@ public partial class ScreenCaptureActionsViewModel : ViewModelBase
         IsTranslating = true;
         try
         {
-            TranslatedText = await _translationManager.TranslateAsync(OcrText, InferredLanguage.Value, TargetLanguage.Value);
+            TranslatedText =
+                await _translationManager.TranslateAsync(OcrText, InferredLanguage.Value, TargetLanguage.Value);
             HasTranslatedText = !string.IsNullOrWhiteSpace(TranslatedText);
         }
         finally
@@ -147,10 +148,7 @@ public partial class ScreenCaptureActionsViewModel : ViewModelBase
         if (HasOcrText)
         {
             await InferLanguage();
-            if (HasInferredLanguage && TargetLanguage.HasValue)
-            {
-                await Translate();
-            }
+            if (HasInferredLanguage && TargetLanguage.HasValue) await Translate();
         }
     }
 

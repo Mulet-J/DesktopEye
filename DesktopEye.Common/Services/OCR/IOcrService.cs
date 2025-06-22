@@ -9,4 +9,5 @@ namespace DesktopEye.Common.Services.OCR;
 public interface IOcrService : ILoadable
 {
     Task<string> GetTextFromBitmapAsync(Bitmap bitmap, List<Language> languages);
+    Task<string> GetTextFromBitmapTwoPassAsync(Bitmap bitmap);
 }
