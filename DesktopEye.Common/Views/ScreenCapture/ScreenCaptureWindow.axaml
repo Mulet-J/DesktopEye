@@ -3,15 +3,19 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:views="clr-namespace:DesktopEye.Common.Views.ScreenCapture"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
         x:Class="DesktopEye.Common.Views.ScreenCapture.ScreenCaptureWindow"
         Title="Capture d'écran"
-        Icon="/Assets/avalonia-logo.ico"
         WindowStartupLocation="CenterScreen"
-        SystemDecorations="Full"
-        ExtendClientAreaToDecorationsHint="False"
+        Width="1200" Height="800"
+        MinWidth="800" MinHeight="600"
+        Background="Transparent"
+        ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaChromeHints="NoChrome"
-        Background="Transparent">
-    
-    <views:ScreenCaptureView />
+        ExtendClientAreaTitleBarHeightHint="-1">
+
+    <!-- Contenu principal -->
+    <Panel>
+        <views:ScreenCaptureView />
+    </Panel>
 </Window>

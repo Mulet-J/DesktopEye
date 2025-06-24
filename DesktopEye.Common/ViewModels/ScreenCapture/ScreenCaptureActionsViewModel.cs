@@ -29,6 +29,7 @@ public partial class ScreenCaptureActionsViewModel : ViewModelBase
     private IEnumerable<TranslationType> _availableTranslationTypes = Enum.GetValues<TranslationType>();
 
     [ObservableProperty] private Bitmap? _bitmap;
+    [ObservableProperty] private bool _isProcessingImage;
     [ObservableProperty] private ClassifierType _currentClassifierType;
     [ObservableProperty] private OcrType _currentOcrType;
     [ObservableProperty] private TranslationType _currentTranslationType;
@@ -71,21 +72,29 @@ public partial class ScreenCaptureActionsViewModel : ViewModelBase
 
     private async Task StartAutoAnalysis()
     {
-        // Petite pause pour l'UX
-        await Task.Delay(500);
-        
-        ShowInitialMessage = false;
-        await ExtractText();
-        
-        if (HasOcrText)
+        IsProcessingImage = true;
+        try
         {
-            await InferLanguage();
-            
-            if (HasInferredLanguage && TargetLanguage.HasValue)
+            // Petite pause pour l'UX
+            await Task.Delay(500);
+        
+            ShowInitialMessage = false;
+            await ExtractText();
+        
+            if (HasOcrText)
             {
-                ShowTranslationWaitMessage = false;
-                await Translate();
+                await InferLanguage();
+            
+                if (HasInferredLanguage && TargetLanguage.HasValue)
+                {
+                    ShowTranslationWaitMessage = false;
+                    await Translate();
+                }
             }
+        }
+        finally
+        {
+            IsProcessingImage = false;
         }
     }
 
@@ -93,7 +102,7 @@ public partial class ScreenCaptureActionsViewModel : ViewModelBase
     {
         if (Bitmap == null)
             return;
-
+        IsProcessingImage = true;
         IsExtractingText = true;
         try
         {
@@ -102,6 +111,7 @@ public partial class ScreenCaptureActionsViewModel : ViewModelBase
         }
         finally
         {
+            IsProcessingImage = false;
             IsExtractingText = false;
         }
     }
@@ -111,6 +121,7 @@ public partial class ScreenCaptureActionsViewModel : ViewModelBase
         if (OcrText == null)
             return;
 
+        IsProcessingImage = true;
         IsDetectingLanguage = true;
         try
         {
@@ -119,6 +130,7 @@ public partial class ScreenCaptureActionsViewModel : ViewModelBase
         }
         finally
         {
+            IsProcessingImage = false;
             IsDetectingLanguage = false;
         }
     }
@@ -128,6 +140,7 @@ public partial class ScreenCaptureActionsViewModel : ViewModelBase
         if (OcrText == null || InferredLanguage == null || TargetLanguage == null)
             return;
 
+        IsProcessingImage = true;
         IsTranslating = true;
         try
         {
@@ -136,6 +149,7 @@ public partial class ScreenCaptureActionsViewModel : ViewModelBase
         }
         finally
         {
+            IsProcessingImage = false;
             IsTranslating = false;
         }
     }
