@@ -2,9 +2,16 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:screenCapture1="clr-namespace:DesktopEye.Common.Views.ScreenCapture"
+        xmlns:views="clr-namespace:DesktopEye.Common.Views.ScreenCapture"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="DesktopEye.Common.Views.ScreenCapture.ScreenCaptureWindow"
-        Title="ScreenCaptureWindow">
-    <screenCapture1:ScreenCaptureView />
+        Title="Capture d'écran"
+        Icon="/Assets/avalonia-logo.ico"
+        WindowStartupLocation="CenterScreen"
+        SystemDecorations="Full"
+        ExtendClientAreaToDecorationsHint="False"
+        ExtendClientAreaChromeHints="NoChrome"
+        Background="Transparent">
+    
+    <views:ScreenCaptureView />
 </Window>
