@@ -51,6 +51,22 @@ public static class ImageFormatExtension
         return mat;
     }
 
+    /// <summary>
+    ///     Convert to a SkiaSharp compatible bitmap
+    /// </summary>
+    /// <param name="bitmap"></param>
+    /// <returns></returns>
+    public static SKBitmap ToSkBitmap(this Bitmap bitmap)
+    {
+        ArgumentNullException.ThrowIfNull(bitmap);
+
+        using var stream = new MemoryStream();
+        bitmap.Save(stream);
+        stream.Position = 0;
+
+        return SKBitmap.Decode(stream);
+    }
+
     #endregion
 
     #region SKBitmap
@@ -118,6 +134,57 @@ public static class ImageFormatExtension
         if (bitmap.ColorType == SKColorType.Rgba8888) Cv2.CvtColor(mat, mat, ColorConversionCodes.RGBA2BGRA);
 
         return mat;
+    }
+
+    #endregion
+
+    #region Mat
+
+    /// <summary>
+    ///     Convert to an Avalonia compatible bitmap
+    /// </summary>
+    /// <param name="mat"></param>
+    /// <returns></returns>
+    public static Bitmap ToAvaloniaBitmap(this Mat mat)
+    {
+        ArgumentNullException.ThrowIfNull(mat);
+
+        // Encode the Mat as PNG bytes
+        Cv2.ImEncode(".png", mat, out var imageBytes);
+
+        using var stream = new MemoryStream(imageBytes);
+        return new Bitmap(stream);
+    }
+
+    /// <summary>
+    ///     Convert to a tesseract compatible format
+    /// </summary>
+    /// <param name="mat"></param>
+    /// <returns></returns>
+    public static Image ToTesseractImage(this Mat mat)
+    {
+        ArgumentNullException.ThrowIfNull(mat);
+
+        // Encode the Mat as PNG bytes
+        Cv2.ImEncode(".png", mat, out var imageBytes);
+
+        return Image.LoadFromMemory(imageBytes);
+    }
+
+    /// <summary>
+    ///     Convert to a SkiaSharp compatible bitmap
+    /// </summary>
+    /// <param name="mat"></param>
+    /// <returns></returns>
+    public static SKBitmap ToSkBitmap(this Mat mat)
+    {
+        ArgumentNullException.ThrowIfNull(mat);
+
+        // Encode the Mat as PNG bytes
+        Cv2.ImEncode(".png", mat, out var imageBytes);
+
+        using var stream = new MemoryStream(imageBytes);
+        return SKBitmap.Decode(stream);
     }
 
     #endregion

@@ -39,6 +39,6 @@ public class ScriptNameHelper
     // Helper method to get script for a language
     public static List<Language> GetLanguageForScript(ScriptName scriptName)
     {
-        return ScriptToLanguages.TryGetValue(scriptName, out var language) ? language : [Language.Unknown];
+        return ScriptToLanguages.TryGetValue(scriptName, out var language) ? language : [Language.English];
     }
 }

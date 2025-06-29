@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Shapes;
 using Avalonia.Input;
 using Avalonia.Media;
+using Avalonia.VisualTree;
 using CommunityToolkit.Mvvm.Input;
 using Point = Avalonia.Point;
 using ScreenCaptureViewModel = DesktopEye.Common.ViewModels.ScreenCapture.ScreenCaptureViewModel;
@@ -29,8 +30,12 @@ public partial class ScreenCaptureView : UserControl
 
     private void ConfirmSelection()
     {
-        if (DataContext is ScreenCaptureViewModel viewmodel) 
+        if (DataContext is ScreenCaptureViewModel viewmodel)
+        {
             viewmodel.ProcessSelectionCommand.Execute(this);
+            var window = this.FindAncestorOfType<Window>();
+            window?.Close();
+        }
     }
 
     private void OnPointerPressed(object? sender, PointerPressedEventArgs e)
@@ -80,7 +85,7 @@ public partial class ScreenCaptureView : UserControl
     private void OnPointerReleased(object? sender, PointerReleasedEventArgs e)
     {
         // Remove the visual selection rectangle after selection is confirmed
-        if (_selectionRectangle != null) 
+        if (_selectionRectangle != null)
             SelectionCanvas.Children.Remove(_selectionRectangle);
     }
 }

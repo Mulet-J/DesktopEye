@@ -10,7 +10,7 @@ public static class PathHelper
     public static string GetProjectDirectory()
     {
         var assemblyLocation = Assembly.GetExecutingAssembly().Location;
-        var directory = new DirectoryInfo(Path.GetDirectoryName(assemblyLocation));
+        var directory = new DirectoryInfo(Path.GetDirectoryName(assemblyLocation) ?? string.Empty);
 
         // Navigate up to find the project root (look for .csproj file)
         while (directory != null && !directory.GetFiles("*.csproj").Any()) directory = directory.Parent;

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Media.Imaging;
+using DesktopEye.Common.Classes;
 using DesktopEye.Common.Exceptions;
 using DesktopEye.Common.Extensions;
 using DesktopEye.Common.Services.ApplicationPath;
@@ -12,6 +13,7 @@ using DesktopEye.Common.Services.Download;
 using Microsoft.Extensions.Logging;
 using TesseractOCR;
 using TesseractOCR.Enums;
+using TesseractOCR.Pix;
 using Language = DesktopEye.Common.Enums.Language;
 using ScriptNameHelper = DesktopEye.Common.Helpers.ScriptNameHelper;
 
@@ -166,19 +168,13 @@ public class TesseractOcrService : IOcrService, IDisposable
 
     #region DetectScript
 
-    public async Task<ScriptName> DetectScriptWithOsdAsync(Bitmap bitmap)
-    {
-        return await Task.Run(() => DetectScriptWithOsd(bitmap));
-    }
-
-    public ScriptName DetectScriptWithOsd(Bitmap bitmap)
+    private (ScriptName scriptName, float confidence) DetectScriptWithOsd(Image image)
     {
         lock (_lock)
         {
             if (_osdEngine == null)
                 throw new Exception($"Tried to run OCR with an unintialized engine {nameof(_osdEngine)}");
 
-            var image = bitmap.ToTesseractImage();
 
             // This sets the minimum characters needed to run the osd. Default is 50
             _osdEngine.SetVariable("min_characters_to_try", 5);
@@ -191,14 +187,21 @@ public class TesseractOcrService : IOcrService, IDisposable
             {
                 res.DetectOrientationAndScript(out _, out _, out var name,
                     out var scriptConfidence);
-                return name;
+                _logger.LogInformation("Detected script is {0} with confidence {1}", name, scriptConfidence);
+                return (name, scriptConfidence);
             }
             catch
             {
                 _logger.LogWarning("Could not detect the text's script type, falling back to latin.");
-                return ScriptName.Latin;
+                return (ScriptName.Latin, 0);
             }
         }
+    }
+
+    public async Task<(ScriptName scriptName, float confidence)> DetectScriptWithOsdAsync(Image image,
+        CancellationToken cancellationToken = default)
+    {
+        return await Task.Run(() => DetectScriptWithOsd(image), cancellationToken);
     }
 
     #endregion
@@ -211,21 +214,41 @@ public class TesseractOcrService : IOcrService, IDisposable
     ///     script.
     /// </summary>
     /// <param name="bitmap">The source bitmap</param>
-    /// <returns></returns>
-    public async Task<string> GetTextFromBitmapTwoPassAsync(Bitmap bitmap)
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <param name="preprocess"></param>
+    /// <returns>The extracted text</returns>
+    public async Task<OcrResult> GetTextFromBitmapAsync(Bitmap bitmap,
+        CancellationToken cancellationToken = default, bool preprocess = true)
     {
         _logger.LogInformation("Starting two-pass OCR process for bitmap");
 
+        Image? image = null;
+
+        if (preprocess)
+        {
+            using var mat = bitmap.ToMat();
+            using var processedMat = ImagePreprocessor.PreprocessImage(mat);
+            image = processedMat.ToTesseractImage();
+        }
+
         try
         {
-            var scriptName = await DetectScriptWithOsdAsync(bitmap);
-            _logger.LogInformation("Detected script: {ScriptName}", scriptName);
+            cancellationToken.ThrowIfCancellationRequested();
 
-            var result = await GetTextFromBitmapUsingScriptNameAsync(bitmap, scriptName);
-            _logger.LogInformation("Two-pass OCR completed successfully. Text length: {TextLength}",
-                result.Length);
+            image ??= bitmap.ToTesseractImage();
+
+            var script = await DetectScriptWithOsdAsync(image, cancellationToken);
+
+            var result = await GetTextFromImageUsingScriptNameAsync(image, script.scriptName, cancellationToken);
+            _logger.LogInformation("Two-pass OCR completed successfully. Word count: {WordCount}",
+                result.Words.Count);
 
             return result;
+        }
+        catch (OperationCanceledException)
+        {
+            _logger.LogInformation("Two-pass OCR operation was cancelled");
+            throw;
         }
         catch (Exception ex)
         {
@@ -237,15 +260,19 @@ public class TesseractOcrService : IOcrService, IDisposable
     /// <summary>
     ///     Changes the current engine using the ScriptName as a source and return the bitmap's text
     /// </summary>
-    /// <param name="bitmap">The source bitmap</param>
+    /// <param name="image">The source image</param>
     /// <param name="scriptName">The ScriptName used as a reference for the target language</param>
+    /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>The text extracted from the bitmap</returns>
-    public async Task<string> GetTextFromBitmapUsingScriptNameAsync(Bitmap bitmap, ScriptName scriptName)
+    public async Task<OcrResult> GetTextFromImageUsingScriptNameAsync(Image image, ScriptName scriptName,
+        CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Starting OCR with script name: {ScriptName}", scriptName);
 
         try
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             var targetLibLanguage = ScriptNameHelper.GetLanguageForScript(scriptName).FirstOrDefault();
             _logger.LogDebug("Mapped script {ScriptName} to library language: {LibLanguage}", scriptName,
                 targetLibLanguage);
@@ -253,14 +280,19 @@ public class TesseractOcrService : IOcrService, IDisposable
             var targetLanguage = LibLanguageToLanguage(targetLibLanguage);
             _logger.LogDebug("Converted library language to target language: {TargetLanguage}", targetLanguage);
 
-            var engineRes = await SetEngineAsync([targetLanguage]);
+            _ = await SetEngineAsync([targetLanguage], cancellationToken);
             _logger.LogInformation("Engine set successfully for language: {TargetLanguage}", targetLanguage);
 
-            var result = await GetTextFromBitmapAsync(bitmap);
-            _logger.LogInformation("OCR completed successfully using script {ScriptName}. Text length: {TextLength}",
-                scriptName, result.Length);
+            var result = await GetTextFromImageKeepEngineAsync(image, cancellationToken);
+            _logger.LogInformation("OCR completed successfully using script {ScriptName}. Word count: {WordCount}",
+                scriptName, result.Words.Count);
 
             return result;
+        }
+        catch (OperationCanceledException)
+        {
+            _logger.LogInformation("OCR operation with script name {ScriptName} was cancelled", scriptName);
+            throw;
         }
         catch (Exception ex)
         {
@@ -269,25 +301,45 @@ public class TesseractOcrService : IOcrService, IDisposable
         }
     }
 
-    public async Task<string> GetTextFromBitmapAsync(Bitmap bitmap, List<Language> languages)
+    public async Task<OcrResult> GetTextFromBitmapAsync(Bitmap bitmap, List<Language> languages,
+        CancellationToken cancellationToken = default, bool preprocess = true)
     {
         _logger.LogInformation("Starting OCR with {LanguageCount} languages: {Languages}",
             languages.Count, string.Join(", ", languages));
 
-        await SetEngineAsync(languages);
+        Image? image = null;
+
+        if (preprocess)
+        {
+            using var mat = bitmap.ToMat();
+            using var processedMat = ImagePreprocessor.PreprocessImage(mat);
+            image = processedMat.ToTesseractImage();
+        }
 
         try
         {
-            var result = await Task.Run(() => GetTextFromBitmap(bitmap));
-            _logger.LogInformation("OCR completed successfully with multiple languages. Text length: {TextLength}",
-                result?.Length ?? 0);
+            cancellationToken.ThrowIfCancellationRequested();
+
+            await SetEngineAsync(languages, cancellationToken);
+
+            image ??= bitmap.ToTesseractImage();
+
+            var result = await Task.Run(() => GetTextFromImageKeepEngine(image), cancellationToken);
+            _logger.LogInformation("OCR completed successfully with multiple languages. Word count: {WordCount}",
+                result.Words.Count);
 
             return result;
+        }
+        catch (OperationCanceledException)
+        {
+            _logger.LogInformation("OCR operation with languages {Languages} was cancelled",
+                string.Join(", ", languages));
+            throw;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error occurred during OCR with languages: {Languages}",
-                string.Join(", ", languages ?? new List<Language>()));
+                string.Join(", ", languages));
             throw;
         }
     }
@@ -295,11 +347,11 @@ public class TesseractOcrService : IOcrService, IDisposable
     /// <summary>
     ///     Get text from the bitmap without changing the engine.
     /// </summary>
-    /// <param name="bitmap">The source bitmap</param>
+    /// <param name="image">The source image</param>
     /// <returns>The text extracted from the bitmap</returns>
     /// <exception cref="ArgumentNullException"></exception>
     /// <exception cref="InvalidOperationException"></exception>
-    public string GetTextFromBitmap(Bitmap bitmap)
+    private OcrResult GetTextFromImageKeepEngine(Image image)
     {
         lock (_lock)
         {
@@ -307,30 +359,30 @@ public class TesseractOcrService : IOcrService, IDisposable
 
             try
             {
-                if (bitmap == null)
+                if (image == null)
                 {
                     _logger.LogError("Bitmap parameter is null");
-                    throw new ArgumentNullException(nameof(bitmap));
+                    throw new ArgumentNullException(nameof(image));
                 }
 
                 if (_engine == null)
                 {
                     _logger.LogError("OCR engine is not initialized. Call SetEngine first.");
-                    throw new InvalidOperationException("OCR engine is not initialized. Call SetEngine first.");
+                    throw new InvalidOperationException("OCR engine is not initialized.");
                 }
 
-                var image = bitmap.ToTesseractImage();
                 _logger.LogDebug("Bitmap converted to Tesseract image format");
 
                 using var page = _engine.Process(image);
+
+                var words = ParseTsvString(page.TsvText);
                 var text = page.Text;
+                var res = new OcrResult(words, text);
 
-                _logger.LogInformation("OCR text extraction completed successfully. Extracted {TextLength} characters",
-                    text.Length);
-                _logger.LogDebug("Extracted text preview: {TextPreview}",
-                    string.IsNullOrEmpty(text) ? "[Empty]" : text.Length > 100 ? text[..100] + "..." : text);
+                _logger.LogInformation("OCR text extraction completed successfully. Extracted {WordCount} words",
+                    res.Words.Count);
 
-                return text;
+                return res;
             }
             catch (Exception ex)
             {
@@ -340,9 +392,10 @@ public class TesseractOcrService : IOcrService, IDisposable
         }
     }
 
-    public async Task<string> GetTextFromBitmapAsync(Bitmap bitmap)
+    private async Task<OcrResult> GetTextFromImageKeepEngineAsync(Image image,
+        CancellationToken cancellationToken = default)
     {
-        return await Task.Run(() => GetTextFromBitmap(bitmap));
+        return await Task.Run(() => GetTextFromImageKeepEngine(image), cancellationToken);
     }
 
     #endregion
@@ -366,30 +419,6 @@ public class TesseractOcrService : IOcrService, IDisposable
                 var convertedLanguages = LanguageToLibLanguage(languages);
                 _logger.LogDebug("Converted {LanguageCount} languages to library format", convertedLanguages.Count);
 
-                // Check if all required models are available
-                // var missingModels = new List<TesseractOCR.Enums.Language>();
-                // foreach (var language in convertedLanguages)
-                // {
-                //     var modelPath = Path.Combine(_modelsFolderPath, $"{language}.traineddata");
-                //     if (!File.Exists(modelPath))
-                //     {
-                //         missingModels.Add(language);
-                //         _logger.LogWarning("Missing model file for language {Language} at path: {ModelPath}", language,
-                //             modelPath);
-                //     }
-                // }
-                // if (missingModels.Count > 0)
-                // {
-                //     _logger.LogInformation("Downloading {MissingModelCount} missing language models", missingModels.Count);
-                //     var downloadResult = await DownloadModelAsync(missingModels);
-                //
-                //     if (!downloadResult)
-                //     {
-                //         _logger.LogError("Failed to download required language models");
-                //         return false;
-                //     }
-                // }
-
                 _engine?.Dispose();
                 _engine = new Engine(_modelsFolderPath, convertedLanguages);
 
@@ -406,9 +435,9 @@ public class TesseractOcrService : IOcrService, IDisposable
         }
     }
 
-    public async Task<bool> SetEngineAsync(List<Language> languages)
+    public async Task<bool> SetEngineAsync(List<Language> languages, CancellationToken cancellationToken = default)
     {
-        return await Task.Run(() => SetEngine(languages));
+        return await Task.Run(() => SetEngine(languages), cancellationToken);
     }
 
     #endregion
@@ -462,6 +491,64 @@ public class TesseractOcrService : IOcrService, IDisposable
     private static List<TesseractOCR.Enums.Language> LanguageToLibLanguage(List<Language> languages)
     {
         return languages.Select(LanguageToLibLanguage).ToList();
+    }
+
+    private static List<OcrWord> ParseTsvString(string tsvContent)
+    {
+        var lines = tsvContent.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries);
+
+        var ocrWords = new List<OcrWord>();
+
+        // Skip header row (first line)
+        for (var i = 1; i < lines.Length; i++)
+        {
+            var word = ParseTsvLine(lines[i]);
+            if (word != null)
+                ocrWords.Add(word);
+        }
+
+        return ocrWords;
+    }
+
+    private static OcrWord? ParseTsvLine(string line)
+    {
+        if (string.IsNullOrWhiteSpace(line))
+            return null;
+
+        var columns = line.Split('\t');
+
+        // Tesseract TSV format has 12 columns:
+        // level, page_num, block_num, par_num, line_num, word_num, left, top, width, height, conf, text
+        if (columns.Length < 12)
+            return null;
+
+        try
+        {
+            // Parse numeric values
+            if (int.TryParse(columns[6], out var left) ||
+                int.TryParse(columns[7], out var top) ||
+                int.TryParse(columns[8], out var width) ||
+                int.TryParse(columns[9], out var height) ||
+                float.TryParse(columns[10], out var confidence))
+                return null;
+
+            // Get text (last column, may contain spaces if rejoined)
+            var text = columns[11];
+
+            // Handle case where text might contain tabs (rejoin remaining columns)
+            if (columns.Length > 12) text = string.Join("\t", columns.Skip(11));
+
+            // Skip empty text or very low confidence
+            if (string.IsNullOrWhiteSpace(text) || confidence < 0)
+                return null;
+
+            return new OcrWord(left, top, width, height, confidence, text.Trim());
+        }
+        catch (Exception)
+        {
+            // Skip malformed lines
+            return null;
+        }
     }
 
     #endregion

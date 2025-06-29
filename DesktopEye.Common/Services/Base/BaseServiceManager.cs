@@ -17,21 +17,22 @@ public abstract class BaseServiceManager<TService, TServiceType> : IBaseServiceM
     where TService : class
     where TServiceType : struct, Enum
 {
+    private readonly SemaphoreSlim _semaphore = new(1, 1);
+    private readonly IServiceProvider _services;
     protected readonly ILogger? Logger;
-    protected readonly SemaphoreSlim Semaphore = new(1, 1);
-    protected readonly IServiceProvider Services;
 
     private TService? _currentService;
     private bool _disposed;
 
     protected BaseServiceManager(IServiceProvider services, ILogger? logger = null)
     {
-        Services = services ?? throw new ArgumentNullException(nameof(services));
+        _services = services ?? throw new ArgumentNullException(nameof(services));
         Logger = logger;
 
         Logger?.LogInformation("Initializing {ManagerType}", GetType().Name);
 
         // Initialize with default service but don't preload yet
+        // ReSharper disable once VirtualMemberCallInConstructor
         var defaultServiceType = GetDefaultServiceType();
         SwitchToPrivate(defaultServiceType);
     }
@@ -68,7 +69,7 @@ public abstract class BaseServiceManager<TService, TServiceType> : IBaseServiceM
                 CurrentService = null;
             }
 
-            Semaphore.Dispose();
+            _semaphore.Dispose();
             _disposed = true;
 
             Logger?.LogInformation("{ManagerType} disposed successfully", GetType().Name);
@@ -122,7 +123,7 @@ public abstract class BaseServiceManager<TService, TServiceType> : IBaseServiceM
     /// <returns>The created service instance</returns>
     private TService CreateService(TServiceType serviceType)
     {
-        var service = Services.GetKeyedService<TService>(serviceType);
+        var service = _services.GetKeyedService<TService>(serviceType);
 
         if (service == null)
             throw new InvalidOperationException($"Failed to inject service of type {serviceType}. " +
@@ -152,7 +153,7 @@ public abstract class BaseServiceManager<TService, TServiceType> : IBaseServiceM
     {
         ThrowIfDisposed();
 
-        await Semaphore.WaitAsync(cancellationToken);
+        await _semaphore.WaitAsync(cancellationToken);
         try
         {
             if (CurrentService == null)
@@ -170,7 +171,7 @@ public abstract class BaseServiceManager<TService, TServiceType> : IBaseServiceM
         }
         finally
         {
-            Semaphore.Release();
+            _semaphore.Release();
         }
     }
 
@@ -184,7 +185,7 @@ public abstract class BaseServiceManager<TService, TServiceType> : IBaseServiceM
     {
         ThrowIfDisposed();
 
-        Semaphore.Wait();
+        _semaphore.Wait();
         try
         {
             if (CurrentService == null)
@@ -205,7 +206,7 @@ public abstract class BaseServiceManager<TService, TServiceType> : IBaseServiceM
         }
         finally
         {
-            Semaphore.Release();
+            _semaphore.Release();
         }
     }
 
@@ -226,7 +227,7 @@ public abstract class BaseServiceManager<TService, TServiceType> : IBaseServiceM
     {
         ThrowIfDisposed();
 
-        await Semaphore.WaitAsync(cancellationToken);
+        await _semaphore.WaitAsync(cancellationToken);
         try
         {
             Logger?.LogDebug("Switching to service type: {ServiceType}", serviceType);
@@ -267,7 +268,7 @@ public abstract class BaseServiceManager<TService, TServiceType> : IBaseServiceM
         }
         finally
         {
-            Semaphore.Release();
+            _semaphore.Release();
         }
     }
 

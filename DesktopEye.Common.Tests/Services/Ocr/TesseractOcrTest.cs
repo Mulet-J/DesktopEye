@@ -1,3 +1,4 @@
+using DesktopEye.Common.Classes;
 using DesktopEye.Common.Extensions;
 using DesktopEye.Common.Services.OCR;
 using DesktopEye.Common.Tests.Fixtures.Ocr;
@@ -25,13 +26,11 @@ public class TesseractOcrTest : IClassFixture<TesseractOcrTestFixture>
         var text = "Hello world! This is an example of english text.";
         var expectedScriptName = ScriptName.Latin;
         using var skBitmap = GenerateBitmapWithText(text, 50f, 50f, 20f, 500, 100);
-        using var bitmap = skBitmap.ToAvaloniaBitmap();
+        using var image = skBitmap.ToAvaloniaBitmap().ToTesseractImage();
 
-        var actualScriptName = ScriptName.Latin;
+        var actualScript = await _tesseractOcrService.DetectScriptWithOsdAsync(image);
 
-        actualScriptName = await _tesseractOcrService.DetectScriptWithOsdAsync(bitmap);
-
-        Assert.Equal(expectedScriptName, actualScriptName);
+        Assert.Equal(expectedScriptName, actualScript.scriptName);
     }
 
     [Fact]
@@ -40,11 +39,11 @@ public class TesseractOcrTest : IClassFixture<TesseractOcrTestFixture>
         var text = "世界、こんいちは。これは日本語のテキストです。";
         var expectedScriptName = ScriptName.Japanese;
         using var skBitmap = GenerateBitmapWithText(text, 50f, 50f, 20f, 500, 100);
-        using var bitmap = skBitmap.ToAvaloniaBitmap();
+        using var image = skBitmap.ToAvaloniaBitmap().ToTesseractImage();
 
-        var actualScriptName = await _tesseractOcrService.DetectScriptWithOsdAsync(bitmap);
+        var actualScript = await _tesseractOcrService.DetectScriptWithOsdAsync(image);
 
-        Assert.Equal(expectedScriptName, actualScriptName);
+        Assert.Equal(expectedScriptName, actualScript.scriptName);
     }
 
     [Fact]
@@ -54,9 +53,9 @@ public class TesseractOcrTest : IClassFixture<TesseractOcrTestFixture>
         using var skBitmap = GenerateBitmapWithText(expected, 50f, 50f, 20f, 500, 100);
         using var bitmap = skBitmap.ToAvaloniaBitmap();
 
-        var actual = await _tesseractOcrService.GetTextFromBitmapAsync(bitmap, [Language.English]);
+        var res = await _tesseractOcrService.GetTextFromBitmapAsync(bitmap, [Language.English]);
 
-        actual = actual.Replace("\n", "").Trim();
+        var actual = res.Text.Replace("\n", "").Trim();
 
         Assert.Equal(expected, actual);
     }
@@ -68,10 +67,10 @@ public class TesseractOcrTest : IClassFixture<TesseractOcrTestFixture>
         using var skBitmap = GenerateBitmapWithText(expected, 50f, 50f, 20f, 500, 100);
         using var bitmap = skBitmap.ToAvaloniaBitmap();
 
-        var actual = await _tesseractOcrService.GetTextFromBitmapAsync(bitmap, [Language.Japanese]);
+        var res = await _tesseractOcrService.GetTextFromBitmapAsync(bitmap, [Language.Japanese]);
 
         //TODO implement ocr post processing to handle issues like extra spaces
-        actual = actual.Replace("\n", "").Replace(" ", "");
+        var actual = res.Text.Replace("\n", "").Replace(" ", "");
 
         Assert.Equal(expected, actual);
     }
@@ -83,9 +82,9 @@ public class TesseractOcrTest : IClassFixture<TesseractOcrTestFixture>
         using var skBitmap = GenerateBitmapWithText(expected, 50f, 50f, 20f, 500, 100);
         using var bitmap = skBitmap.ToAvaloniaBitmap();
 
-        var actual = await _tesseractOcrService.GetTextFromBitmapTwoPassAsync(bitmap);
+        var res = await _tesseractOcrService.GetTextFromBitmapAsync(bitmap);
 
-        actual = actual.Replace("\n", "").Trim();
+        var actual = res.Text.Replace("\n", "").Trim();
 
         Assert.Equal(expected, actual);
     }
@@ -97,9 +96,9 @@ public class TesseractOcrTest : IClassFixture<TesseractOcrTestFixture>
         using var skBitmap = GenerateBitmapWithText(expected, 50f, 50f, 20f, 500, 100);
         using var bitmap = skBitmap.ToAvaloniaBitmap();
 
-        var actual = await _tesseractOcrService.GetTextFromBitmapTwoPassAsync(bitmap);
+        var res = await _tesseractOcrService.GetTextFromBitmapAsync(bitmap);
 
-        actual = actual.Replace("\n", "").Replace(" ", "");
+        var actual = res.Text.Replace("\n", "").Replace(" ", "");
 
         Assert.Equal(expected, actual);
     }
@@ -111,11 +110,10 @@ public class TesseractOcrTest : IClassFixture<TesseractOcrTestFixture>
         using var skBitmap = GenerateBitmapWithText(gibberish, 50f, 50f, 20f, 500, 100);
         using var bitmap = skBitmap.ToAvaloniaBitmap();
 
-        var actual = "";
 
-        actual = await _tesseractOcrService.GetTextFromBitmapTwoPassAsync(bitmap);
+        var res = await _tesseractOcrService.GetTextFromBitmapAsync(bitmap);
 
-        actual = actual.Replace("\n", "").Trim();
+        var actual = res.Text.Replace("\n", "").Trim();
 
         Assert.NotNull(actual);
     }
@@ -125,11 +123,11 @@ public class TesseractOcrTest : IClassFixture<TesseractOcrTestFixture>
     {
         var expected = "Hello world! This is an example of english text.";
         using var skBitmap = GenerateBitmapWithText(expected, 50f, 50f, 20f, 500, 100);
-        using var bitmap = skBitmap.ToAvaloniaBitmap();
+        using var image = skBitmap.ToAvaloniaBitmap().ToTesseractImage();
 
-        var actual = await _tesseractOcrService.GetTextFromBitmapUsingScriptNameAsync(bitmap, ScriptName.Latin);
+        var res = await _tesseractOcrService.GetTextFromImageUsingScriptNameAsync(image, ScriptName.Latin);
 
-        actual = actual.Replace("\n", "").Trim();
+        var actual = res.Text.Replace("\n", "").Trim();
 
         Assert.Equal(expected, actual);
     }
@@ -139,19 +137,19 @@ public class TesseractOcrTest : IClassFixture<TesseractOcrTestFixture>
     {
         var expected = "世界、こんいちは。これは日本語のテキストです。";
         using var skBitmap = GenerateBitmapWithText(expected, 50f, 50f, 20f, 500, 100);
-        using var bitmap = skBitmap.ToAvaloniaBitmap();
+        using var image = skBitmap.ToAvaloniaBitmap().ToTesseractImage();
 
-        var actual = "";
+        OcrResult res = null;
         try
         {
-            actual = await _tesseractOcrService.GetTextFromBitmapUsingScriptNameAsync(bitmap, ScriptName.Japanese);
+            res = await _tesseractOcrService.GetTextFromImageUsingScriptNameAsync(image, ScriptName.Japanese);
         }
         catch (Exception ex)
         {
             _outputHelper.WriteLine(ex.ToString());
         }
 
-        actual = actual.Replace("\n", "").Replace(" ", "");
+        var actual = res?.Text.Replace("\n", "").Replace(" ", "");
 
         Assert.Equal(expected, actual);
     }

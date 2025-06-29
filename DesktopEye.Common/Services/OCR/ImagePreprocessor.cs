@@ -6,6 +6,7 @@ namespace DesktopEye.Common.Services.OCR;
 
 public static class ImagePreprocessor
 {
+    // TODO there's probably a lot of room for improvement
     public static Mat PreprocessImage(Mat mat)
     {
         // We need a grayscale mat

@@ -17,7 +17,6 @@
         SystemDecorations="None"
         TransparencyLevelHint="Transparent"
         Background="Transparent"
-        WindowStartupLocation="CenterScreen"
         WindowState="Maximized">
 
     <!-- Contenu principal overlay invisible -->

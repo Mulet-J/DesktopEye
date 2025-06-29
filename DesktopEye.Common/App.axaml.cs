@@ -9,7 +9,6 @@ using Avalonia.Platform;
 using DesktopEye.Common.Resources;
 using DesktopEye.Common.Services.Core;
 using DesktopEye.Common.Services.OCR;
-using DesktopEye.Common.Services.ScreenCapture;
 using DesktopEye.Common.Services.TextClassifier;
 using DesktopEye.Common.Services.Translation;
 using DesktopEye.Common.ViewModels;
@@ -120,8 +119,6 @@ public class App : Application
 
     private void TriggerCapture(object? sender, EventArgs e)
     {
-        var bitmap = _services.GetService<IScreenCaptureService>()?.CaptureScreen();
-        if (bitmap == null) return;
         var fullScreenWindow = new ScreenCaptureWindow
         {
             DataContext = _services.GetService<ScreenCaptureViewModel>()
