@@ -10,19 +10,8 @@ public partial class ScreenCaptureActionsWindow : Window
     {
         InitializeComponent();
     }
-    
-    private void OnTitleBarPointerPressed(object? sender, PointerPressedEventArgs e)
-    {
-        if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed) 
-            BeginMoveDrag(e);
-    }
 
-    private void MinimizeWindow(object? sender, RoutedEventArgs e)
-    {
-        WindowState = WindowState.Minimized;
-    }
-
-    private void CloseWindow(object? sender, RoutedEventArgs e)
+    private void CloseButton_Click(object sender, RoutedEventArgs e)
     {
         Close();
     }
