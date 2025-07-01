@@ -21,9 +21,10 @@ public class NTextCatClassifierTest
 
         // Build the service provider and get the HttpClientFactory
         var serviceProvider = services.BuildServiceProvider();
+        var mockBugsnagService = new Mock<Bugsnag.IClient>();
         _httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
         var downloadLogger = new Mock<ILogger<DownloadService>>();
-        var downloadService = new DownloadService(_httpClientFactory, downloadLogger.Object);
+        var downloadService = new DownloadService(_httpClientFactory, downloadLogger.Object, mockBugsnagService.Object);
         var nTextCatLogger = new Mock<ILogger<NTextCatClassifierService>>();
 
         // Create required dependencies

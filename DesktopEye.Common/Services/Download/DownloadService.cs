@@ -12,11 +12,13 @@ public class DownloadService : IDownloadService
 {
     private readonly HttpClient _httpClient;
     private readonly ILogger<DownloadService> _logger;
+    private readonly Bugsnag.IClient _bugsnag;
 
-    public DownloadService(IHttpClientFactory httpClientFactory, ILogger<DownloadService> logger)
+    public DownloadService(IHttpClientFactory httpClientFactory, ILogger<DownloadService> logger, Bugsnag.IClient bugsnag)
     {
         _httpClient = httpClientFactory.CreateClient("DesktopEyeClient");
         _logger = logger;
+        _bugsnag = bugsnag;
     }
 
     public async Task<bool> DownloadFileAsync(string url, string destinationPath)
@@ -86,24 +88,28 @@ public class DownloadService : IDownloadService
             _logger.LogError(ex,
                 "HTTP error occurred while downloading from {Url}. Status: {StatusCode}, Message: {Message}", url,
                 ex.Data["StatusCode"], ex.Message);
+            _bugsnag.Notify(ex);
             return false;
         }
         catch (IOException ex)
         {
             _logger.LogError(ex, "IO error occurred while saving file to {Path}. Message: {Message}", destinationPath,
                 ex.Message);
+            _bugsnag.Notify(ex);
             return false;
         }
         catch (ArgumentException ex)
         {
             _logger.LogError(ex, "Invalid argument provided. Parameter: {ParamName}, Message: {Message}", ex.ParamName,
                 ex.Message);
+            _bugsnag.Notify(ex);
             return false;
         }
         catch (UnauthorizedAccessException ex)
         {
             _logger.LogError(ex, "Access denied while writing to {Path}. Message: {Message}", destinationPath,
                 ex.Message);
+            _bugsnag.Notify(ex);
             return false;
         }
         catch (Exception ex)
@@ -111,6 +117,7 @@ public class DownloadService : IDownloadService
             _logger.LogError(ex,
                 "Unexpected error occurred while downloading from {Url} to {DestinationPath}. Exception type: {ExceptionType}, Message: {Message}",
                 url, destinationPath, ex.GetType().Name, ex.Message);
+            _bugsnag.Notify(ex);
             return false;
         }
     }
@@ -154,6 +161,7 @@ public class DownloadService : IDownloadService
             _logger.LogWarning(ex,
                 "Failed to set executable permissions using chmod for {FilePath}. Exception: {ExceptionType}, Message: {Message}",
                 filePath, ex.GetType().Name, ex.Message);
+            _bugsnag.Notify(ex);
         }
 
         // Method 2: Fallback using .NET's UnixFileMode (available in .NET 6+)
@@ -189,6 +197,7 @@ public class DownloadService : IDownloadService
             _logger.LogWarning(ex,
                 "Failed to set executable permissions using UnixFileMode for {FilePath}. Exception: {ExceptionType}, Message: {Message}",
                 filePath, ex.GetType().Name, ex.Message);
+            _bugsnag.Notify(ex);
         }
 
         _logger.LogWarning("All methods to set executable permissions failed for {FilePath}", filePath);

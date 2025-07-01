@@ -16,7 +16,8 @@ public class DesignScreenCaptureActionsViewModel : ScreenCaptureActionsViewModel
     public DesignScreenCaptureActionsViewModel() : base(
         new Mock<IOcrManager>().Object,
         new Mock<ITextClassifierManager>().Object,
-        new Mock<ITranslationManager>().Object
+        new Mock<ITranslationManager>().Object,
+        new Mock<Bugsnag.IClient>().Object
     )
     {
         var words = new List<OcrWord> { new(0, 0, 0, 0, 1, "Le") };

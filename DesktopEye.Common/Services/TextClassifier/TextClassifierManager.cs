@@ -10,8 +10,8 @@ namespace DesktopEye.Common.Services.TextClassifier;
 public class TextClassifierManager : BaseServiceManager<ITextClassifierService, ClassifierType>,
     ITextClassifierManager
 {
-    public TextClassifierManager(IServiceProvider services, ILogger<TextClassifierManager>? logger = null)
-        : base(services, logger)
+    public TextClassifierManager(IServiceProvider services,  Bugsnag.IClient bugsnag, ILogger<TextClassifierManager>? logger = null)
+        : base(services, bugsnag, logger)
     {
     }
 

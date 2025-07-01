@@ -11,7 +11,8 @@ public class DesignScreenCaptureViewModel : ScreenCaptureViewModel
 {
     public DesignScreenCaptureViewModel() : base(
         new Mock<IServiceProvider>().Object,
-        new Mock<IScreenCaptureService>().Object
+        new Mock<IScreenCaptureService>().Object,
+        new Mock<Bugsnag.IClient>().Object
     )
     {
         Bitmap = CreateMockBitmap();

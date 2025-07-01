@@ -9,6 +9,7 @@ public class PathService : IPathService
 
     public PathService()
     {
+        // Initialize directories based on the application name
         AppDataDirectory = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
             ApplicationName);

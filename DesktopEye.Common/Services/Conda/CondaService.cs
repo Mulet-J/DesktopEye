@@ -16,7 +16,10 @@ namespace DesktopEye.Common.Services.Conda;
 public class CondaService : ICondaService
 {
     private readonly IDownloadService _downloadService;
-
+    private readonly ILogger<CondaService> _logger;
+    private readonly IPathService _pathService;
+    private readonly Bugsnag.IClient _bugsnag;
+    
     private readonly Dictionary<string, string> _downloadUrls = new()
     {
         { "Windows-x64", "https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe" },
@@ -26,21 +29,18 @@ public class CondaService : ICondaService
         { "macOS-arm64", "https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-arm64.sh" }
     };
 
-    private readonly ILogger<CondaService> _logger;
-
-    private readonly IPathService _pathService;
-
-    public CondaService(IPathService pathService, IDownloadService downloadService, ILogger<CondaService> logger)
+    public CondaService(IPathService pathService, IDownloadService downloadService, Bugsnag.IClient bugsnag, ILogger<CondaService> logger)
     {
         _downloadService = downloadService ?? throw new ArgumentNullException(nameof(downloadService));
         _pathService = pathService ?? throw new ArgumentNullException(nameof(pathService));
+        _bugsnag = bugsnag ?? throw new ArgumentNullException(nameof(bugsnag));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
         _logger.LogDebug("CondaService initialized with conda directory: {CondaDirectory}",
             _pathService.CondaDirectory);
     }
 
-    public string CondaDirectoryPath => _pathService.CondaDirectory;
+    private string CondaDirectoryPath => _pathService.CondaDirectory;
 
     /// <summary>
     ///     The path to the conda environment's python dll.
@@ -49,94 +49,102 @@ public class CondaService : ICondaService
     /// <exception cref="PythonException"></exception>
     public string PythonDllPath
     {
+        
         get
         {
             _logger.LogDebug("Searching for Python DLL in conda directory: {CondaDir}", CondaDirectoryPath);
             var condaDir = CondaDirectoryPath;
-
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            try
             {
-                _logger.LogDebug("Platform detected: Windows - searching for python3*.dll");
-
-                // On Windows, look for python3X.dll in the main conda directory
-                var pythonDlls = Directory.GetFiles(condaDir, "python3*.dll", SearchOption.TopDirectoryOnly);
-                if (pythonDlls.Length > 0)
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
-                    Array.Sort(pythonDlls);
-                    var selectedDll = pythonDlls[^1];
-                    _logger.LogDebug("Found Python DLL in main directory: {DllPath}", selectedDll);
-                    return selectedDll;
-                }
+                    _logger.LogDebug("Platform detected: Windows - searching for python3*.dll");
 
-                // Fallback: look in DLLs subdirectory
-                var dllsDir = Path.Combine(condaDir, "DLLs");
-                _logger.LogDebug("Searching fallback location: {DllsDir}", dllsDir);
-
-                if (Directory.Exists(dllsDir))
-                {
-                    pythonDlls = Directory.GetFiles(dllsDir, "python3*.dll", SearchOption.TopDirectoryOnly);
+                    // On Windows, look for python3X.dll in the main conda directory
+                    var pythonDlls = Directory.GetFiles(condaDir, "python3*.dll", SearchOption.TopDirectoryOnly);
                     if (pythonDlls.Length > 0)
                     {
                         Array.Sort(pythonDlls);
                         var selectedDll = pythonDlls[^1];
-                        _logger.LogDebug("Found Python DLL in DLLs subdirectory: {DllPath}", selectedDll);
+                        _logger.LogDebug("Found Python DLL in main directory: {DllPath}", selectedDll);
                         return selectedDll;
                     }
+
+                    // Fallback: look in DLLs subdirectory
+                    var dllsDir = Path.Combine(condaDir, "DLLs");
+                    _logger.LogDebug("Searching fallback location: {DllsDir}", dllsDir);
+
+                    if (Directory.Exists(dllsDir))
+                    {
+                        pythonDlls = Directory.GetFiles(dllsDir, "python3*.dll", SearchOption.TopDirectoryOnly);
+                        if (pythonDlls.Length > 0)
+                        {
+                            Array.Sort(pythonDlls);
+                            var selectedDll = pythonDlls[^1];
+                            _logger.LogDebug("Found Python DLL in DLLs subdirectory: {DllPath}", selectedDll);
+                            return selectedDll;
+                        }
+                    }
+
+                    _logger.LogWarning("No Python DLL found in Windows conda directory: {CondaDir}", condaDir);
                 }
-
-                _logger.LogWarning("No Python DLL found in Windows conda directory: {CondaDir}", condaDir);
-            }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                _logger.LogDebug("Platform detected: Linux - searching for libpython3.*.so");
-
-                // On Linux, look for libpython3.X.so in lib directory
-                var libDir = Path.Combine(condaDir, "lib");
-                if (Directory.Exists(libDir))
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
                 {
-                    // Also check for .so files without version suffix
-                    var pythonLibs = Directory.GetFiles(libDir, "libpython3.*.so", SearchOption.TopDirectoryOnly);
-                    if (pythonLibs.Length > 0)
+                    _logger.LogDebug("Platform detected: Linux - searching for libpython3.*.so");
+
+                    // On Linux, look for libpython3.X.so in lib directory
+                    var libDir = Path.Combine(condaDir, "lib");
+                    if (Directory.Exists(libDir))
                     {
-                        Array.Sort(pythonLibs);
-                        var selectedLib = pythonLibs[^1];
-                        _logger.LogDebug("Found Python library: {LibPath}", selectedLib);
-                        return selectedLib;
+                        // Also check for .so files without version suffix
+                        var pythonLibs = Directory.GetFiles(libDir, "libpython3.*.so", SearchOption.TopDirectoryOnly);
+                        if (pythonLibs.Length > 0)
+                        {
+                            Array.Sort(pythonLibs);
+                            var selectedLib = pythonLibs[^1];
+                            _logger.LogDebug("Found Python library: {LibPath}", selectedLib);
+                            return selectedLib;
+                        }
+
+                        pythonLibs = Directory.GetFiles(libDir, "libpython3.*.so.*", SearchOption.TopDirectoryOnly);
+                        if (pythonLibs.Length > 0)
+                        {
+                            Array.Sort(pythonLibs);
+                            var selectedLib = pythonLibs[^1];
+                            _logger.LogDebug("Found Python library with version suffix: {LibPath}", selectedLib);
+                            return selectedLib;
+                        }
                     }
 
-                    pythonLibs = Directory.GetFiles(libDir, "libpython3.*.so.*", SearchOption.TopDirectoryOnly);
-                    if (pythonLibs.Length > 0)
-                    {
-                        Array.Sort(pythonLibs);
-                        var selectedLib = pythonLibs[^1];
-                        _logger.LogDebug("Found Python library with version suffix: {LibPath}", selectedLib);
-                        return selectedLib;
-                    }
+                    _logger.LogWarning("No Python library found in Linux conda directory: {LibDir}", libDir);
                 }
-
-                _logger.LogWarning("No Python library found in Linux conda directory: {LibDir}", libDir);
-            }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            {
-                _logger.LogDebug("Platform detected: macOS - searching for libpython3.*.dylib");
-
-                // On macOS, look for libpython3.X.dylib in lib directory
-                var libDir = Path.Combine(condaDir, "lib");
-                if (Directory.Exists(libDir))
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
                 {
-                    var pythonLibs = Directory.GetFiles(libDir, "libpython3.*.dylib", SearchOption.TopDirectoryOnly);
-                    if (pythonLibs.Length > 0)
+                    _logger.LogDebug("Platform detected: macOS - searching for libpython3.*.dylib");
+
+                    // On macOS, look for libpython3.X.dylib in lib directory
+                    var libDir = Path.Combine(condaDir, "lib");
+                    if (Directory.Exists(libDir))
                     {
-                        Array.Sort(pythonLibs);
-                        var selectedLib = pythonLibs[^1];
-                        _logger.LogDebug("Found Python library on macOS: {LibPath}", selectedLib);
-                        return selectedLib;
+                        var pythonLibs = Directory.GetFiles(libDir, "libpython3.*.dylib", SearchOption.TopDirectoryOnly);
+                        if (pythonLibs.Length > 0)
+                        {
+                            Array.Sort(pythonLibs);
+                            var selectedLib = pythonLibs[^1];
+                            _logger.LogDebug("Found Python library on macOS: {LibPath}", selectedLib);
+                            return selectedLib;
+                        }
                     }
+
+                    _logger.LogWarning("No Python library found in macOS conda directory: {LibDir}", libDir);
                 }
-
-                _logger.LogWarning("No Python library found in macOS conda directory: {LibDir}", libDir);
+            } catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error while searching for Python DLL/library in conda directory: {CondaDir}",
+                    CondaDirectoryPath);
+                _bugsnag.Notify(ex);
             }
-
+            // If we reach here, no Python DLL/library was found
             _logger.LogError("Could not find Python DLL/library in conda directory: {CondaDir}", condaDir);
             throw new PythonException("Could not find python dll");
         }
@@ -146,16 +154,25 @@ public class CondaService : ICondaService
     {
         get
         {
-            var condaDir = CondaDirectoryPath;
-            string executablePath;
+            try
+            {
+                var condaDir = CondaDirectoryPath;
+                string executablePath;
 
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                executablePath = Path.Combine(condaDir, "Scripts", "conda.exe");
-            else
-                executablePath = Path.Combine(condaDir, "bin", "conda");
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                    executablePath = Path.Combine(condaDir, "Scripts", "conda.exe");
+                else
+                    executablePath = Path.Combine(condaDir, "bin", "conda");
 
-            _logger.LogDebug("Conda executable path: {ExecutablePath}", executablePath);
-            return executablePath;
+                _logger.LogDebug("Conda executable path: {ExecutablePath}", executablePath);
+                return executablePath;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error getting Conda executable path");
+                _bugsnag.Notify(e);
+            }
+            throw new CondaException("Could not find conda executable path");
         }
     }
 
@@ -173,6 +190,7 @@ public class CondaService : ICondaService
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error checking if Conda is installed");
+                _bugsnag.Notify(ex);
                 return false;
             }
         }
@@ -181,7 +199,6 @@ public class CondaService : ICondaService
     public async Task<bool> InstallMinicondaAsync()
     {
         _logger.LogInformation("Starting Miniconda installation process");
-
         try
         {
             if (IsInstalled)
@@ -233,6 +250,7 @@ public class CondaService : ICondaService
             catch (Exception ex)
             {
                 _logger.LogWarning(ex, "Failed to clean up installer file: {InstallerPath}", installerPath);
+                _bugsnag.Notify(ex);
             }
 
             return installSuccess;
@@ -240,6 +258,7 @@ public class CondaService : ICondaService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error during Miniconda installation");
+            _bugsnag.Notify(ex);
             return false;
         }
     }
@@ -254,7 +273,7 @@ public class CondaService : ICondaService
             _logger.LogError("Cannot execute conda command - Conda is not installed");
             throw new InvalidOperationException("Conda is not installed");
         }
-
+        
         try
         {
             using var process = new Process();
@@ -299,6 +318,7 @@ public class CondaService : ICondaService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to execute conda command: {Command}", command);
+            _bugsnag.Notify(ex);
             throw new InvalidOperationException($"Failed to execute conda command: {command}", ex);
         }
     }
@@ -355,6 +375,7 @@ public class CondaService : ICondaService
         {
             _logger.LogError(ex, "Error installing conda packages: {Packages}",
                 string.Join(", ", instruction.Packages));
+            _bugsnag.Notify(ex);
             return false;
         }
     }
@@ -390,6 +411,7 @@ public class CondaService : ICondaService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error installing conda package instructions");
+            _bugsnag.Notify(ex);
             return false;
         }
     }
@@ -423,6 +445,7 @@ public class CondaService : ICondaService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error installing pip packages: {Packages}", string.Join(", ", packages));
+            _bugsnag.Notify(ex);
             return false;
         }
     }
@@ -518,34 +541,44 @@ public class CondaService : ICondaService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error installing pip package: {Package}", package);
+            _bugsnag.Notify(ex);
             return false;
         }
     }
 
     private string GetPlatformString()
     {
-        string platform;
+        try
+        {
+            string platform;
 
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-        {
-            platform = RuntimeInformation.ProcessArchitecture == Architecture.X64 ? "Windows-x64" : "Windows-x86";
-        }
-        else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-        {
-            platform = "Linux-x64";
-        }
-        else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-        {
-            platform = RuntimeInformation.ProcessArchitecture == Architecture.Arm64 ? "macOS-arm64" : "macOS-x64";
-        }
-        else
-        {
-            _logger.LogError("Unsupported platform detected");
-            throw new PlatformNotSupportedException("Unsupported platform");
-        }
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                platform = RuntimeInformation.ProcessArchitecture == Architecture.X64 ? "Windows-x64" : "Windows-x86";
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                platform = "Linux-x64";
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                platform = RuntimeInformation.ProcessArchitecture == Architecture.Arm64 ? "macOS-arm64" : "macOS-x64";
+            }
+            else
+            {
+                _logger.LogError("Unsupported platform detected");
+                throw new PlatformNotSupportedException("Unsupported platform");
+            }
 
-        _logger.LogDebug("Detected platform: {Platform}", platform);
-        return platform;
+            _logger.LogDebug("Detected platform: {Platform}", platform);
+            return platform;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error detecting platform");
+            _bugsnag.Notify(e);
+            throw new PlatformNotSupportedException("Failed to detect platform", e);
+        }
     }
 
     private string GetInstallerFileName(string platform)
@@ -624,6 +657,7 @@ public class CondaService : ICondaService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Exception during Miniconda installation");
+            _bugsnag.Notify(ex);
             return false;
         }
     }

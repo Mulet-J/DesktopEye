@@ -18,7 +18,8 @@ public class NllbPyTorchTranslationTestFixture : IDisposable
         // Create required dependencies
         IPathService pathService = new PathService();
         var condaLogger = new Mock<ILogger<CondaService>>();
-        ICondaService condaService = new CondaService(pathService, mockDownloadService.Object, condaLogger.Object);
+        var mockBugsnagService = new Mock<Bugsnag.IClient>();
+        ICondaService condaService = new CondaService(pathService, mockDownloadService.Object, mockBugsnagService.Object, condaLogger.Object);
         var runtimeManagerLogger = new Mock<ILogger<PythonRuntimeManager>>();
         IPythonRuntimeManager runtimeManager =
             new PythonRuntimeManager(pathService, condaService, runtimeManagerLogger.Object);
