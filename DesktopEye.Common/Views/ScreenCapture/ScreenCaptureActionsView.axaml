@@ -43,7 +43,7 @@
                    DisplayMode="Inline"
                    OpenPaneLength="520"
                    PanePlacement="Right"
-                   Margin="40">
+                   Margin="5">
 
             <!-- Panneau principal (image) -->
             <Border Background="{DynamicResource SystemControlBackgroundAltHighBrush}"
@@ -54,24 +54,6 @@
                     BoxShadow="0 4 16 0 #20000000">
 
                 <Grid RowDefinitions="Auto,*">
-                    <!-- En-tête avec titre -->
-                    <Border Grid.Row="0"
-                            Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                            BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
-                            BorderThickness="0,0,0,1"
-                            Padding="16,12">
-                        <DockPanel>
-                            <PathIcon Data="M16,16 m-6,0 a6,6 0 1,0 12,0 a6,6 0 1,0 -12,0 M13,13 l6,6"
-                                      Width="16" Height="16"
-                                      Foreground="{DynamicResource SystemAccentColor}"
-                                      DockPanel.Dock="Left"
-                                      Margin="0,0,8,0" />
-                            <TextBlock Text="Capture d'écran"
-                                       VerticalAlignment="Center"
-                                       FontWeight="SemiBold" />
-                        </DockPanel>
-                    </Border>
-
                     <!-- Zone d'image -->
                     <Border Grid.Row="1" Padding="16">
                         <Panel>
@@ -275,18 +257,5 @@
                 </Border>
             </SplitView.Pane>
         </SplitView>
-
-        <!-- Boutons d'action flottants -->
-        <Button HorizontalAlignment="Right"
-                VerticalAlignment="Top"
-                Margin="20"
-                Classes="action-button"
-                Background="{DynamicResource SystemAccentColorLight1}"
-                Foreground="White"
-                BorderThickness="0"
-                Click="OnCloseClick"
-                ToolTip.Tip="Fermer">
-            <PathIcon Data="M8,8 L16,16 M8,16 L16,8" Width="12" Height="12" />
-        </Button>
     </Grid>
 </UserControl>
