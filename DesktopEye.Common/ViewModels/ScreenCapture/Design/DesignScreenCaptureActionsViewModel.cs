@@ -19,12 +19,13 @@ public class DesignScreenCaptureActionsViewModel : ScreenCaptureActionsViewModel
         new Mock<ITranslationManager>().Object
     )
     {
-        var words = new List<OcrWord>() { new OcrWord(0,0,0,0,1,"Le")};
-        OcrText = new OcrResult(words, "Le");
+        var words = new List<OcrWord> { new(0, 0, 0, 0, 1, "Le") };
+        OcrText = new OcrResult(words, "Le", 1);
         InferredLanguage = Language.English;
-        TranslatedText = "Bienvenue sur DesktopEye ! Cet outil OCR puissant peut extraire du texte de n'importe quelle capture d'écran avec une précision remarquable. Que vous travailliez avec des documents, des images ou du contenu web, notre technologie IA avancée garantit une reconnaissance de texte précise dans plusieurs langues.";
+        TranslatedText =
+            "Bienvenue sur DesktopEye ! Cet outil OCR puissant peut extraire du texte de n'importe quelle capture d'écran avec une précision remarquable. Que vous travailliez avec des documents, des images ou du contenu web, notre technologie IA avancée garantit une reconnaissance de texte précise dans plusieurs langues.";
         TargetLanguage = Language.French;
-        
+
         HasOcrText = true;
         HasInferredLanguage = true;
         HasTranslatedText = true;

@@ -2,6 +2,7 @@ using DesktopEye.Common.Classes;
 using DesktopEye.Common.Extensions;
 using DesktopEye.Common.Services.OCR;
 using DesktopEye.Common.Tests.Fixtures.Ocr;
+using DesktopEye.Common.Tests.TestHelpers;
 using SkiaSharp;
 using TesseractOCR.Enums;
 using Xunit.Abstractions;
@@ -11,6 +12,7 @@ namespace DesktopEye.Common.Tests.Services.Ocr;
 
 public class TesseractOcrTest : IClassFixture<TesseractOcrTestFixture>
 {
+    private readonly string _assetsPath;
     private readonly ITestOutputHelper _outputHelper;
     private readonly TesseractOcrService _tesseractOcrService;
 
@@ -18,6 +20,7 @@ public class TesseractOcrTest : IClassFixture<TesseractOcrTestFixture>
     {
         _tesseractOcrService = fixture.OcrService;
         _outputHelper = outputHelper;
+        _assetsPath = PathHelper.GetAssetsPath();
     }
 
     [Fact]

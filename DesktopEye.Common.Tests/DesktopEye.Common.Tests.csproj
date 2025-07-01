@@ -39,7 +39,6 @@
 
     <ItemGroup>
         <PackageReference Include="SkiaSharp.NativeAssets.macOS"/>
-        <!--A tester-->
         <PackageReference Include="OpenCvSharp4.runtime.osx_arm64"/>
     </ItemGroup>
 

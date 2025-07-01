@@ -21,16 +21,16 @@ public static class ImagePreprocessor
 
         using (var denoised = new Mat())
         {
-            Cv2.BilateralFilter(mat, denoised, 9, 75, 75);
+            Cv2.BilateralFilter(mat, denoised, 5, 25, 25);
             denoised.CopyTo(mat);
         }
 
-        // using (var clahe = Cv2.CreateCLAHE(2.0, new Size(8, 8)))
-        // {
-        //     using var enhanced = new Mat();
-        //     clahe.Apply(mat, enhanced);
-        //     enhanced.CopyTo(mat);
-        // }
+        using (var clahe = Cv2.CreateCLAHE(5.0, new Size(16, 16)))
+        {
+            using var enhanced = new Mat();
+            clahe.Apply(mat, enhanced);
+            enhanced.CopyTo(mat);
+        }
 
         using (var blur = new Mat())
         {
@@ -40,8 +40,8 @@ public static class ImagePreprocessor
 
         using (var binary = new Mat())
         {
-            Cv2.AdaptiveThreshold(mat, binary, 255, AdaptiveThresholdTypes.GaussianC, ThresholdTypes.Binary, 11, 2);
-            Cv2.Threshold(binary, binary, 0, 255, ThresholdTypes.Binary | ThresholdTypes.Otsu);
+            // Cv2.AdaptiveThreshold(mat, binary, 255, AdaptiveThresholdTypes.GaussianC, ThresholdTypes.Binary, 7, 2);
+            Cv2.Threshold(mat, binary, 0, 255, ThresholdTypes.Binary | ThresholdTypes.Otsu);
             // Cv2.Threshold(binary, binary, 0, 255, ThresholdTypes.Otsu);
             binary.CopyTo(mat);
         }
@@ -51,6 +51,8 @@ public static class ImagePreprocessor
         {
             cleaned.CopyTo(mat);
         }
+
+        mat.SaveImage("/home/rzn/.local/share/DesktopEye/debug/processedImage.png");
 
         return mat;
     }

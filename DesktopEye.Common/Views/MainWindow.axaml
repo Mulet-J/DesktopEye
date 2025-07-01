@@ -7,10 +7,9 @@
         x:Class="DesktopEye.Common.Views.MainWindow"
         Title="DesktopEye"
         Icon="/Assets/avalonia-logo.ico"
-        WindowStartupLocation="CenterScreen"
         SystemDecorations="Full"
         TransparencyLevelHint="AcrylicBlur"
         Background="{DynamicResource SystemControlBackgroundAltHighBrush}">
-        
+
     <views:MainView />
 </Window>

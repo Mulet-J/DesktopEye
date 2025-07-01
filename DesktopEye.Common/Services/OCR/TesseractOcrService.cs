@@ -185,9 +185,17 @@ public class TesseractOcrService : IOcrService, IDisposable
 
             try
             {
+                // TODO find why the osd randomly returns a completely random scriptname with 0 confidence
                 res.DetectOrientationAndScript(out _, out _, out var name,
                     out var scriptConfidence);
                 _logger.LogInformation("Detected script is {0} with confidence {1}", name, scriptConfidence);
+
+                if (scriptConfidence < 1)
+                {
+                    _logger.LogWarning("Confidence too low, falling back to latin");
+                    return (ScriptName.Latin, 0);
+                }
+
                 return (name, scriptConfidence);
             }
             catch
@@ -377,7 +385,7 @@ public class TesseractOcrService : IOcrService, IDisposable
 
                 var words = ParseTsvString(page.TsvText);
                 var text = page.Text;
-                var res = new OcrResult(words, text);
+                var res = new OcrResult(words, text, page.MeanConfidence);
 
                 _logger.LogInformation("OCR text extraction completed successfully. Extracted {WordCount} words",
                     res.Words.Count);
@@ -524,25 +532,38 @@ public class TesseractOcrService : IOcrService, IDisposable
 
         try
         {
-            // Parse numeric values
-            if (int.TryParse(columns[6], out var left) ||
-                int.TryParse(columns[7], out var top) ||
-                int.TryParse(columns[8], out var width) ||
-                int.TryParse(columns[9], out var height) ||
-                float.TryParse(columns[10], out var confidence))
+            // Validate minimum column count
+            if (columns.Length < 12)
+                throw new ArgumentException($"Insufficient columns: expected at least 12, got {columns.Length}");
+
+            // Parse numeric values with validation
+            if (!int.TryParse(columns[6], out var left))
+                throw new FormatException($"Invalid left coordinate: '{columns[6]}'");
+
+            if (!int.TryParse(columns[7], out var top))
+                throw new FormatException($"Invalid top coordinate: '{columns[7]}'");
+
+            if (!int.TryParse(columns[8], out var width))
+                throw new FormatException($"Invalid width: '{columns[8]}'");
+
+            if (!int.TryParse(columns[9], out var height))
+                throw new FormatException($"Invalid height: '{columns[9]}'");
+
+            if (!float.TryParse(columns[10], out var confidence))
+                throw new FormatException($"Invalid confidence value: '{columns[10]}'");
+
+            // Validate parsed numeric values
+            if (width <= 0 || height <= 0)
+                throw new ArgumentException($"Invalid dimensions: width={width}, height={height}");
+
+            // Extract text from remaining columns (handles embedded tabs)
+            var text = string.Join("\t", columns.Skip(11)).Trim();
+
+            // Validate text content
+            if (string.IsNullOrWhiteSpace(text))
                 return null;
 
-            // Get text (last column, may contain spaces if rejoined)
-            var text = columns[11];
-
-            // Handle case where text might contain tabs (rejoin remaining columns)
-            if (columns.Length > 12) text = string.Join("\t", columns.Skip(11));
-
-            // Skip empty text or very low confidence
-            if (string.IsNullOrWhiteSpace(text) || confidence < 0)
-                return null;
-
-            return new OcrWord(left, top, width, height, confidence, text.Trim());
+            return new OcrWord(left, top, width, height, confidence, text);
         }
         catch (Exception)
         {

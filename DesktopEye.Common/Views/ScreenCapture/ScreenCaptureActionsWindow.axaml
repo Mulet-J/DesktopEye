@@ -7,11 +7,10 @@
         x:Class="DesktopEye.Common.Views.ScreenCapture.ScreenCaptureActionsWindow"
         Title="DesktopEye - Analyse d'image"
         Icon="/Assets/avalonia-logo.ico"
-        WindowStartupLocation="CenterScreen"
         MinWidth="1000" MinHeight="600"
         SystemDecorations="Full"
         TransparencyLevelHint="AcrylicBlur"
         Background="{DynamicResource SystemControlBackgroundAltHighBrush}">
-    
+
     <views:ScreenCaptureActionsView />
 </Window>
