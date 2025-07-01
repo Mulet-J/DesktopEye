@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Avalonia.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
+using DesktopEye.Common.Classes;
 using DesktopEye.Common.Enums;
-using DesktopEye.Common.Helpers;
 using DesktopEye.Common.Services.OCR;
 using DesktopEye.Common.Services.TextClassifier;
 using DesktopEye.Common.Services.Translation;
@@ -29,24 +29,24 @@ public partial class ScreenCaptureActionsViewModel : ViewModelBase
     private IEnumerable<TranslationType> _availableTranslationTypes = Enum.GetValues<TranslationType>();
 
     [ObservableProperty] private Bitmap? _bitmap;
-    [ObservableProperty] private bool _isProcessingImage;
     [ObservableProperty] private ClassifierType _currentClassifierType;
     [ObservableProperty] private OcrType _currentOcrType;
     [ObservableProperty] private TranslationType _currentTranslationType;
+    [ObservableProperty] private bool _hasInferredLanguage;
+    [ObservableProperty] private bool _hasOcrText;
+    [ObservableProperty] private bool _hasTranslatedText;
     [ObservableProperty] private Language? _inferredLanguage;
-    [ObservableProperty] private string? _ocrText;
-    [ObservableProperty] private Language? _targetLanguage;
-    [ObservableProperty] private string? _translatedText;
+    [ObservableProperty] private bool _isDetectingLanguage;
 
     // Nouvelles propriétés pour l'UI Google Translate
     [ObservableProperty] private bool _isExtractingText;
-    [ObservableProperty] private bool _isDetectingLanguage;
+    [ObservableProperty] private bool _isProcessingImage;
     [ObservableProperty] private bool _isTranslating;
-    [ObservableProperty] private bool _hasOcrText;
-    [ObservableProperty] private bool _hasInferredLanguage;
-    [ObservableProperty] private bool _hasTranslatedText;
+    [ObservableProperty] private OcrResult? _ocrText;
     [ObservableProperty] private bool _showInitialMessage = true;
     [ObservableProperty] private bool _showTranslationWaitMessage = true;
+    [ObservableProperty] private Language? _targetLanguage;
+    [ObservableProperty] private string? _translatedText;
 
     public ScreenCaptureActionsViewModel(IOcrManager ocrManager, ITextClassifierManager classifierManager,
         ITranslationManager translationManager)
@@ -57,7 +57,7 @@ public partial class ScreenCaptureActionsViewModel : ViewModelBase
         _currentOcrType = _ocrManager.CurrentServiceType;
         _currentClassifierType = _classifierManager.CurrentServiceType;
         _currentTranslationType = _translationManager.CurrentServiceType;
-        
+
         // Langue par défaut
         _targetLanguage = Language.French;
     }
@@ -77,18 +77,24 @@ public partial class ScreenCaptureActionsViewModel : ViewModelBase
         {
             // Petite pause pour l'UX
             await Task.Delay(500);
-        
+
             ShowInitialMessage = false;
             await ExtractText();
-        
+
             if (HasOcrText)
             {
                 await InferLanguage();
-            
-                if (HasInferredLanguage && TargetLanguage.HasValue)
+
+                if (HasInferredLanguage)
                 {
-                    ShowTranslationWaitMessage = false;
-                    await Translate();
+                    // Second pass with a specific language to maximize accuracy
+                    await ExtractTextWithLanguage();
+
+                    if (TargetLanguage.HasValue)
+                    {
+                        ShowTranslationWaitMessage = false;
+                        await Translate();
+                    }
                 }
             }
         }
@@ -106,8 +112,8 @@ public partial class ScreenCaptureActionsViewModel : ViewModelBase
         IsExtractingText = true;
         try
         {
-            OcrText = await _ocrManager.GetTextFromBitmapAsync(Bitmap, LanguageHelper.GetAllLanguages());
-            HasOcrText = !string.IsNullOrWhiteSpace(OcrText);
+            OcrText = await _ocrManager.GetTextFromBitmapAsync(Bitmap);
+            HasOcrText = !string.IsNullOrWhiteSpace(OcrText.Text);
         }
         finally
         {
@@ -116,7 +122,28 @@ public partial class ScreenCaptureActionsViewModel : ViewModelBase
         }
     }
 
-    public async Task InferLanguage()
+    private async Task ExtractTextWithLanguage()
+    {
+        // Null checking
+        if (InferredLanguage is not { } language)
+            return;
+
+        if (Bitmap == null)
+            return;
+
+        IsExtractingText = true;
+        try
+        {
+            var listLanguages = new List<Language> { language };
+            OcrText = await _ocrManager.GetTextFromBitmapAsync(Bitmap, listLanguages);
+        }
+        finally
+        {
+            IsExtractingText = false;
+        }
+    }
+
+    private async Task InferLanguage()
     {
         if (OcrText == null)
             return;
@@ -125,7 +152,7 @@ public partial class ScreenCaptureActionsViewModel : ViewModelBase
         IsDetectingLanguage = true;
         try
         {
-            InferredLanguage = await _classifierManager.ClassifyTextAsync(OcrText);
+            InferredLanguage = await _classifierManager.ClassifyTextAsync(OcrText.Text);
             HasInferredLanguage = InferredLanguage.HasValue;
         }
         finally
@@ -135,7 +162,7 @@ public partial class ScreenCaptureActionsViewModel : ViewModelBase
         }
     }
 
-    public async Task Translate()
+    private async Task Translate()
     {
         if (OcrText == null || InferredLanguage == null || TargetLanguage == null)
             return;
@@ -144,7 +171,8 @@ public partial class ScreenCaptureActionsViewModel : ViewModelBase
         IsTranslating = true;
         try
         {
-            TranslatedText = await _translationManager.TranslateAsync(OcrText, InferredLanguage.Value, TargetLanguage.Value);
+            TranslatedText =
+                await _translationManager.TranslateAsync(OcrText.Text, InferredLanguage.Value, TargetLanguage.Value);
             HasTranslatedText = !string.IsNullOrWhiteSpace(TranslatedText);
         }
         finally
@@ -161,10 +189,7 @@ public partial class ScreenCaptureActionsViewModel : ViewModelBase
         if (HasOcrText)
         {
             await InferLanguage();
-            if (HasInferredLanguage && TargetLanguage.HasValue)
-            {
-                await Translate();
-            }
+            if (HasInferredLanguage && TargetLanguage.HasValue) await Translate();
         }
     }
 
@@ -184,9 +209,9 @@ public partial class ScreenCaptureActionsViewModel : ViewModelBase
     }
 
     // Méthode pour mettre à jour les propriétés HasXxx quand les propriétés changent
-    partial void OnOcrTextChanged(string? value)
+    partial void OnOcrTextChanged(OcrResult? value)
     {
-        HasOcrText = !string.IsNullOrWhiteSpace(value);
+        HasOcrText = !string.IsNullOrWhiteSpace(value!.Text);
     }
 
     partial void OnInferredLanguageChanged(Language? value)

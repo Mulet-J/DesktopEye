@@ -25,6 +25,7 @@
             <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
         </PackageReference>
         <PackageReference Include="FastText.Native.Linux"/>
+        <PackageReference Include="OpenCvSharp4.official.runtime.linux-x64" />
         <PackageReference Include="SkiaSharp.NativeAssets.Linux"/>
         <PackageReference Include="Tmds.DBus"/>
         <DotNetCliToolReference Include="Tmds.DBus.Tool" Version="0.5.0"/>

@@ -11,40 +11,40 @@
     <Design.DataContext>
         <design:DesignScreenCaptureActionsViewModel />
     </Design.DataContext>
-    
+
     <UserControl.Styles>
         <!-- Styles cohérents pour les boutons d'action -->
         <Style Selector="Button.action-button">
-            <Setter Property="Padding" Value="12,8"/>
-            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltHighBrush}"/>
-            <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseLowBrush}"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="CornerRadius" Value="4"/>
-            <Setter Property="HorizontalContentAlignment" Value="Center"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="12,8" />
+            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltHighBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseLowBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="4" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
         </Style>
-        
+
         <!-- Styles pour les onglets -->
         <Style Selector="TabItem">
-            <Setter Property="FontWeight" Value="Normal"/>
-            <Setter Property="Padding" Value="16,8"/>
-            <Setter Property="Margin" Value="0"/>
-            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
+            <Setter Property="FontWeight" Value="Normal" />
+            <Setter Property="Padding" Value="16,8" />
+            <Setter Property="Margin" Value="0" />
+            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
         </Style>
-        
+
         <Style Selector="TabItem:selected">
-            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontWeight" Value="SemiBold" />
         </Style>
     </UserControl.Styles>
 
     <Grid>
         <!-- Mise en page principale avec panneaux flexibles -->
-        <SplitView IsPaneOpen="True" 
-                   DisplayMode="Inline" 
+        <SplitView IsPaneOpen="True"
+                   DisplayMode="Inline"
                    OpenPaneLength="520"
                    PanePlacement="Right"
                    Margin="40">
-            
+
             <!-- Panneau principal (image) -->
             <Border Background="{DynamicResource SystemControlBackgroundAltHighBrush}"
                     BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
@@ -52,7 +52,7 @@
                     CornerRadius="8"
                     Padding="0"
                     BoxShadow="0 4 16 0 #20000000">
-                
+
                 <Grid RowDefinitions="Auto,*">
                     <!-- En-tête avec titre -->
                     <Border Grid.Row="0"
@@ -61,36 +61,36 @@
                             BorderThickness="0,0,0,1"
                             Padding="16,12">
                         <DockPanel>
-                            <PathIcon Data="M16,16 m-6,0 a6,6 0 1,0 12,0 a6,6 0 1,0 -12,0 M13,13 l6,6" 
+                            <PathIcon Data="M16,16 m-6,0 a6,6 0 1,0 12,0 a6,6 0 1,0 -12,0 M13,13 l6,6"
                                       Width="16" Height="16"
                                       Foreground="{DynamicResource SystemAccentColor}"
                                       DockPanel.Dock="Left"
-                                      Margin="0,0,8,0"/>
-                            <TextBlock Text="Capture d'écran" 
+                                      Margin="0,0,8,0" />
+                            <TextBlock Text="Capture d'écran"
                                        VerticalAlignment="Center"
-                                       FontWeight="SemiBold"/>
+                                       FontWeight="SemiBold" />
                         </DockPanel>
                     </Border>
-                    
+
                     <!-- Zone d'image -->
                     <Border Grid.Row="1" Padding="16">
                         <Panel>
-                            <Image Source="{Binding Bitmap}" 
+                            <Image Source="{Binding Bitmap}"
                                    Stretch="Uniform"
                                    HorizontalAlignment="Center"
                                    VerticalAlignment="Center" />
-                            
+
                             <!-- Indicateur de chargement -->
                             <ProgressBar IsVisible="{Binding IsProcessingImage}"
                                          IsIndeterminate="True"
                                          Width="100" Height="10"
                                          HorizontalAlignment="Center"
-                                         VerticalAlignment="Center"/>
+                                         VerticalAlignment="Center" />
                         </Panel>
                     </Border>
                 </Grid>
             </Border>
-            
+
             <!-- Panneau latéral (résultats) -->
             <SplitView.Pane>
                 <Border Background="{DynamicResource SystemControlBackgroundAltHighBrush}"
@@ -99,7 +99,7 @@
                         CornerRadius="8"
                         Margin="16,0,0,0"
                         BoxShadow="0 4 16 0 #20000000">
-                    
+
                     <Grid RowDefinitions="Auto,*">
                         <!-- Onglets de navigation -->
                         <TabControl Grid.Row="0" Padding="0" Margin="0">
@@ -115,37 +115,39 @@
                                             Margin="0,0,0,16">
                                         <Grid ColumnDefinitions="*,Auto,*">
                                             <!-- Langue détectée -->
-                                            <StackPanel Grid.Column="0" Orientation="Horizontal" 
+                                            <StackPanel Grid.Column="0" Orientation="Horizontal"
                                                         VerticalAlignment="Center">
-                                                <TextBlock Text="Détecté: " Opacity="0.7"/>
-                                                <TextBlock Text="{Binding InferredLanguage, FallbackValue='Détection...'}" 
-                                                           FontWeight="Medium"/>
-                                                <ProgressBar IsIndeterminate="True" 
-                                                             IsVisible="{Binding IsDetectingLanguage}" 
+                                                <TextBlock Text="Détecté: " Opacity="0.7" />
+                                                <TextBlock
+                                                    Text="{Binding InferredLanguage, FallbackValue='Détection...'}"
+                                                    FontWeight="Medium" />
+                                                <ProgressBar IsIndeterminate="True"
+                                                             IsVisible="{Binding IsDetectingLanguage}"
                                                              Width="12" Height="12"
-                                                             Margin="8,0,0,0"/>
+                                                             Margin="8,0,0,0" />
                                             </StackPanel>
-                                            
+
                                             <!-- Icône d'échange -->
-                                            <Button Grid.Column="1" 
+                                            <Button Grid.Column="1"
                                                     Classes="action-button"
                                                     Padding="8,4"
                                                     Margin="8,0"
                                                     ToolTip.Tip="Échanger les langues">
-                                                <PathIcon Data="M6,2 L10,6 L6,10 M2,6 L10,6 M10,14 L6,18 L10,22 M14,18 L6,18" 
-                                                          Width="12" Height="12"/>
+                                                <PathIcon
+                                                    Data="M6,2 L10,6 L6,10 M2,6 L10,6 M10,14 L6,18 L10,22 M14,18 L6,18"
+                                                    Width="12" Height="12" />
                                             </Button>
-                                            
+
                                             <!-- Langue cible -->
-                                            <ComboBox Grid.Column="2" 
+                                            <ComboBox Grid.Column="2"
                                                       ItemsSource="{Binding AvailableLanguages}"
                                                       SelectedItem="{Binding TargetLanguage}"
-                                                      HorizontalAlignment="Stretch"/>
+                                                      HorizontalAlignment="Stretch" />
                                         </Grid>
                                     </Border>
-                                    
+
                                     <!-- Zone de texte -->
-                                    <Border Grid.Row="1" 
+                                    <Border Grid.Row="1"
                                             Background="{DynamicResource SystemControlBackgroundChromeLowBrush}"
                                             BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
                                             BorderThickness="1"
@@ -154,60 +156,62 @@
                                         <Grid>
                                             <!-- Texte extrait -->
                                             <ScrollViewer>
-                                                <TextBlock Text="{Binding OcrText, FallbackValue=''}"
+                                                <TextBlock Text="{Binding OcrText.Text, FallbackValue=''}"
                                                            IsVisible="{Binding HasOcrText}"
                                                            TextWrapping="Wrap" />
                                             </ScrollViewer>
-                                            
+
                                             <!-- État de chargement OCR -->
-                                            <StackPanel IsVisible="{Binding IsExtractingText}" 
+                                            <StackPanel IsVisible="{Binding IsExtractingText}"
                                                         HorizontalAlignment="Center" VerticalAlignment="Center">
-                                                <ProgressBar IsIndeterminate="True" Width="24" Height="24"/>
-                                                <TextBlock Text="Extraction du texte..." 
+                                                <ProgressBar IsIndeterminate="True" Width="24" Height="24" />
+                                                <TextBlock Text="Extraction du texte..."
                                                            HorizontalAlignment="Center" Margin="0,16,0,0" />
                                             </StackPanel>
-                                            
+
                                             <!-- Message initial -->
-                                            <StackPanel IsVisible="{Binding ShowInitialMessage}" 
+                                            <StackPanel IsVisible="{Binding ShowInitialMessage}"
                                                         HorizontalAlignment="Center" VerticalAlignment="Center">
-                                                <ProgressBar IsIndeterminate="True" Width="24" Height="24"/>
-                                                <TextBlock Text="Analyse automatique en cours..." 
+                                                <ProgressBar IsIndeterminate="True" Width="24" Height="24" />
+                                                <TextBlock Text="Analyse automatique en cours..."
                                                            FontWeight="Medium"
                                                            HorizontalAlignment="Center" Margin="0,16,0,0" />
-                                                <TextBlock Text="Veuillez patienter pendant que nous analysons votre capture" 
-                                                           Opacity="0.7" 
-                                                           HorizontalAlignment="Center" Margin="0,8,0,0" TextWrapping="Wrap" />
+                                                <TextBlock
+                                                    Text="Veuillez patienter pendant que nous analysons votre capture"
+                                                    Opacity="0.7"
+                                                    HorizontalAlignment="Center" Margin="0,8,0,0" TextWrapping="Wrap" />
                                             </StackPanel>
                                         </Grid>
                                     </Border>
-                                    
+
                                     <!-- Actions de texte -->
-                                    <StackPanel Grid.Row="2" Orientation="Horizontal" 
+                                    <StackPanel Grid.Row="2" Orientation="Horizontal"
                                                 HorizontalAlignment="Right" Margin="0,16,0,0" Spacing="8">
                                         <Button Classes="action-button"
                                                 ToolTip.Tip="Copier le texte">
                                             <StackPanel Orientation="Horizontal" Spacing="8">
-                                                <PathIcon Data="M2,2 L2,14 L14,14 L14,2 Z M4,4 L12,4 L12,12 L4,12 Z" 
-                                                          Width="16" Height="16"/>
-                                                <TextBlock Text="Copier"/>
+                                                <PathIcon Data="M2,2 L2,14 L14,14 L14,2 Z M4,4 L12,4 L12,12 L4,12 Z"
+                                                          Width="16" Height="16" />
+                                                <TextBlock Text="Copier" />
                                             </StackPanel>
                                         </Button>
                                         <Button Classes="action-button"
                                                 ToolTip.Tip="Synthèse vocale">
                                             <StackPanel Orientation="Horizontal" Spacing="8">
-                                                <PathIcon Data="M2,6 L6,6 L10,2 L10,14 L6,10 L2,10 Z M12,4 L12,12 M14,2 L14,14" 
-                                                          Width="16" Height="16"/>
-                                                <TextBlock Text="Écouter"/>
+                                                <PathIcon
+                                                    Data="M2,6 L6,6 L10,2 L10,14 L6,10 L2,10 Z M12,4 L12,12 M14,2 L14,14"
+                                                    Width="16" Height="16" />
+                                                <TextBlock Text="Écouter" />
                                             </StackPanel>
                                         </Button>
                                     </StackPanel>
                                 </Grid>
                             </TabItem>
-                            
+
                             <TabItem Header="Traduction" x:Name="TranslationTab">
                                 <Grid RowDefinitions="*,Auto" Margin="16">
                                     <!-- Zone de traduction -->
-                                    <Border Grid.Row="0" 
+                                    <Border Grid.Row="0"
                                             Background="{DynamicResource SystemControlBackgroundChromeLowBrush}"
                                             BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
                                             BorderThickness="1"
@@ -220,46 +224,47 @@
                                                            IsVisible="{Binding HasTranslatedText}"
                                                            TextWrapping="Wrap" />
                                             </ScrollViewer>
-                                            
+
                                             <!-- État de chargement traduction -->
-                                            <StackPanel IsVisible="{Binding IsTranslating}" 
+                                            <StackPanel IsVisible="{Binding IsTranslating}"
                                                         HorizontalAlignment="Center" VerticalAlignment="Center">
-                                                <ProgressBar IsIndeterminate="True" Width="24" Height="24"/>
-                                                <TextBlock Text="Traduction en cours..." 
+                                                <ProgressBar IsIndeterminate="True" Width="24" Height="24" />
+                                                <TextBlock Text="Traduction en cours..."
                                                            HorizontalAlignment="Center" Margin="0,16,0,0" />
                                             </StackPanel>
-                                            
+
                                             <!-- Message d'attente -->
-                                            <StackPanel IsVisible="{Binding ShowTranslationWaitMessage}" 
+                                            <StackPanel IsVisible="{Binding ShowTranslationWaitMessage}"
                                                         HorizontalAlignment="Center" VerticalAlignment="Center">
-                                                <ProgressBar IsIndeterminate="True" Width="24" Height="24"/>
-                                                <TextBlock Text="En attente de l'extraction du texte..." 
+                                                <ProgressBar IsIndeterminate="True" Width="24" Height="24" />
+                                                <TextBlock Text="En attente de l'extraction du texte..."
                                                            FontWeight="Medium"
                                                            HorizontalAlignment="Center" Margin="0,16,0,0" />
-                                                <TextBlock Text="La traduction commencera automatiquement" 
-                                                           Opacity="0.7" 
+                                                <TextBlock Text="La traduction commencera automatiquement"
+                                                           Opacity="0.7"
                                                            HorizontalAlignment="Center" Margin="0,8,0,0" />
                                             </StackPanel>
                                         </Grid>
                                     </Border>
-                                    
+
                                     <!-- Actions de traduction -->
-                                    <StackPanel Grid.Row="1" Orientation="Horizontal" 
+                                    <StackPanel Grid.Row="1" Orientation="Horizontal"
                                                 HorizontalAlignment="Right" Margin="0,16,0,0" Spacing="8">
                                         <Button Classes="action-button"
                                                 ToolTip.Tip="Copier la traduction">
                                             <StackPanel Orientation="Horizontal" Spacing="8">
-                                                <PathIcon Data="M2,2 L2,14 L14,14 L14,2 Z M4,4 L12,4 L12,12 L4,12 Z" 
-                                                          Width="16" Height="16"/>
-                                                <TextBlock Text="Copier"/>
+                                                <PathIcon Data="M2,2 L2,14 L14,14 L14,2 Z M4,4 L12,4 L12,12 L4,12 Z"
+                                                          Width="16" Height="16" />
+                                                <TextBlock Text="Copier" />
                                             </StackPanel>
                                         </Button>
                                         <Button Classes="action-button"
                                                 ToolTip.Tip="Synthèse vocale">
                                             <StackPanel Orientation="Horizontal" Spacing="8">
-                                                <PathIcon Data="M2,6 L6,6 L10,2 L10,14 L6,10 L2,10 Z M12,4 L12,12 M14,2 L14,14" 
-                                                          Width="16" Height="16"/>
-                                                <TextBlock Text="Écouter"/>
+                                                <PathIcon
+                                                    Data="M2,6 L6,6 L10,2 L10,14 L6,10 L2,10 Z M12,4 L12,12 M14,2 L14,14"
+                                                    Width="16" Height="16" />
+                                                <TextBlock Text="Écouter" />
                                             </StackPanel>
                                         </Button>
                                     </StackPanel>
@@ -270,10 +275,10 @@
                 </Border>
             </SplitView.Pane>
         </SplitView>
-        
+
         <!-- Boutons d'action flottants -->
-        <Button HorizontalAlignment="Right" 
-                VerticalAlignment="Top" 
+        <Button HorizontalAlignment="Right"
+                VerticalAlignment="Top"
                 Margin="20"
                 Classes="action-button"
                 Background="{DynamicResource SystemAccentColorLight1}"
@@ -281,7 +286,7 @@
                 BorderThickness="0"
                 Click="OnCloseClick"
                 ToolTip.Tip="Fermer">
-            <PathIcon Data="M8,8 L16,16 M8,16 L16,8" Width="12" Height="12"/>
+            <PathIcon Data="M8,8 L16,16 M8,16 L16,8" Width="12" Height="12" />
         </Button>
     </Grid>
 </UserControl>

@@ -31,6 +31,8 @@ public class NllbPyTorchTranslationService : ITranslationService, ILoadable
     private dynamic? _model;
     private dynamic? _tokenizer;
 
+    //TODO find why the interop code randomly crashes
+
     public NllbPyTorchTranslationService(ICondaService condaService, IPathService pathService,
         IPythonRuntimeManager runtimeManager, ILogger<NllbPyTorchTranslationService> logger)
     {

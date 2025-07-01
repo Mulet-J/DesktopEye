@@ -26,6 +26,7 @@
             <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
         </PackageReference>
         <PackageReference Include="FastText.Native.Windows"/>
+        <PackageReference Include="OpenCvSharp4.runtime.win"/>
         <PackageReference Include="SkiaSharp.NativeAssets.Win32"/>
     </ItemGroup>
 
