@@ -51,7 +51,7 @@ public partial class ScreenCaptureActionsViewModel : ViewModelBase
     [ObservableProperty] private Language? _targetLanguage;
     [ObservableProperty] private string? _translatedText;
 
-    protected ScreenCaptureActionsViewModel(IOcrManager ocrManager, ITextClassifierManager classifierManager,
+    public ScreenCaptureActionsViewModel(IOcrManager ocrManager, ITextClassifierManager classifierManager,
         ITranslationManager translationManager, Bugsnag.IClient bugsnag)
     {
         _ocrManager = ocrManager;

@@ -19,7 +19,7 @@ public partial class ScreenCaptureViewModel : ViewModelBase, IDisposable
     [ObservableProperty] private Bitmap? _bitmap;
     [ObservableProperty] private Rect? _selection;
 
-    protected ScreenCaptureViewModel(IServiceProvider services, IScreenCaptureService captureService, Bugsnag.IClient bugsnag)
+    public ScreenCaptureViewModel(IServiceProvider services, IScreenCaptureService captureService, Bugsnag.IClient bugsnag)
     {
         _services = services;
         _captureService = captureService;
