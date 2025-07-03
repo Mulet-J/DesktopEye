@@ -99,10 +99,13 @@
                                             <!-- Langue détectée -->
                                             <StackPanel Grid.Column="0" Orientation="Horizontal"
                                                         VerticalAlignment="Center">
-                                                <TextBlock Text="Détecté: " Opacity="0.7" />
-                                                <TextBlock
-                                                    Text="{Binding InferredLanguage, FallbackValue='Détection...'}"
-                                                    FontWeight="Medium" />
+                                                <TextBlock Text="Détecté: " Opacity="0.7" VerticalAlignment="Center"/>
+                                                <ComboBox
+                                                    ItemsSource="{Binding AvailableLanguages}"
+                                                          SelectedItem="{Binding InferredLanguage}"
+                                                          HorizontalAlignment="Stretch"
+                                                          Margin="0,0,8,0">
+                                                </ComboBox>
                                                 <ProgressBar IsIndeterminate="True"
                                                              IsVisible="{Binding IsDetectingLanguage}"
                                                              Width="12" Height="12"
