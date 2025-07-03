@@ -14,20 +14,23 @@ namespace DesktopEye.Common.ViewModels.ScreenCapture;
 
 public partial class ScreenCaptureActionsViewModel : ViewModelBase
 {
+    // Services
     private readonly ITextClassifierManager _classifierManager;
     private readonly IOcrManager _ocrManager;
     private readonly ITranslationManager _translationManager;
+    private readonly Bugsnag.IClient _bugsnag;
 
+    // Available options
     [ObservableProperty]
     private IEnumerable<ClassifierType> _availableClassifierTypes = Enum.GetValues<ClassifierType>();
-
-    [ObservableProperty] private IEnumerable<Language> _availableLanguages = Enum.GetValues<Language>();
-
-    [ObservableProperty] private IEnumerable<OcrType> _availableOcrTypes = Enum.GetValues<OcrType>();
 
     [ObservableProperty]
     private IEnumerable<TranslationType> _availableTranslationTypes = Enum.GetValues<TranslationType>();
 
+    [ObservableProperty] private IEnumerable<Language> _availableLanguages = Enum.GetValues<Language>();
+    [ObservableProperty] private IEnumerable<OcrType> _availableOcrTypes = Enum.GetValues<OcrType>();
+
+    // Data properties
     [ObservableProperty] private Bitmap? _bitmap;
     [ObservableProperty] private ClassifierType _currentClassifierType;
     [ObservableProperty] private OcrType _currentOcrType;
@@ -38,7 +41,7 @@ public partial class ScreenCaptureActionsViewModel : ViewModelBase
     [ObservableProperty] private Language? _inferredLanguage;
     [ObservableProperty] private bool _isDetectingLanguage;
 
-    // Nouvelles propriétés pour l'UI Google Translate
+    // UI state properties
     [ObservableProperty] private bool _isExtractingText;
     [ObservableProperty] private bool _isProcessingImage;
     [ObservableProperty] private bool _isTranslating;
@@ -49,25 +52,33 @@ public partial class ScreenCaptureActionsViewModel : ViewModelBase
     [ObservableProperty] private string? _translatedText;
 
     public ScreenCaptureActionsViewModel(IOcrManager ocrManager, ITextClassifierManager classifierManager,
-        ITranslationManager translationManager)
+        ITranslationManager translationManager, Bugsnag.IClient bugsnag)
     {
         _ocrManager = ocrManager;
         _classifierManager = classifierManager;
         _translationManager = translationManager;
+        _bugsnag = bugsnag;
         _currentOcrType = _ocrManager.CurrentServiceType;
         _currentClassifierType = _classifierManager.CurrentServiceType;
         _currentTranslationType = _translationManager.CurrentServiceType;
-
         // Langue par défaut
         _targetLanguage = Language.French;
     }
 
     public void SetBitmap(Bitmap bitmap)
     {
-        Bitmap = bitmap;
-        // Reset des états et démarrage de l'analyse automatique
-        ResetResults();
-        _ = Task.Run(StartAutoAnalysis);
+        try
+        {
+            Bitmap = bitmap;
+            // Reset des états et démarrage de l'analyse automatique
+            ResetResults();
+            _ = Task.Run(StartAutoAnalysis);
+        }
+        catch (Exception e)
+        {
+            // Log the exception using Bugsnag
+            _bugsnag.Notify(e);
+        }
     }
 
     private async Task StartAutoAnalysis()
@@ -77,19 +88,15 @@ public partial class ScreenCaptureActionsViewModel : ViewModelBase
         {
             // Petite pause pour l'UX
             await Task.Delay(500);
-
             ShowInitialMessage = false;
             await ExtractText();
-
             if (HasOcrText)
             {
                 await InferLanguage();
-
                 if (HasInferredLanguage)
                 {
                     // Second pass with a specific language to maximize accuracy
                     await ExtractTextWithLanguage();
-
                     if (TargetLanguage.HasValue)
                     {
                         ShowTranslationWaitMessage = false;
@@ -98,13 +105,18 @@ public partial class ScreenCaptureActionsViewModel : ViewModelBase
                 }
             }
         }
+        catch (Exception e)
+        {
+            // Log the exception using Bugsnag
+            _bugsnag.Notify(e);
+        }
         finally
         {
             IsProcessingImage = false;
         }
     }
 
-    public async Task ExtractText()
+    private async Task ExtractText()
     {
         if (Bitmap == null)
             return;
@@ -114,6 +126,10 @@ public partial class ScreenCaptureActionsViewModel : ViewModelBase
         {
             OcrText = await _ocrManager.GetTextFromBitmapAsync(Bitmap);
             HasOcrText = !string.IsNullOrWhiteSpace(OcrText.Text);
+        } catch (Exception e)
+        {
+            // Log the exception using Bugsnag
+            _bugsnag.Notify(e);
         }
         finally
         {
@@ -127,15 +143,17 @@ public partial class ScreenCaptureActionsViewModel : ViewModelBase
         // Null checking
         if (InferredLanguage is not { } language)
             return;
-
         if (Bitmap == null)
             return;
-
         IsExtractingText = true;
         try
         {
             var listLanguages = new List<Language> { language };
             OcrText = await _ocrManager.GetTextFromBitmapAsync(Bitmap, listLanguages);
+        } catch (Exception e)
+        {
+            // Log the exception using Bugsnag
+            _bugsnag.Notify(e);
         }
         finally
         {
@@ -154,6 +172,10 @@ public partial class ScreenCaptureActionsViewModel : ViewModelBase
         {
             InferredLanguage = await _classifierManager.ClassifyTextAsync(OcrText.Text);
             HasInferredLanguage = InferredLanguage.HasValue;
+        } catch (Exception e)
+        {
+            // Log the exception using Bugsnag
+            _bugsnag.Notify(e);
         }
         finally
         {
@@ -174,6 +196,10 @@ public partial class ScreenCaptureActionsViewModel : ViewModelBase
             TranslatedText =
                 await _translationManager.TranslateAsync(OcrText.Text, InferredLanguage.Value, TargetLanguage.Value);
             HasTranslatedText = !string.IsNullOrWhiteSpace(TranslatedText);
+        } catch (Exception e)
+        {
+            // Log the exception using Bugsnag
+            _bugsnag.Notify(e);
         }
         finally
         {

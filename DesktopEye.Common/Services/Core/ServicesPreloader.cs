@@ -8,11 +8,13 @@ public class ServicesPreloader
 {
     private readonly ILogger<ServicesPreloader> _logger;
     private readonly IServiceProvider _serviceProvider;
+    private readonly Bugsnag.IClient _bugsnag;
 
-    public ServicesPreloader(IServiceProvider serviceProvider, ILogger<ServicesPreloader> logger)
+    public ServicesPreloader(IServiceProvider serviceProvider, ILogger<ServicesPreloader> logger, Bugsnag.IClient bugsnag)
     {
         _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _bugsnag = bugsnag ?? throw new ArgumentNullException(nameof(bugsnag));
     }
 
     public void PreloadServices(params Type[] serviceTypes)
@@ -28,6 +30,7 @@ public class ServicesPreloader
             catch (Exception ex)
             {
                 _logger.LogError($"Failed to preload service of type {type.FullName}: {ex.Message}");
+                _bugsnag.Notify(ex);
             }
     }
 }

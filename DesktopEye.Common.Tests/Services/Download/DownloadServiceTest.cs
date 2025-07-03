@@ -14,7 +14,6 @@ public class DownloadServiceTests : IDisposable
     private readonly Mock<ILogger<DownloadService>> _mockLogger;
     private readonly Mock<HttpMessageHandler> _mockHttpMessageHandler;
     private readonly HttpClient _httpClient;
-    private readonly IHttpClientFactory _httpClientFactory;
     private readonly DownloadService _downloadService;
     private readonly string _tempDirectory;
 
@@ -28,11 +27,12 @@ public class DownloadServiceTests : IDisposable
     
         // Build the service provider and get the HttpClientFactory
         var serviceProvider = services.BuildServiceProvider();
-        _httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
+        var httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
+        var bugsnag = serviceProvider.GetRequiredService<Bugsnag.IClient>();
         _mockLogger = new Mock<ILogger<DownloadService>>();
         _mockHttpMessageHandler = new Mock<HttpMessageHandler>();
-        _httpClient = _httpClientFactory.CreateClient("DesktopEyeClient");
-        _downloadService = new DownloadService(_httpClientFactory,_mockLogger.Object);
+        _httpClient = httpClientFactory.CreateClient("DesktopEyeClient");
+        _downloadService = new DownloadService(httpClientFactory,_mockLogger.Object, bugsnag);
         
         // Create a temporary directory for test files
         _tempDirectory = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
@@ -192,8 +192,6 @@ public class DownloadServiceTests : IDisposable
 // Additional integration tests for more complex scenarios
 public class DownloadServiceIntegrationTests : IDisposable
 {
-    private readonly Mock<ILogger<DownloadService>> _mockLogger;
-    private readonly IHttpClientFactory _httpClientFactory;
     private readonly HttpClient _realHttpClient;
     private readonly DownloadService _downloadService;
     private readonly string _tempDirectory;
@@ -208,10 +206,11 @@ public class DownloadServiceIntegrationTests : IDisposable
     
         // Build the service provider and get the HttpClientFactory
         var serviceProvider = services.BuildServiceProvider();
-        _httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
-        _mockLogger = new Mock<ILogger<DownloadService>>();
-        _realHttpClient = _httpClientFactory.CreateClient("DesktopEyeClient");
-        _downloadService = new DownloadService(_httpClientFactory, _mockLogger.Object);
+        var bugsnag = serviceProvider.GetRequiredService<Bugsnag.IClient>();
+        var httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
+        var mockLogger = new Mock<ILogger<DownloadService>>();
+        _realHttpClient = httpClientFactory.CreateClient("DesktopEyeClient");
+        _downloadService = new DownloadService(httpClientFactory, mockLogger.Object, bugsnag);
         
         _tempDirectory = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
         Directory.CreateDirectory(_tempDirectory);

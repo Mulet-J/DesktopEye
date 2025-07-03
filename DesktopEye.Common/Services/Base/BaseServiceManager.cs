@@ -19,14 +19,16 @@ public abstract class BaseServiceManager<TService, TServiceType> : IBaseServiceM
 {
     private readonly SemaphoreSlim _semaphore = new(1, 1);
     private readonly IServiceProvider _services;
+    private readonly Bugsnag.IClient _bugsnag;
     protected readonly ILogger? Logger;
 
     private TService? _currentService;
     private bool _disposed;
 
-    protected BaseServiceManager(IServiceProvider services, ILogger? logger = null)
+    protected BaseServiceManager(IServiceProvider services, Bugsnag.IClient bugsnag, ILogger? logger = null)
     {
         _services = services ?? throw new ArgumentNullException(nameof(services));
+        _bugsnag = bugsnag ?? throw new ArgumentNullException(nameof(bugsnag));
         Logger = logger;
 
         Logger?.LogInformation("Initializing {ManagerType}", GetType().Name);
@@ -58,9 +60,7 @@ public abstract class BaseServiceManager<TService, TServiceType> : IBaseServiceM
     public virtual void Dispose()
     {
         if (_disposed) return;
-
         Logger?.LogDebug("Disposing {ManagerType}", GetType().Name);
-
         try
         {
             if (CurrentService != null)
@@ -77,8 +77,8 @@ public abstract class BaseServiceManager<TService, TServiceType> : IBaseServiceM
         catch (Exception ex)
         {
             Logger?.LogError(ex, "Error occurred while disposing {ManagerType}", GetType().Name);
+            _bugsnag.Notify(ex);
         }
-
         GC.SuppressFinalize(this);
     }
 
@@ -106,6 +106,7 @@ public abstract class BaseServiceManager<TService, TServiceType> : IBaseServiceM
         {
             Logger?.LogError("Encountered an error when trying to load service type: {ServiceType}",
                 CurrentServiceType);
+            _bugsnag.Notify(ex);
             return false;
         }
     }
@@ -124,11 +125,9 @@ public abstract class BaseServiceManager<TService, TServiceType> : IBaseServiceM
     private TService CreateService(TServiceType serviceType)
     {
         var service = _services.GetKeyedService<TService>(serviceType);
-
         if (service == null)
             throw new InvalidOperationException($"Failed to inject service of type {serviceType}. " +
                                                 "Ensure the service is registered in the dependency injection container.");
-
         return service;
     }
 
@@ -167,6 +166,7 @@ public abstract class BaseServiceManager<TService, TServiceType> : IBaseServiceM
         catch (Exception ex)
         {
             Logger?.LogError(ex, "Operation failed using {ServiceType}", CurrentServiceType);
+            _bugsnag.Notify(ex);
             throw;
         }
         finally
@@ -201,6 +201,7 @@ public abstract class BaseServiceManager<TService, TServiceType> : IBaseServiceM
             catch (Exception ex)
             {
                 Logger?.LogError(ex, "Operation failed using {ServiceType}", CurrentServiceType);
+                _bugsnag.Notify(ex);
                 throw;
             }
         }
@@ -264,6 +265,7 @@ public abstract class BaseServiceManager<TService, TServiceType> : IBaseServiceM
         catch (Exception ex)
         {
             Logger?.LogError(ex, "Failed to switch to service type: {ServiceType}", serviceType);
+            _bugsnag.Notify(ex);
             throw;
         }
         finally
@@ -300,6 +302,7 @@ public abstract class BaseServiceManager<TService, TServiceType> : IBaseServiceM
                 catch (Exception ex)
                 {
                     Logger?.LogError(ex.ToString());
+                    _bugsnag.Notify(ex);
                 }
             });
     }

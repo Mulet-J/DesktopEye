@@ -14,9 +14,11 @@ public class OcrManager : BaseServiceManager<IOcrService, OcrType>, IOcrManager
 {
     private readonly object _lock = new();
     private readonly SemaphoreSlim _semaphore = new(1, 1);
+    private readonly Bugsnag.IClient _bugsnag;
 
-    public OcrManager(IServiceProvider services, ILogger<OcrManager>? logger = null) : base(services, logger)
+    public OcrManager(IServiceProvider services, Bugsnag.IClient bugsnag, ILogger<OcrManager>? logger = null) : base(services, bugsnag, logger)
     {
+        _bugsnag = bugsnag;
     }
 
     public async Task<OcrResult> GetTextFromBitmapAsync(Bitmap bitmap, List<Language> languages,

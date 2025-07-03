@@ -1,3 +1,4 @@
+using Bugsnag;
 using DesktopEye.Common.Classes;
 using DesktopEye.Common.Services.ApplicationPath;
 using DesktopEye.Common.Services.Conda;
@@ -11,7 +12,6 @@ namespace DesktopEye.Common.Tests.Services.Conda;
 public class CondaTest
 {
     private readonly CondaService _condaService;
-    private readonly IHttpClientFactory _httpClientFactory;
 
     public CondaTest()
     {
@@ -23,14 +23,14 @@ public class CondaTest
     
         // Build the service provider and get the HttpClientFactory
         var serviceProvider = services.BuildServiceProvider();
-        _httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
+        var httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
+        var bugsnag = serviceProvider.GetRequiredService<Bugsnag.IClient>();
         
         IPathService pathService = new PathService();
         ILogger<DownloadService> loggerService = new Logger<DownloadService>(new LoggerFactory());
-        
-        IDownloadService downloadService = new DownloadService(_httpClientFactory, loggerService);
+        IDownloadService downloadService = new DownloadService(httpClientFactory, loggerService, bugsnag);
         var condaLogger = new Mock<ILogger<CondaService>>();
-        _condaService = new CondaService(pathService, downloadService, condaLogger.Object);
+        _condaService = new CondaService(pathService, downloadService, bugsnag, condaLogger.Object);
     }
 
     [Fact]

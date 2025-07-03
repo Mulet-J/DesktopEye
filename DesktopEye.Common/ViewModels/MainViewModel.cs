@@ -7,22 +7,23 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace DesktopEye.Common.ViewModels;
 
-public partial class MainViewModel : ViewModelBase
+public partial class MainViewModel(Bugsnag.IClient bugsnag, IServiceProvider services) : ViewModelBase
 {
-    private readonly IServiceProvider _services;
-
-    public MainViewModel(IServiceProvider services)
-    {
-        _services = services;
-    }
-
     [RelayCommand]
     private void CaptureRegion()
     {
-        var fullScreenWindow = new ScreenCaptureWindow
+        try 
         {
-            DataContext = _services.GetService<ScreenCaptureViewModel>()
-        };
-        fullScreenWindow.Show();
+            var fullScreenWindow = new ScreenCaptureWindow
+            {
+                DataContext = services.GetService<ScreenCaptureViewModel>()
+            };
+            fullScreenWindow.Show();   
+        }
+        catch (Exception e)
+        {
+            // Log the exception using Bugsnag
+            bugsnag.Notify(e);
+        }
     }
 }

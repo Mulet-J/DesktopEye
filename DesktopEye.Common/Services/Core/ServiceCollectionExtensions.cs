@@ -1,3 +1,4 @@
+using Bugsnag.AspNet.Core;
 using DesktopEye.Common.Enums;
 using DesktopEye.Common.Services.ApplicationPath;
 using DesktopEye.Common.Services.Conda;
@@ -47,7 +48,8 @@ public static class ServiceCollectionExtensions
         services.AddHttpClient("DesktopEyeClient",
             client => { client.DefaultRequestHeaders.Add("User-Agent", "DesktopEye/1.0"); });
         services.AddScoped<IDownloadService, DownloadService>();
-
+        
+        AddExternalServices(services);
         AddViewModels(services);
         // AddViews(services);
 
@@ -60,5 +62,16 @@ public static class ServiceCollectionExtensions
         services.AddTransient<SettingsViewModel>();
         services.AddTransient<ScreenCaptureViewModel>();
         services.AddTransient<ScreenCaptureActionsViewModel>();
+    }
+    
+    private static void AddExternalServices(this IServiceCollection services)
+    {
+        // Add external services here if needed
+        // Industrialisation - bugsnag - bug and issue reporting
+        services.AddBugsnag(configuration =>
+        {
+            configuration.ApiKey = "80808d682d0824d1e39b970ba69feffd";
+            configuration.ReleaseStage = "production";
+        });
     }
 }

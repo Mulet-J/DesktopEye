@@ -15,13 +15,15 @@ public partial class ScreenCaptureViewModel : ViewModelBase, IDisposable
 {
     private readonly IScreenCaptureService _captureService;
     private readonly IServiceProvider _services;
+    private readonly Bugsnag.IClient _bugsnag;
     [ObservableProperty] private Bitmap? _bitmap;
     [ObservableProperty] private Rect? _selection;
 
-    public ScreenCaptureViewModel(IServiceProvider services, IScreenCaptureService captureService)
+    public ScreenCaptureViewModel(IServiceProvider services, IScreenCaptureService captureService, Bugsnag.IClient bugsnag)
     {
         _services = services;
         _captureService = captureService;
+        _bugsnag = bugsnag;
         GetScreenBitmap();
     }
 
@@ -39,17 +41,26 @@ public partial class ScreenCaptureViewModel : ViewModelBase, IDisposable
     [RelayCommand]
     private void ProcessSelection()
     {
-        if (!Selection.HasValue) return;
-        if (Bitmap is null) return;
-        var cropedBitmap = Bitmap.CropBitmap(Selection.Value.TopLeft, Selection.Value.BottomRight);
-        var dataContext = _services.GetService<ScreenCaptureActionsViewModel>();
-        if (dataContext == null) throw new Exception();
-        dataContext.SetBitmap(cropedBitmap);
-        var window = new ScreenCaptureActionsWindow
+        try
         {
-            DataContext = dataContext
-        };
+            if (!Selection.HasValue) return;
+            if (Bitmap is null) return;
+            var cropedBitmap = Bitmap.CropBitmap(Selection.Value.TopLeft, Selection.Value.BottomRight);
+            var dataContext = _services.GetService<ScreenCaptureActionsViewModel>();
+            if (dataContext == null) throw new Exception();
+            dataContext.SetBitmap(cropedBitmap);
+            var window = new ScreenCaptureActionsWindow
+            {
+                DataContext = dataContext
+            };
 
-        window.Show();
+            window.Show();
+        }
+        catch (Exception e)
+        {
+            // Log the exception using Bugsnag
+            _bugsnag.Notify(e);
+        }
+        
     }
 }

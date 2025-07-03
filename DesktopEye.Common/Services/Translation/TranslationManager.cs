@@ -9,8 +9,8 @@ namespace DesktopEye.Common.Services.Translation;
 
 public class TranslationManager : BaseServiceManager<ITranslationService, TranslationType>, ITranslationManager
 {
-    public TranslationManager(IServiceProvider services, ILogger<TranslationManager>? logger = null)
-        : base(services, logger)
+    public TranslationManager(IServiceProvider services,  Bugsnag.IClient bugsnag, ILogger<TranslationManager>? logger = null)
+        : base(services, bugsnag, logger)
     {
     }
 
