@@ -70,7 +70,7 @@ public static class ServiceCollectionExtensions
         // Industrialisation - bugsnag - bug and issue reporting
         services.AddBugsnag(configuration =>
         {
-            configuration.ApiKey = "a294626c7449669f24608e2d78dff419";
+            configuration.ApiKey = "80808d682d0824d1e39b970ba69feffd";
             configuration.ReleaseStage = "production";
         });
     }
