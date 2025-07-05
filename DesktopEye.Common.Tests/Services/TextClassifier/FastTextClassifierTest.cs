@@ -1,5 +1,5 @@
-﻿using DesktopEye.Common.Enums;
-using DesktopEye.Common.Services.TextClassifier;
+﻿using DesktopEye.Common.Domain.Features.TextClassification;
+using DesktopEye.Common.Domain.Models;
 using DesktopEye.Common.Tests.Fixtures.TextClassifier;
 
 namespace DesktopEye.Common.Tests.Services.TextClassifier;

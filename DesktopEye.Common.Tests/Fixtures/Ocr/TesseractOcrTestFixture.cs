@@ -1,7 +1,7 @@
 using Avalonia;
-using DesktopEye.Common.Services.ApplicationPath;
-using DesktopEye.Common.Services.Download;
-using DesktopEye.Common.Services.OCR;
+using DesktopEye.Common.Domain.Features.OpticalCharacterRecognition;
+using DesktopEye.Common.Infrastructure.Services.ApplicationPath;
+using DesktopEye.Common.Infrastructure.Services.Download;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -13,7 +13,7 @@ public class TesseractOcrTestFixture : IDisposable
 {
     public TesseractOcrTestFixture()
     {
-        AppBuilder.Configure<Application>()
+        AppBuilder.Configure<Avalonia.Application>()
             .UsePlatformDetect()
             .WithInterFont()
             .SetupWithoutStarting();

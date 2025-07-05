@@ -1,12 +1,11 @@
-using DesktopEye.Common.Classes;
-using DesktopEye.Common.Extensions;
-using DesktopEye.Common.Services.OCR;
+using DesktopEye.Common.Domain.Features.OpticalCharacterRecognition;
+using DesktopEye.Common.Domain.Models.OpticalCharacterRecognition;
 using DesktopEye.Common.Tests.Fixtures.Ocr;
 using DesktopEye.Common.Tests.TestHelpers;
 using SkiaSharp;
 using TesseractOCR.Enums;
 using Xunit.Abstractions;
-using Language = DesktopEye.Common.Enums.Language;
+using Language = DesktopEye.Common.Domain.Models.Language;
 
 namespace DesktopEye.Common.Tests.Services.Ocr;
 

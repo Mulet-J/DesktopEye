@@ -1,8 +1,9 @@
 ﻿using System;
 using Avalonia;
 using DesktopEye.Common;
-using DesktopEye.Common.Services.Core;
-using DesktopEye.Common.Services.ScreenCapture;
+using DesktopEye.Common.Application;
+using DesktopEye.Common.Infrastructure.Services.Core;
+using DesktopEye.Common.Infrastructure.Services.ScreenCapture;
 using DesktopEye.Desktop.MacOS.Services;
 using Microsoft.Extensions.DependencyInjection;
 

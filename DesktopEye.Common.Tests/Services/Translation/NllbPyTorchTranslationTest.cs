@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
-using DesktopEye.Common.Enums;
-using DesktopEye.Common.Services.Translation;
+using DesktopEye.Common.Domain.Features.TextTranslation;
+using DesktopEye.Common.Domain.Models;
 using DesktopEye.Common.Tests.Fixtures.Translation;
 using Xunit.Abstractions;
 
