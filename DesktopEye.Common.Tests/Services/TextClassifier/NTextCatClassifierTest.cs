@@ -1,7 +1,7 @@
 using DesktopEye.Common.Domain.Features.TextClassification;
 using DesktopEye.Common.Domain.Models;
-using DesktopEye.Common.Services.ApplicationPath;
-using DesktopEye.Common.Services.Download;
+using DesktopEye.Common.Infrastructure.Services.ApplicationPath;
+using DesktopEye.Common.Infrastructure.Services.Download;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;

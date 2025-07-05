@@ -4,13 +4,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using DesktopEye.Common.Domain.Features.TextTranslation.Interfaces;
 using DesktopEye.Common.Domain.Models;
-using DesktopEye.Common.Interfaces;
-using DesktopEye.Common.Services.ApplicationPath;
-using DesktopEye.Common.Services.Conda;
-using DesktopEye.Common.Services.Python;
+using DesktopEye.Common.Infrastructure.Interfaces;
+using DesktopEye.Common.Infrastructure.Services.ApplicationPath;
+using DesktopEye.Common.Infrastructure.Services.Conda;
+using DesktopEye.Common.Infrastructure.Services.Python;
 using Microsoft.Extensions.Logging;
 using Python.Runtime;
-using PythonException = DesktopEye.Common.Exceptions.PythonException;
+using PythonException = DesktopEye.Common.Infrastructure.Exceptions.PythonException;
 
 namespace DesktopEye.Common.Domain.Features.TextTranslation;
 

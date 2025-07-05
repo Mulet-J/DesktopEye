@@ -6,7 +6,7 @@ using Avalonia.Media.Imaging;
 using DesktopEye.Common.Domain.Features.OpticalCharacterRecognition.Interfaces;
 using DesktopEye.Common.Domain.Models;
 using DesktopEye.Common.Domain.Models.OpticalCharacterRecognition;
-using DesktopEye.Common.Services.Base;
+using DesktopEye.Common.Infrastructure.Services.Base;
 using Microsoft.Extensions.Logging;
 
 namespace DesktopEye.Common.Domain.Features.OpticalCharacterRecognition;

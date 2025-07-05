@@ -9,6 +9,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <AvaloniaResource Include="Application\Assets\avalonia-logo.ico" />
         <AvaloniaResource Include="Assets\**"/>
     </ItemGroup>
 
@@ -69,6 +70,18 @@
             <Generator>PublicResXFileCodeGenerator</Generator>
             <LastGenOutput>ResourcesCommon.Designer.cs</LastGenOutput>
         </EmbeddedResource>
+        <EmbeddedResource Update="Application\Resources\ResourcesCommon.resx">
+          <Generator>PublicResXFileCodeGenerator</Generator>
+          <LastGenOutput>ResourcesCommon.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Application\Resources\ResourcesLanguages.resx">
+          <Generator>PublicResXFileCodeGenerator</Generator>
+          <LastGenOutput>ResourcesLanguages.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Application\Resources\ResourcesTray.resx">
+          <Generator>PublicResXFileCodeGenerator</Generator>
+          <LastGenOutput>ResourcesTray.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
     </ItemGroup>
 
     <ItemGroup>
@@ -103,5 +116,24 @@
             <AutoGen>True</AutoGen>
             <DependentUpon>ResourcesCommon.resx</DependentUpon>
         </Compile>
+        <Compile Update="Application\App.axaml.cs">
+          <DependentUpon>App.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <AdditionalFiles Include="Application\Views\Controls\AreaSelectionControl.axaml" />
+      <AdditionalFiles Include="Application\Views\MainView.axaml" />
+      <AdditionalFiles Include="Application\Views\MainWindow.axaml" />
+      <AdditionalFiles Include="Application\Views\ScreenCapture\ScreenCaptureActionsView.axaml" />
+      <AdditionalFiles Include="Application\Views\ScreenCapture\ScreenCaptureActionsWindow.axaml" />
+      <AdditionalFiles Include="Application\Views\ScreenCapture\ScreenCaptureView.axaml" />
+      <AdditionalFiles Include="Application\Views\ScreenCapture\ScreenCaptureWindow.axaml" />
+      <AdditionalFiles Include="Application\Views\SettingsView.axaml" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Infrastructure\" />
     </ItemGroup>
 </Project>

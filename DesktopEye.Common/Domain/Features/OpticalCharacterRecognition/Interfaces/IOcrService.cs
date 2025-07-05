@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Avalonia.Media.Imaging;
 using DesktopEye.Common.Domain.Models;
 using DesktopEye.Common.Domain.Models.OpticalCharacterRecognition;
-using DesktopEye.Common.Interfaces;
+using DesktopEye.Common.Infrastructure.Interfaces;
 
 namespace DesktopEye.Common.Domain.Features.OpticalCharacterRecognition.Interfaces;
 

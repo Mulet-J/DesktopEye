@@ -2,7 +2,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using DesktopEye.Common.Domain.Models;
 using DesktopEye.Common.Domain.Models.TextClassification;
-using DesktopEye.Common.Services.Base;
+using DesktopEye.Common.Infrastructure.Services.Base;
 
 namespace DesktopEye.Common.Domain.Features.TextClassification.Interfaces;
 

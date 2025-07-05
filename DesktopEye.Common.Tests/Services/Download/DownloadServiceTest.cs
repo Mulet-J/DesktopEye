@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using System.Runtime.InteropServices;
 using System.Text;
-using DesktopEye.Common.Services.Download;
+using DesktopEye.Common.Infrastructure.Services.Download;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;

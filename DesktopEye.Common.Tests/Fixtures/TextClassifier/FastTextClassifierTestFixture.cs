@@ -1,5 +1,5 @@
 using DesktopEye.Common.Domain.Features.TextClassification;
-using DesktopEye.Common.Services.ApplicationPath;
+using DesktopEye.Common.Infrastructure.Services.ApplicationPath;
 using Microsoft.Extensions.Logging;
 using Moq;
 

@@ -1,4 +1,3 @@
-using DesktopEye.Common.Classes;
 using DesktopEye.Common.Domain.Features.OpticalCharacterRecognition;
 using DesktopEye.Common.Domain.Models.OpticalCharacterRecognition;
 using DesktopEye.Common.Tests.Fixtures.Ocr;

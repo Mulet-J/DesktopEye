@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using DesktopEye.Common.Domain.Features.TextTranslation.Interfaces;
 using DesktopEye.Common.Domain.Models;
 using DesktopEye.Common.Domain.Models.TextTranslation;
-using DesktopEye.Common.Services.Base;
+using DesktopEye.Common.Infrastructure.Services.Base;
 using Microsoft.Extensions.Logging;
 
 namespace DesktopEye.Common.Domain.Features.TextTranslation;

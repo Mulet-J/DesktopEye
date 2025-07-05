@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
-using DesktopEye.Common.Services.ScreenCapture;
+using DesktopEye.Common.Infrastructure.Services.ScreenCapture;
 
 namespace DesktopEye.Desktop.MacOS.Services;
 

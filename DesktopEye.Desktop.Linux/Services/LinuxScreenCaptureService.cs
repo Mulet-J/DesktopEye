@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Avalonia.Media.Imaging;
-using DesktopEye.Common.Services.ScreenCapture;
+using DesktopEye.Common.Infrastructure.Services.ScreenCapture;
 using Tmds.DBus;
 
 namespace DesktopEye.Desktop.Linux.Services;
