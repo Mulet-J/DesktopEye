@@ -1,8 +1,8 @@
+using DesktopEye.Common.Domain.Features.TextTranslation;
 using DesktopEye.Common.Services.ApplicationPath;
 using DesktopEye.Common.Services.Conda;
 using DesktopEye.Common.Services.Download;
 using DesktopEye.Common.Services.Python;
-using DesktopEye.Common.Services.Translation;
 using Microsoft.Extensions.Logging;
 using Moq;
 

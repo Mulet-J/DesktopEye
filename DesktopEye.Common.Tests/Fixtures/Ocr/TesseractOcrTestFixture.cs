@@ -1,7 +1,7 @@
 using Avalonia;
+using DesktopEye.Common.Domain.Features.OpticalCharacterRecognition;
 using DesktopEye.Common.Services.ApplicationPath;
 using DesktopEye.Common.Services.Download;
-using DesktopEye.Common.Services.OCR;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
 using Moq;

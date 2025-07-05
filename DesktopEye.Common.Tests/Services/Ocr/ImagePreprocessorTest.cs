@@ -1,4 +1,5 @@
-using DesktopEye.Common.Services.OCR;
+using DesktopEye.Common.Domain.Features.OpticalCharacterRecognition;
+using DesktopEye.Common.Domain.UseCases.OpticalCharacterRecognition;
 using DesktopEye.Common.Tests.TestHelpers;
 using OpenCvSharp;
 

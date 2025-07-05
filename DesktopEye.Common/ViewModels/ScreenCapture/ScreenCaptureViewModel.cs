@@ -1,9 +1,9 @@
 ﻿using System;
 using Avalonia;
 using Avalonia.Media.Imaging;
+using Avalonia.Platform;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using DesktopEye.Common.Helpers;
 using DesktopEye.Common.Services.ScreenCapture;
 using DesktopEye.Common.ViewModels.Base;
 using DesktopEye.Common.Views.ScreenCapture;
@@ -45,10 +45,10 @@ public partial class ScreenCaptureViewModel : ViewModelBase, IDisposable
         {
             if (!Selection.HasValue) return;
             if (Bitmap is null) return;
-            var cropedBitmap = Bitmap.CropBitmap(Selection.Value.TopLeft, Selection.Value.BottomRight);
+            var croppedBitmap = CropBitmap(Selection.Value.TopLeft, Selection.Value.BottomRight);
             var dataContext = _services.GetService<ScreenCaptureActionsViewModel>();
             if (dataContext == null) throw new Exception();
-            dataContext.SetBitmap(cropedBitmap);
+            dataContext.SetBitmap(croppedBitmap);
             var window = new ScreenCaptureActionsWindow
             {
                 DataContext = dataContext
@@ -62,5 +62,42 @@ public partial class ScreenCaptureViewModel : ViewModelBase, IDisposable
             _bugsnag.Notify(e);
         }
         
+    }
+    private WriteableBitmap CropBitmap(Point startPoint, Point endPoint)
+    {
+        if (Bitmap is null)
+            throw new InvalidOperationException("Aucun bitmap source n'est disponible.");
+
+        // Calculer les dimensions du rectangle de découpe
+        var x = Math.Min(startPoint.X, endPoint.X);
+        var y = Math.Min(startPoint.Y, endPoint.Y);
+        var width = Math.Abs(endPoint.X - startPoint.X);
+        var height = Math.Abs(endPoint.Y - startPoint.Y);
+
+        // Valider les bornes de découpe
+        if (width <= 0 || height <= 0)
+            throw new ArgumentException("La zone de découpe doit avoir une largeur et une hauteur positives.");
+
+        if (x < 0 || y < 0 || x + width > Bitmap.PixelSize.Width ||
+            y + height > Bitmap.PixelSize.Height)
+            throw new ArgumentException("La zone de découpe dépasse les limites du bitmap.");
+
+        // Créer le rectangle source
+        var sourceRect = new PixelRect((int)x, (int)y, (int)width, (int)height);
+
+        // Créer un nouveau WriteableBitmap pour la zone découpée
+        var croppedBitmap = new WriteableBitmap(
+            new PixelSize((int)width, (int)height),
+            Bitmap.Dpi,
+            PixelFormat.Bgra8888,
+            AlphaFormat.Premul
+        );
+
+        using var context = croppedBitmap.Lock();
+        // Copier les données de pixels du rectangle source vers le nouveau bitmap
+        Bitmap.CopyPixels(sourceRect, context.Address, context.RowBytes * context.Size.Height,
+            context.RowBytes);
+
+        return croppedBitmap;
     }
 }

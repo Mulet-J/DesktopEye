@@ -4,13 +4,16 @@ using System.Threading.Tasks;
 using Avalonia.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DesktopEye.Common.Classes;
-using DesktopEye.Common.Enums;
-using DesktopEye.Common.Services.OCR;
-using DesktopEye.Common.Services.TextClassifier;
-using DesktopEye.Common.Services.Translation;
 using DesktopEye.Common.ViewModels.Base;
 using CommunityToolkit.Mvvm.Input;
 using System.Windows.Input;
+using DesktopEye.Common.Domain.Features.OpticalCharacterRecognition.Interfaces;
+using DesktopEye.Common.Domain.Features.TextClassification.Interfaces;
+using DesktopEye.Common.Domain.Features.TextTranslation.Interfaces;
+using DesktopEye.Common.Domain.Models;
+using DesktopEye.Common.Domain.Models.OpticalCharacterRecognition;
+using DesktopEye.Common.Domain.Models.TextClassification;
+using DesktopEye.Common.Domain.Models.TextTranslation;
 
 namespace DesktopEye.Common.ViewModels.ScreenCapture;
 
