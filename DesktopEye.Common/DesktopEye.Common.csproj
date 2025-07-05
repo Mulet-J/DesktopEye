@@ -58,29 +58,20 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <EmbeddedResource Update="Resources\ResourcesTray.resx">
-            <Generator>PublicResXFileCodeGenerator</Generator>
-            <LastGenOutput>ResourcesTray.Designer.cs</LastGenOutput>
-        </EmbeddedResource>
-        <EmbeddedResource Update="Resources\ResourcesLanguages.resx">
-            <Generator>PublicResXFileCodeGenerator</Generator>
-            <LastGenOutput>ResourcesLanguages.Designer.cs</LastGenOutput>
-        </EmbeddedResource>
-        <EmbeddedResource Update="Resources\ResourcesCommon.resx">
-            <Generator>PublicResXFileCodeGenerator</Generator>
-            <LastGenOutput>ResourcesCommon.Designer.cs</LastGenOutput>
-        </EmbeddedResource>
         <EmbeddedResource Update="Application\Resources\ResourcesCommon.resx">
           <Generator>PublicResXFileCodeGenerator</Generator>
           <LastGenOutput>ResourcesCommon.Designer.cs</LastGenOutput>
+          <CustomToolNamespace>DesktopEye.Common.Resources</CustomToolNamespace>
         </EmbeddedResource>
         <EmbeddedResource Update="Application\Resources\ResourcesLanguages.resx">
           <Generator>PublicResXFileCodeGenerator</Generator>
           <LastGenOutput>ResourcesLanguages.Designer.cs</LastGenOutput>
+          <CustomToolNamespace>DesktopEye.Common.Resources</CustomToolNamespace>
         </EmbeddedResource>
         <EmbeddedResource Update="Application\Resources\ResourcesTray.resx">
           <Generator>PublicResXFileCodeGenerator</Generator>
           <LastGenOutput>ResourcesTray.Designer.cs</LastGenOutput>
+          <CustomToolNamespace>DesktopEye.Common.Resources</CustomToolNamespace>
         </EmbeddedResource>
     </ItemGroup>
 
@@ -101,17 +92,17 @@
             <DependentUpon>ScreenCaptureActionsWindow.axaml</DependentUpon>
             <SubType>Code</SubType>
         </Compile>
-        <Compile Update="Resources\ResourcesTray.Designer.cs">
+        <Compile Update="Application\Resources\ResourcesTray.Designer.cs">
             <DesignTime>True</DesignTime>
             <AutoGen>True</AutoGen>
             <DependentUpon>ResourcesTray.resx</DependentUpon>
         </Compile>
-        <Compile Update="Resources\ResourcesLanguages.Designer.cs">
+        <Compile Update="Application\Resources\ResourcesLanguages.Designer.cs">
             <DesignTime>True</DesignTime>
             <AutoGen>True</AutoGen>
             <DependentUpon>ResourcesLanguages.resx</DependentUpon>
         </Compile>
-        <Compile Update="Resources\ResourcesCommon.Designer.cs">
+        <Compile Update="Application\Resources\ResourcesCommon.Designer.cs">
             <DesignTime>True</DesignTime>
             <AutoGen>True</AutoGen>
             <DependentUpon>ResourcesCommon.resx</DependentUpon>

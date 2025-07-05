@@ -6,7 +6,7 @@
         mc:Ignorable="d" d:DesignWidth="1400" d:DesignHeight="800"
         x:Class="DesktopEye.Common.Application.Views.ScreenCapture.ScreenCaptureActionsWindow"
         Title="DesktopEye - Analyse d'image"
-        Icon="Application/Assets/avalonia-logo.ico"
+        Icon="/Application/Assets/avalonia-logo.ico"
         MinWidth="1000" MinHeight="600"
         SystemDecorations="Full"
         TransparencyLevelHint="AcrylicBlur"
