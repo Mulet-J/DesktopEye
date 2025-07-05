@@ -9,6 +9,8 @@ using DesktopEye.Common.Services.OCR;
 using DesktopEye.Common.Services.TextClassifier;
 using DesktopEye.Common.Services.Translation;
 using DesktopEye.Common.ViewModels.Base;
+using CommunityToolkit.Mvvm.Input;
+using System.Windows.Input;
 
 namespace DesktopEye.Common.ViewModels.ScreenCapture;
 
@@ -50,6 +52,8 @@ public partial class ScreenCaptureActionsViewModel : ViewModelBase
     [ObservableProperty] private bool _showTranslationWaitMessage = true;
     [ObservableProperty] private Language? _targetLanguage;
     [ObservableProperty] private string? _translatedText;
+    // Dans la classe ScreenCaptureActionsViewModel
+    [ObservableProperty] private ICommand? _relaunchAnalysisCommand;
 
     public ScreenCaptureActionsViewModel(IOcrManager ocrManager, ITextClassifierManager classifierManager,
         ITranslationManager translationManager, Bugsnag.IClient bugsnag)
@@ -63,6 +67,8 @@ public partial class ScreenCaptureActionsViewModel : ViewModelBase
         _currentTranslationType = _translationManager.CurrentServiceType;
         // Langue par défaut
         _targetLanguage = Language.French;
+        // Initialiser la commande
+        RelaunchAnalysisCommand = new AsyncRelayCommand(RelaunchAnalysis);
     }
 
     public void SetBitmap(Bitmap bitmap)
@@ -96,6 +102,37 @@ public partial class ScreenCaptureActionsViewModel : ViewModelBase
                 if (HasInferredLanguage)
                 {
                     // Second pass with a specific language to maximize accuracy
+                    await ExtractTextWithLanguage();
+                    if (TargetLanguage.HasValue)
+                    {
+                        ShowTranslationWaitMessage = false;
+                        await Translate();
+                    }
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            // Log the exception using Bugsnag
+            _bugsnag.Notify(e);
+        }
+        finally
+        {
+            IsProcessingImage = false;
+        }
+    }
+    private async Task RelaunchAnalysis()
+    {
+        IsProcessingImage = true;
+        try
+        {
+            // Petite pause pour l'UX
+            await Task.Delay(500);
+            ShowInitialMessage = false;
+            if (HasOcrText)
+            {
+                if (HasInferredLanguage)
+                {
                     await ExtractTextWithLanguage();
                     if (TargetLanguage.HasValue)
                     {
