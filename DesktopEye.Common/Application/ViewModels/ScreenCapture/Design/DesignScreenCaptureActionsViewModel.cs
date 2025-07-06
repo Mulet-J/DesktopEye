@@ -14,9 +14,9 @@ namespace DesktopEye.Common.Application.ViewModels.ScreenCapture.Design;
 public class DesignScreenCaptureActionsViewModel : ScreenCaptureActionsViewModel
 {
     public DesignScreenCaptureActionsViewModel() : base(
-        new Mock<IOcrManager>().Object,
-        new Mock<ITextClassifierManager>().Object,
-        new Mock<ITranslationManager>().Object,
+        new Mock<IOcrOrchestrator>().Object,
+        new Mock<ITextClassifierOrchestrator>().Object,
+        new Mock<ITranslationOrchestrator>().Object,
         new Mock<Bugsnag.IClient>().Object
     )
     {

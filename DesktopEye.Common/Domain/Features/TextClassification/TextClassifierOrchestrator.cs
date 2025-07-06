@@ -4,15 +4,15 @@ using System.Threading.Tasks;
 using DesktopEye.Common.Domain.Features.TextClassification.Interfaces;
 using DesktopEye.Common.Domain.Models;
 using DesktopEye.Common.Domain.Models.TextClassification;
-using DesktopEye.Common.Infrastructure.Services.Base;
+using DesktopEye.Common.Infrastructure.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace DesktopEye.Common.Domain.Features.TextClassification;
 
-public class TextClassifierManager : BaseServiceManager<ITextClassifierService, ClassifierType>,
-    ITextClassifierManager
+public class TextClassifierOrchestrator : ServiceOrchestrator<ITextClassifierService, ClassifierType>,
+    ITextClassifierOrchestrator
 {
-    public TextClassifierManager(IServiceProvider services,  Bugsnag.IClient bugsnag, ILogger<TextClassifierManager>? logger = null)
+    public TextClassifierOrchestrator(IServiceProvider services,  Bugsnag.IClient bugsnag, ILogger<TextClassifierOrchestrator>? logger = null)
         : base(services, bugsnag, logger)
     {
     }

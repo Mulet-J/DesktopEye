@@ -4,11 +4,11 @@ using System.Threading.Tasks;
 using Avalonia.Media.Imaging;
 using DesktopEye.Common.Domain.Models;
 using DesktopEye.Common.Domain.Models.OpticalCharacterRecognition;
-using DesktopEye.Common.Infrastructure.Services.Base;
+using DesktopEye.Common.Infrastructure.Configuration;
 
 namespace DesktopEye.Common.Domain.Features.OpticalCharacterRecognition.Interfaces;
 
-public interface IOcrManager : IBaseServiceManager<IOcrService, OcrType>
+public interface IOcrOrchestrator : IServiceOrchestrator<IOcrService, OcrType>
 {
     Task<OcrResult> GetTextFromBitmapAsync(Bitmap bitmap, CancellationToken cancellationToken = default,
         bool preprocess = true);

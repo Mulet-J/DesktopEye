@@ -1,7 +1,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace DesktopEye.Common.Infrastructure.Interfaces;
+namespace DesktopEye.Common.Infrastructure.Configuration.Interfaces;
 
 /// <summary>Provides a mechanism for loading resources.</summary>
 public interface ILoadable

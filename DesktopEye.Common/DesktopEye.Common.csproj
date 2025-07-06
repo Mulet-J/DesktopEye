@@ -123,8 +123,4 @@
       <AdditionalFiles Include="Application\Views\ScreenCapture\ScreenCaptureWindow.axaml" />
       <AdditionalFiles Include="Application\Views\SettingsView.axaml" />
     </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Infrastructure\" />
-    </ItemGroup>
 </Project>

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using DesktopEye.Common.Domain.Features.TextClassification.Helpers;
 using DesktopEye.Common.Domain.Features.TextClassification.Interfaces;
 using DesktopEye.Common.Domain.Models;
-using DesktopEye.Common.Infrastructure.Interfaces;
+using DesktopEye.Common.Infrastructure.Configuration.Interfaces;
 using DesktopEye.Common.Infrastructure.Services.ApplicationPath;
 using DesktopEye.Common.Infrastructure.Services.Download;
 using Microsoft.Extensions.Logging;

@@ -2,9 +2,9 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace DesktopEye.Common.Infrastructure.Services.Base;
+namespace DesktopEye.Common.Infrastructure.Configuration;
 
-public interface IBaseServiceManager<TService, TServiceType> : IDisposable
+public interface IServiceOrchestrator<TService, TServiceType> : IDisposable
 {
     TServiceType CurrentServiceType { get; }
 

@@ -1,18 +1,18 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using DesktopEye.Common.Infrastructure.Interfaces;
+using DesktopEye.Common.Infrastructure.Configuration.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace DesktopEye.Common.Infrastructure.Services.Base;
+namespace DesktopEye.Common.Infrastructure.Configuration;
 
 /// <summary>
 ///     Base class for service managers that handle switching between different service implementations
 /// </summary>
 /// <typeparam name="TService">The service interface type</typeparam>
 /// <typeparam name="TServiceType">The enum type representing different service implementations</typeparam>
-public abstract class BaseServiceManager<TService, TServiceType> : IBaseServiceManager<TService, TServiceType>,
+public abstract class ServiceOrchestrator<TService, TServiceType> : IServiceOrchestrator<TService, TServiceType>,
     ILoadable
     where TService : class
     where TServiceType : struct, Enum
@@ -25,7 +25,7 @@ public abstract class BaseServiceManager<TService, TServiceType> : IBaseServiceM
     private TService? _currentService;
     private bool _disposed;
 
-    protected BaseServiceManager(IServiceProvider services, Bugsnag.IClient bugsnag, ILogger? logger = null)
+    protected ServiceOrchestrator(IServiceProvider services, Bugsnag.IClient bugsnag, ILogger? logger = null)
     {
         _services = services ?? throw new ArgumentNullException(nameof(services));
         _bugsnag = bugsnag ?? throw new ArgumentNullException(nameof(bugsnag));
@@ -79,6 +79,7 @@ public abstract class BaseServiceManager<TService, TServiceType> : IBaseServiceM
             Logger?.LogError(ex, "Error occurred while disposing {ManagerType}", GetType().Name);
             _bugsnag.Notify(ex);
         }
+
         GC.SuppressFinalize(this);
     }
 

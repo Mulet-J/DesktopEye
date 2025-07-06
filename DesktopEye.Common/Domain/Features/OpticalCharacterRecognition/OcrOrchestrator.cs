@@ -6,18 +6,18 @@ using Avalonia.Media.Imaging;
 using DesktopEye.Common.Domain.Features.OpticalCharacterRecognition.Interfaces;
 using DesktopEye.Common.Domain.Models;
 using DesktopEye.Common.Domain.Models.OpticalCharacterRecognition;
-using DesktopEye.Common.Infrastructure.Services.Base;
+using DesktopEye.Common.Infrastructure.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace DesktopEye.Common.Domain.Features.OpticalCharacterRecognition;
 
-public class OcrManager : BaseServiceManager<IOcrService, OcrType>, IOcrManager
+public class OcrOrchestrator : ServiceOrchestrator<IOcrService, OcrType>, IOcrOrchestrator
 {
     private readonly object _lock = new();
     private readonly SemaphoreSlim _semaphore = new(1, 1);
     private readonly Bugsnag.IClient _bugsnag;
 
-    public OcrManager(IServiceProvider services, Bugsnag.IClient bugsnag, ILogger<OcrManager>? logger = null) : base(services, bugsnag, logger)
+    public OcrOrchestrator(IServiceProvider services, Bugsnag.IClient bugsnag, ILogger<OcrOrchestrator>? logger = null) : base(services, bugsnag, logger)
     {
         _bugsnag = bugsnag;
     }

@@ -2,7 +2,7 @@
 using Avalonia;
 using DesktopEye.Common;
 using DesktopEye.Common.Application;
-using DesktopEye.Common.Infrastructure.Services.Core;
+using DesktopEye.Common.Infrastructure.Configuration;
 using DesktopEye.Common.Infrastructure.Services.ScreenCapture;
 using DesktopEye.Desktop.Windows.Services;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,7 +31,7 @@ internal static class Program
     {
         // Dependency Injection
         var services = new ServiceCollection();
-        services.AddCommonServices();
+        services.InjectApplicationServices();
         services.AddPlatformServices();
 
         var serviceProvider = services.BuildServiceProvider();

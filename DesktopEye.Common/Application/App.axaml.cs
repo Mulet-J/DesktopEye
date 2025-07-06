@@ -10,7 +10,7 @@ using DesktopEye.Common.Application.Views.ScreenCapture;
 using DesktopEye.Common.Domain.Features.OpticalCharacterRecognition.Interfaces;
 using DesktopEye.Common.Domain.Features.TextClassification.Interfaces;
 using DesktopEye.Common.Domain.Features.TextTranslation.Interfaces;
-using DesktopEye.Common.Infrastructure.Services.Core;
+using DesktopEye.Common.Infrastructure.Configuration;
 using DesktopEye.Common.Resources;
 using Microsoft.Extensions.DependencyInjection;
 using MainViewModel = DesktopEye.Common.Application.ViewModels.MainViewModel;
@@ -38,8 +38,8 @@ public class App : Avalonia.Application
     private void PreloadServices()
     {
         // Preload services, obviously only pass singletons here
-        var preloader = _services.GetRequiredService<ServicesPreloader>();
-        preloader.PreloadServices(typeof(IOcrManager), typeof(ITextClassifierManager), typeof(ITranslationManager));
+        var preloader = _services.GetRequiredService<ServicesLoader>();
+        preloader.PreloadServices(typeof(IOcrOrchestrator), typeof(ITextClassifierOrchestrator), typeof(ITranslationOrchestrator));
     }
 
     public override void OnFrameworkInitializationCompleted()

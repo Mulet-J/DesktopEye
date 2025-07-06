@@ -4,14 +4,14 @@ using System.Threading.Tasks;
 using DesktopEye.Common.Domain.Features.TextTranslation.Interfaces;
 using DesktopEye.Common.Domain.Models;
 using DesktopEye.Common.Domain.Models.TextTranslation;
-using DesktopEye.Common.Infrastructure.Services.Base;
+using DesktopEye.Common.Infrastructure.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace DesktopEye.Common.Domain.Features.TextTranslation;
 
-public class TranslationManager : BaseServiceManager<ITranslationService, TranslationType>, ITranslationManager
+public class TranslationOrchestrator : ServiceOrchestrator<ITranslationService, TranslationType>, ITranslationOrchestrator
 {
-    public TranslationManager(IServiceProvider services,  Bugsnag.IClient bugsnag, ILogger<TranslationManager>? logger = null)
+    public TranslationOrchestrator(IServiceProvider services,  Bugsnag.IClient bugsnag, ILogger<TranslationOrchestrator>? logger = null)
         : base(services, bugsnag, logger)
     {
     }

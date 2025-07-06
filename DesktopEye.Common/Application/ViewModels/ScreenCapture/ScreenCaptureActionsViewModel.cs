@@ -19,9 +19,9 @@ namespace DesktopEye.Common.Application.ViewModels.ScreenCapture;
 public partial class ScreenCaptureActionsViewModel : ViewModelBase
 {
     // Services
-    private readonly ITextClassifierManager _classifierManager;
-    private readonly IOcrManager _ocrManager;
-    private readonly ITranslationManager _translationManager;
+    private readonly ITextClassifierOrchestrator _classifierOrchestrator;
+    private readonly IOcrOrchestrator _ocrOrchestrator;
+    private readonly ITranslationOrchestrator _translationOrchestrator;
     private readonly Bugsnag.IClient _bugsnag;
 
     // Available options
@@ -57,16 +57,16 @@ public partial class ScreenCaptureActionsViewModel : ViewModelBase
     // Dans la classe ScreenCaptureActionsViewModel
     [ObservableProperty] private ICommand? _relaunchAnalysisCommand;
 
-    public ScreenCaptureActionsViewModel(IOcrManager ocrManager, ITextClassifierManager classifierManager,
-        ITranslationManager translationManager, Bugsnag.IClient bugsnag)
+    public ScreenCaptureActionsViewModel(IOcrOrchestrator ocrOrchestrator, ITextClassifierOrchestrator classifierOrchestrator,
+        ITranslationOrchestrator translationOrchestrator, Bugsnag.IClient bugsnag)
     {
-        _ocrManager = ocrManager;
-        _classifierManager = classifierManager;
-        _translationManager = translationManager;
+        _ocrOrchestrator = ocrOrchestrator;
+        _classifierOrchestrator = classifierOrchestrator;
+        _translationOrchestrator = translationOrchestrator;
         _bugsnag = bugsnag;
-        _currentOcrType = _ocrManager.CurrentServiceType;
-        _currentClassifierType = _classifierManager.CurrentServiceType;
-        _currentTranslationType = _translationManager.CurrentServiceType;
+        _currentOcrType = _ocrOrchestrator.CurrentServiceType;
+        _currentClassifierType = _classifierOrchestrator.CurrentServiceType;
+        _currentTranslationType = _translationOrchestrator.CurrentServiceType;
         // Langue par défaut
         _targetLanguage = Language.French;
         // Initialiser la commande
@@ -163,7 +163,7 @@ public partial class ScreenCaptureActionsViewModel : ViewModelBase
         IsExtractingText = true;
         try
         {
-            OcrText = await _ocrManager.GetTextFromBitmapAsync(Bitmap);
+            OcrText = await _ocrOrchestrator.GetTextFromBitmapAsync(Bitmap);
             HasOcrText = !string.IsNullOrWhiteSpace(OcrText.Text);
         } catch (Exception e)
         {
@@ -188,7 +188,7 @@ public partial class ScreenCaptureActionsViewModel : ViewModelBase
         try
         {
             var listLanguages = new List<Language> { language };
-            OcrText = await _ocrManager.GetTextFromBitmapAsync(Bitmap, listLanguages);
+            OcrText = await _ocrOrchestrator.GetTextFromBitmapAsync(Bitmap, listLanguages);
         } catch (Exception e)
         {
             // Log the exception using Bugsnag
@@ -209,7 +209,7 @@ public partial class ScreenCaptureActionsViewModel : ViewModelBase
         IsDetectingLanguage = true;
         try
         {
-            InferredLanguage = await _classifierManager.ClassifyTextAsync(OcrText.Text);
+            InferredLanguage = await _classifierOrchestrator.ClassifyTextAsync(OcrText.Text);
             HasInferredLanguage = InferredLanguage.HasValue;
         } catch (Exception e)
         {
@@ -233,7 +233,7 @@ public partial class ScreenCaptureActionsViewModel : ViewModelBase
         try
         {
             TranslatedText =
-                await _translationManager.TranslateAsync(OcrText.Text, InferredLanguage.Value, TargetLanguage.Value);
+                await _translationOrchestrator.TranslateAsync(OcrText.Text, InferredLanguage.Value, TargetLanguage.Value);
             HasTranslatedText = !string.IsNullOrWhiteSpace(TranslatedText);
         } catch (Exception e)
         {
