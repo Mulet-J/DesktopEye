@@ -1,7 +1,7 @@
 ﻿using System;
 using Avalonia.Controls;
 
-namespace DesktopEye.Common.Infrastructure.Services;
+namespace DesktopEye.Common.Application;
 
 // TODO mettre le code de app.axaml.cs ici
 public class TrayIconManager : IDisposable
