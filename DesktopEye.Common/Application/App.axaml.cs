@@ -30,8 +30,8 @@ public class App : Avalonia.Application
     public App(IServiceProvider services)
     {
         _services = services;
-        PreloadServices();
         DownloadModels();
+        PreloadServices();
     }
 
     public override void Initialize()

@@ -93,13 +93,13 @@ public class ModelProvider : IModelProvider
     /// Downloads models that are not available on the system.
     /// </summary>
     /// <param name="models">List of models to download</param>
-    private void DownloadModels(List<Model> models)
+    private async void DownloadModels(List<Model> models)
     {
         try
         {
             foreach (var model in models.Where(model => !_modelStorageService.IsModelAvailable(model)))
             {
-                _modelDownloadService.DownloadModelAsync(model);
+                await _modelDownloadService.DownloadModelAsync(model);
             }
         }
         catch (Exception e)

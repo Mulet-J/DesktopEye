@@ -59,6 +59,7 @@ public class ModelRegistry
         Language.JapaneseVertical,
         Language.ChineseSimplified,
         Language.ChineseTraditional,
+        Language.Osd
     ];
 
     public List<Model> GenerateTesseractRegistry(List<TesseractOCR.Enums.Language> languages)
