@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -11,8 +12,10 @@ using DesktopEye.Common.Domain.Features.OpticalCharacterRecognition.Interfaces;
 using DesktopEye.Common.Domain.Features.TextClassification.Interfaces;
 using DesktopEye.Common.Domain.Features.TextTranslation.Interfaces;
 using DesktopEye.Common.Infrastructure.Configuration;
+using DesktopEye.Common.Infrastructure.Models;
 using DesktopEye.Common.Resources;
 using Microsoft.Extensions.DependencyInjection;
+using TesseractOCR.Enums;
 using MainViewModel = DesktopEye.Common.Application.ViewModels.MainViewModel;
 using ScreenCaptureViewModel = DesktopEye.Common.Application.ViewModels.ScreenCapture.ScreenCaptureViewModel;
 
@@ -28,6 +31,7 @@ public class App : Avalonia.Application
     {
         _services = services;
         PreloadServices();
+        DownloadModels();
     }
 
     public override void Initialize()
@@ -40,6 +44,16 @@ public class App : Avalonia.Application
         // Preload services, obviously only pass singletons here
         var preloader = _services.GetRequiredService<ServicesLoader>();
         preloader.PreloadServices(typeof(IOcrOrchestrator), typeof(ITextClassifierOrchestrator), typeof(ITranslationOrchestrator));
+    }
+    
+    private void DownloadModels()
+    {
+        // Download models if needed
+        var modelProvider = _services.GetRequiredService<IModelProvider>();
+        // TODO: Empty list for now, change it for the correct user models
+        var userCustomModels = new List<Model>();
+        var userCustomLanguages = new List<Language>();
+        modelProvider.Process(userCustomModels, userCustomLanguages);
     }
 
     public override void OnFrameworkInitializationCompleted()
