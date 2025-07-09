@@ -247,39 +247,31 @@ public class NllbPyTorchTranslationService : ITranslationService, ILoadable
     {
         _logger.LogDebug("Loading tokenizer asynchronously for model: {ModelName}", modelName);
 
-        return await Task.Run(() =>
+        return await Task.Run(async () =>
         {
             cancellationToken.ThrowIfCancellationRequested();
 
             try
             {
-                _logger.LogTrace("Acquiring Python GIL for tokenizer loading");
-                using (Py.GIL())
+                _logger.LogTrace("Executing tokenizer loading with GIL protection");
+
+                return await _runtimeManager.ExecuteWithGilAsync(() =>
                 {
-                    _logger.LogTrace("Python GIL acquired for tokenizer loading");
+                    cancellationToken.ThrowIfCancellationRequested();
 
-                    try
-                    {
-                        cancellationToken.ThrowIfCancellationRequested();
+                    _logger.LogTrace("Importing transformers module");
+                    dynamic transformers = Py.Import("transformers");
 
-                        _logger.LogTrace("Importing transformers module");
-                        dynamic transformers = Py.Import("transformers");
+                    _logger.LogTrace("Getting AutoTokenizer from transformers");
+                    var autoTokenizer = transformers.GetAttr("AutoTokenizer");
 
-                        _logger.LogTrace("Getting AutoTokenizer from transformers");
-                        var autoTokenizer = transformers.GetAttr("AutoTokenizer");
+                    _logger.LogDebug("Loading tokenizer from pretrained model with cache directory: {CacheDir}",
+                        _modelDirectory);
+                    var tokenizer = autoTokenizer.from_pretrained(modelName, cache_dir: _modelDirectory);
 
-                        _logger.LogDebug("Loading tokenizer from pretrained model with cache directory: {CacheDir}",
-                            _modelDirectory);
-                        var tokenizer = autoTokenizer.from_pretrained(modelName, cache_dir: _modelDirectory);
-
-                        _logger.LogInformation("Tokenizer loaded successfully for model: {ModelName}", modelName);
-                        return tokenizer;
-                    }
-                    finally
-                    {
-                        _logger.LogTrace("Python GIL released after tokenizer loading");
-                    }
-                }
+                    _logger.LogInformation("Tokenizer loaded successfully for model: {ModelName}", modelName);
+                    return tokenizer;
+                });
             }
             catch (OperationCanceledException)
             {
@@ -305,34 +297,26 @@ public class NllbPyTorchTranslationService : ITranslationService, ILoadable
             try
             {
                 _logger.LogTrace("Acquiring Python GIL for model loading");
-                using (Py.GIL())
+
+                return _runtimeManager.ExecuteWithGilAsync(() =>
                 {
-                    _logger.LogTrace("Python GIL acquired for model loading");
+                    cancellationToken.ThrowIfCancellationRequested();
 
-                    try
-                    {
-                        cancellationToken.ThrowIfCancellationRequested();
+                    _logger.LogTrace("Importing transformers module for model loading");
+                    dynamic transformers = Py.Import("transformers");
 
-                        _logger.LogTrace("Importing transformers module for model loading");
-                        dynamic transformers = Py.Import("transformers");
+                    _logger.LogTrace("Getting AutoModelForSeq2SeqLM from transformers");
+                    var autoModelForSeq2SeqLm = transformers.GetAttr("AutoModelForSeq2SeqLM");
 
-                        _logger.LogTrace("Getting AutoModelForSeq2SeqLM from transformers");
-                        var autoModelForSeq2SeqLm = transformers.GetAttr("AutoModelForSeq2SeqLM");
+                    _logger.LogDebug("Loading model from pretrained with cache directory: {CacheDir}",
+                        _modelDirectory);
+                    var model = autoModelForSeq2SeqLm.from_pretrained(modelName,
+                        cache_dir: _modelDirectory,
+                        torch_dtype: "auto");
 
-                        _logger.LogDebug("Loading model from pretrained with cache directory: {CacheDir}",
-                            _modelDirectory);
-                        var model = autoModelForSeq2SeqLm.from_pretrained(modelName,
-                            cache_dir: _modelDirectory,
-                            torch_dtype: "auto");
-
-                        _logger.LogInformation("Model loaded successfully: {ModelName}", modelName);
-                        return model;
-                    }
-                    finally
-                    {
-                        _logger.LogTrace("Python GIL released after model loading");
-                    }
-                }
+                    _logger.LogInformation("Model loaded successfully: {ModelName}", modelName);
+                    return model;
+                });
             }
             catch (OperationCanceledException)
             {
@@ -403,39 +387,31 @@ public class NllbPyTorchTranslationService : ITranslationService, ILoadable
         try
         {
             _logger.LogTrace("Acquiring Python GIL for translation");
-            using (Py.GIL())
+
+            return _runtimeManager.ExecuteWithGil(() =>
             {
-                _logger.LogTrace("Python GIL acquired successfully");
+                _logger.LogTrace("Setting tokenizer source language to: {SourceLang}", convertedSourceLanguage);
+                _tokenizer.src_lang = convertedSourceLanguage;
 
-                try
-                {
-                    _logger.LogTrace("Setting tokenizer source language to: {SourceLang}", convertedSourceLanguage);
-                    _tokenizer.src_lang = convertedSourceLanguage;
+                _logger.LogTrace("Encoding input text with tokenizer");
+                var encoded = _tokenizer(text, return_tensors: "pt");
 
-                    _logger.LogTrace("Encoding input text with tokenizer");
-                    var encoded = _tokenizer(text, return_tensors: "pt");
+                _logger.LogTrace("Text encoded successfully, converting target language tokens");
+                var forcedBosTokenId = _tokenizer.convert_tokens_to_ids(convertedTargetLanguage);
 
-                    _logger.LogTrace("Text encoded successfully, converting target language tokens");
-                    var forcedBosTokenId = _tokenizer.convert_tokens_to_ids(convertedTargetLanguage);
+                _logger.LogTrace("Generating translation tokens using model");
+                var generatedTokens = _model.generate(
+                    input_ids: encoded["input_ids"],
+                    attention_mask: encoded["attention_mask"],
+                    forced_bos_token_id: forcedBosTokenId
+                );
 
-                    _logger.LogTrace("Generating translation tokens using model");
-                    var generatedTokens = _model.generate(
-                        input_ids: encoded["input_ids"],
-                        attention_mask: encoded["attention_mask"],
-                        forced_bos_token_id: forcedBosTokenId
-                    );
+                _logger.LogTrace("Decoding generated tokens to text");
+                var decoded = _tokenizer.batch_decode(generatedTokens, skip_special_tokens: true);
 
-                    _logger.LogTrace("Decoding generated tokens to text");
-                    var decoded = _tokenizer.batch_decode(generatedTokens, skip_special_tokens: true);
-
-                    var result = decoded[0].ToString();
-                    return result;
-                }
-                finally
-                {
-                    _logger.LogTrace("Python GIL released after translation");
-                }
-            }
+                var result = decoded[0].ToString();
+                return result;
+            });
         }
         catch (Exception ex)
         {
