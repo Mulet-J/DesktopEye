@@ -25,6 +25,7 @@
             <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
         </PackageReference>
         <PackageReference Include="FastText.Native.MacOs"/>
+        <PackageReference Include="Sdcb.OpenCvSharp4.mini.runtime.osx-arm64" />
         <PackageReference Include="SkiaSharp.NativeAssets.macOS"/>
     </ItemGroup>
 
