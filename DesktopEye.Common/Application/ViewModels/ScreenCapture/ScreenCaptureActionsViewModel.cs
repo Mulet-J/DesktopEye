@@ -9,12 +9,12 @@ using CommunityToolkit.Mvvm.Input;
 using DesktopEye.Common.Application.ViewModels.Base;
 using DesktopEye.Common.Domain.Features.OpticalCharacterRecognition.Interfaces;
 using DesktopEye.Common.Domain.Features.TextClassification.Interfaces;
+using DesktopEye.Common.Domain.Features.TextToSpeech;
 using DesktopEye.Common.Domain.Features.TextTranslation.Interfaces;
 using DesktopEye.Common.Domain.Models;
 using DesktopEye.Common.Domain.Models.OpticalCharacterRecognition;
 using DesktopEye.Common.Domain.Models.TextClassification;
 using DesktopEye.Common.Domain.Models.TextTranslation;
-using DesktopEye.Common.Infrastructure.Services.TTS;
 
 namespace DesktopEye.Common.Application.ViewModels.ScreenCapture;
 

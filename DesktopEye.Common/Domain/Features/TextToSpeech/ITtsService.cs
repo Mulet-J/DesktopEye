@@ -1,10 +1,9 @@
-using DesktopEye.Common.Domain.Models;
-
-namespace DesktopEye.Common.Infrastructure.Services.TTS;
-
 using System;
 using System.Threading.Tasks;
+using DesktopEye.Common.Domain.Models;
 using SoundFlow.Components;
+
+namespace DesktopEye.Common.Domain.Features.TextToSpeech;
 
 public interface ITtsService : IDisposable
 {
@@ -12,5 +11,5 @@ public interface ITtsService : IDisposable
     Task<string> TextToSpeechAsync(string text, Language language);
     
     // Ajouter une méthode pour récupérer un MediaPlayer configuré
-    SoundPlayer GetSoundPlayerForFile(string audioFilePath);
+    SoundPlayer? GetSoundPlayerForFile(string audioFilePath);
 }
