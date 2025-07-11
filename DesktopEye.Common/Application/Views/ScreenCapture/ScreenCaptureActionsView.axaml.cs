@@ -1,5 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using DesktopEye.Common.Application.ViewModels.ScreenCapture;
 
 namespace DesktopEye.Common.Application.Views.ScreenCapture;
 
@@ -8,8 +9,25 @@ public partial class ScreenCaptureActionsView : UserControl
     public ScreenCaptureActionsView()
     {
         InitializeComponent();
+        
+        // Abonner au changement d'onglet
+        TabControl tabControl = this.FindControl<TabControl>("MainTabControl");
+        if (tabControl != null)
+        {
+            tabControl.SelectionChanged += TabControl_SelectionChanged;
+        }
     }
 
+    private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (DataContext is ScreenCaptureActionsViewModel viewModel &&
+            sender is TabControl tabControl &&
+            tabControl.SelectedItem is TabItem selectedTab)
+        {
+            viewModel.ActiveTab = selectedTab.Name;
+        }
+    }
+    
     private void OnTextTabClick(object? sender, RoutedEventArgs e)
     {
         // Activer l'onglet Texte

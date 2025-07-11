@@ -11,10 +11,10 @@ public class PathService : IPathService
     {
         // Initialize directories based on the application name
         AppDataDirectory = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData).Replace(" ", "_"),
             ApplicationName);
         LocalAppDataDirectory =
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData).Replace(" ", "_"),
                 ApplicationName);
         CacheDirectory = Path.Combine(LocalAppDataDirectory, "cache");
         ModelsDirectory = Path.Combine(LocalAppDataDirectory, "models");

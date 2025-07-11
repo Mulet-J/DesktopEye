@@ -1,3 +1,5 @@
+using System;
+using System.IO;
 using Bugsnag.AspNet.Core;
 using DesktopEye.Common.Application.ViewModels;
 using DesktopEye.Common.Domain.Features.OpticalCharacterRecognition;
@@ -13,6 +15,7 @@ using DesktopEye.Common.Infrastructure.Services.ApplicationPath;
 using DesktopEye.Common.Infrastructure.Services.Conda;
 using DesktopEye.Common.Infrastructure.Services.Download;
 using DesktopEye.Common.Infrastructure.Services.Python;
+using DesktopEye.Common.Infrastructure.Services.TTS;
 using DesktopEye.Common.Infrastructure.Services.TrainedModel;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -60,6 +63,7 @@ public static class ServicesRegistration
         services.AddSingleton<ICondaService, CondaService>();
         services.AddSingleton<IPythonRuntimeManager, PythonRuntimeManager>();
         services.AddSingleton<IModelProvider, ModelProvider>();
+        services.AddSingleton<AudioService>();
         services.AddSingleton<ServicesLoader>();
         
         // Scoped infrastructure services
@@ -122,7 +126,9 @@ public static class ServicesRegistration
             configuration.ApiKey = "80808d682d0824d1e39b970ba69feffd";
             configuration.ReleaseStage = "production";
         });
+        
     }
+    
 
     /// <summary>
     /// Registers application ViewModels
@@ -133,6 +139,7 @@ public static class ServicesRegistration
         services.AddTransient<SettingsViewModel>();
         services.AddTransient<ScreenCaptureViewModel>();
         services.AddTransient<ScreenCaptureActionsViewModel>();
+        services.AddTransient<AudioPlayerViewModel>();
     }
 
 }
