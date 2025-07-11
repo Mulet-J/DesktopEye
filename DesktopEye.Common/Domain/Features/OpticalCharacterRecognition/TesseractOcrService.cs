@@ -55,7 +55,7 @@ public class TesseractOcrService : IOcrService, IDisposable
         {
             try
             {
-                _osdEngine = new Engine(Path.Combine(_pathService.ModelsDirectory, "tessdata"),
+                _osdEngine = new Engine(Path.Combine(_pathService.ModelsDirectory, "tesseract"),
                     TesseractOCR.Enums.Language.Osd);
                 return true;
             }

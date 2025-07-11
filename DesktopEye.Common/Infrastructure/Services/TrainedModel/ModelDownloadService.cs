@@ -5,25 +5,30 @@ using Bugsnag;
 using DesktopEye.Common.Infrastructure.Models;
 using DesktopEye.Common.Infrastructure.Services.ApplicationPath;
 using DesktopEye.Common.Infrastructure.Services.Download;
+using DesktopEye.Common.Infrastructure.Services.Python;
 using Microsoft.Extensions.Logging;
 using Python.Runtime;
 
 namespace DesktopEye.Common.Infrastructure.Services.TrainedModel;
 
-public class ModelDownloadService : IModelDownloadService
+public class ModelDownloadService : IModelDownloadService, IDisposable
 {
     private readonly IDownloadService _downloadService;
     private readonly IPathService _pathService;
+    private readonly IPythonRuntimeManager _runtimeManager;
     private readonly ILogger<ModelDownloadService> _logger;
-    private readonly Bugsnag.IClient _bugsnagClient;
+    private readonly IClient _bugsnagClient;
 
-    public ModelDownloadService(IDownloadService downloadService, IPathService pathService, ILogger<ModelDownloadService> logger,
+    public ModelDownloadService(IDownloadService downloadService, IPathService pathService,
+        IPythonRuntimeManager runtimeManager, ILogger<ModelDownloadService> logger,
         IClient bugsnagClient)
     {
         _downloadService = downloadService;
+        _pathService = pathService;
+        _runtimeManager = runtimeManager;
         _logger = logger;
         _bugsnagClient = bugsnagClient;
-        _pathService = pathService;
+        _runtimeManager.StartRuntime(this);
     }
 
     public async Task<bool> DownloadModelAsync(Model model)
@@ -67,10 +72,11 @@ public class ModelDownloadService : IModelDownloadService
                         model.ModelName,
                         modelPath);
                 else
-                    _logger.LogError("Failed to download model for language {Language} from {DownloadUrl}", model.ModelName,
+                    _logger.LogError("Failed to download model for language {Language} from {DownloadUrl}",
+                        model.ModelName,
                         model.ModelUrl);
             }
-            
+
             return result;
         }
         catch (Exception ex)
@@ -81,41 +87,32 @@ public class ModelDownloadService : IModelDownloadService
 
         return false;
     }
-    
-     private async Task<dynamic> LoadTokenizerAsync(string modelName, string modelDirectory)
+
+    private async Task<dynamic> LoadTokenizerAsync(string modelName, string modelDirectory)
     {
         _logger.LogDebug("Loading tokenizer asynchronously for model: {ModelName}", modelName);
 
-        return await Task.Run(() =>
+        return await Task.Run(async () =>
         {
             try
             {
-                _logger.LogTrace("Acquiring Python GIL for tokenizer loading");
-                using (Py.GIL())
+                _logger.LogTrace("Executing tokenizer loading with GIL protection");
+
+                return await _runtimeManager.ExecuteWithGilAsync(() =>
                 {
-                    _logger.LogTrace("Python GIL acquired for tokenizer loading");
+                    _logger.LogTrace("Importing transformers module");
+                    dynamic transformers = Py.Import("transformers");
 
-                    try
-                    {
-                        
-                        _logger.LogTrace("Importing transformers module");
-                        dynamic transformers = Py.Import("transformers");
+                    _logger.LogTrace("Getting AutoTokenizer from transformers");
+                    var autoTokenizer = transformers.GetAttr("AutoTokenizer");
 
-                        _logger.LogTrace("Getting AutoTokenizer from transformers");
-                        var autoTokenizer = transformers.GetAttr("AutoTokenizer");
+                    _logger.LogDebug("Loading tokenizer from pretrained model with cache directory: {CacheDir}",
+                        modelDirectory);
+                    var tokenizer = autoTokenizer.from_pretrained(modelName, cache_dir: modelDirectory);
 
-                        _logger.LogDebug("Loading tokenizer from pretrained model with cache directory: {CacheDir}",
-                            modelDirectory);
-                        var tokenizer = autoTokenizer.from_pretrained(modelName, cache_dir: modelDirectory);
-
-                        _logger.LogInformation("Tokenizer loaded successfully for model: {ModelName}", modelName);
-                        return tokenizer;
-                    }
-                    finally
-                    {
-                        _logger.LogTrace("Python GIL released after tokenizer loading");
-                    }
-                }
+                    _logger.LogInformation("Tokenizer loaded successfully for model: {ModelName}", modelName);
+                    return tokenizer;
+                });
             }
             catch (OperationCanceledException)
             {
@@ -139,32 +136,26 @@ public class ModelDownloadService : IModelDownloadService
             try
             {
                 _logger.LogTrace("Acquiring Python GIL for model loading");
-                using (Py.GIL())
+
+                return _runtimeManager.ExecuteWithGilAsync(() =>
                 {
                     _logger.LogTrace("Python GIL acquired for model loading");
 
-                    try
-                    {
-                        _logger.LogTrace("Importing transformers module for model loading");
-                        dynamic transformers = Py.Import("transformers");
+                    _logger.LogTrace("Importing transformers module for model loading");
+                    dynamic transformers = Py.Import("transformers");
 
-                        _logger.LogTrace("Getting AutoModelForSeq2SeqLM from transformers");
-                        var autoModelForSeq2SeqLm = transformers.GetAttr("AutoModelForSeq2SeqLM");
+                    _logger.LogTrace("Getting AutoModelForSeq2SeqLM from transformers");
+                    var autoModelForSeq2SeqLm = transformers.GetAttr("AutoModelForSeq2SeqLM");
 
-                        _logger.LogDebug("Loading model from pretrained with cache directory: {CacheDir}",
-                            modelDirectory);
-                        var model = autoModelForSeq2SeqLm.from_pretrained(modelName,
-                            cache_dir: modelDirectory,
-                            torch_dtype: "auto");
+                    _logger.LogDebug("Loading model from pretrained with cache directory: {CacheDir}",
+                        modelDirectory);
+                    var model = autoModelForSeq2SeqLm.from_pretrained(modelName,
+                        cache_dir: modelDirectory,
+                        torch_dtype: "auto");
 
-                        _logger.LogInformation("Model loaded successfully: {ModelName}", modelName);
-                        return model;
-                    }
-                    finally
-                    {
-                        _logger.LogTrace("Python GIL released after model loading");
-                    }
-                }
+                    _logger.LogInformation("Model loaded successfully: {ModelName}", modelName);
+                    return model;
+                });
             }
             catch (OperationCanceledException)
             {
@@ -177,5 +168,17 @@ public class ModelDownloadService : IModelDownloadService
                 throw;
             }
         });
+    }
+    
+    public void Dispose()
+    {
+        try
+        {
+            _runtimeManager.StopRuntime(this);
+        }
+        catch (Exception ex)
+        {
+            _bugsnagClient.Notify(ex);
+        }
     }
 }

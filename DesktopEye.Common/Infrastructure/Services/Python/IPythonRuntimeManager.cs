@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 
 namespace DesktopEye.Common.Infrastructure.Services.Python;
 
@@ -31,4 +32,32 @@ public interface IPythonRuntimeManager : IDisposable
     ///     Use with caution as this may cause issues for classes still using Python.
     /// </summary>
     void ForceShutdown();
+    
+    /// <summary>
+    ///     Executes a function with Python GIL (Global Interpreter Lock) protection
+    /// </summary>
+    /// <param name="func">The function to execute</param>
+    void ExecuteWithGil(Action func);
+
+    /// <summary>
+    ///     Executes a function with Python GIL (Global Interpreter Lock) protection (async version)
+    /// </summary>
+    /// <param name="func">The function to execute</param>
+    Task ExecuteWithGilAsync(Action func);
+
+    /// <summary>
+    ///     Executes a function with Python GIL (Global Interpreter Lock) protection and returns a result
+    /// </summary>
+    /// <typeparam name="T">The return type</typeparam>
+    /// <param name="func">The function to execute</param>
+    /// <returns>The result of the function</returns>
+    T ExecuteWithGil<T>(Func<T> func);
+
+    /// <summary>
+    ///     Executes a function with Python GIL (Global Interpreter Lock) protection and returns a result (async version)
+    /// </summary>
+    /// <typeparam name="T">The return type</typeparam>
+    /// <param name="func">The function to execute</param>
+    /// <returns>The result of the function</returns>
+    Task<T> ExecuteWithGilAsync<T>(Func<T> func);
 }

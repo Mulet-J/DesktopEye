@@ -254,39 +254,31 @@ public class NllbPyTorchTranslationService : ITranslationService, ILoadable
     {
         _logger.LogDebug("Loading tokenizer asynchronously for model: {ModelName}", modelName);
 
-        return await Task.Run(() =>
+        return await Task.Run(async () =>
         {
             cancellationToken.ThrowIfCancellationRequested();
 
             try
             {
-                _logger.LogTrace("Acquiring Python GIL for tokenizer loading");
-                using (Py.GIL())
+                _logger.LogTrace("Executing tokenizer loading with GIL protection");
+
+                return await _runtimeManager.ExecuteWithGilAsync(() =>
                 {
-                    _logger.LogTrace("Python GIL acquired for tokenizer loading");
+                    cancellationToken.ThrowIfCancellationRequested();
 
-                    try
-                    {
-                        cancellationToken.ThrowIfCancellationRequested();
+                    _logger.LogTrace("Importing transformers module");
+                    dynamic transformers = Py.Import("transformers");
 
-                        _logger.LogTrace("Importing transformers module");
-                        dynamic transformers = Py.Import("transformers");
-
-                        _logger.LogTrace("Getting AutoTokenizer from transformers");
-                        var autoTokenizer = transformers.GetAttr("AutoTokenizer");
+                    _logger.LogTrace("Getting AutoTokenizer from transformers");
+                    var autoTokenizer = transformers.GetAttr("AutoTokenizer");
 
                         _logger.LogDebug("Loading tokenizer from pretrained model with cache directory: {CacheDir}",
                             _pathService.ModelsDirectory);
                         var tokenizer = autoTokenizer.from_pretrained(modelName, cache_dir: _pathService.ModelsDirectory);
 
-                        _logger.LogInformation("Tokenizer loaded successfully for model: {ModelName}", modelName);
-                        return tokenizer;
-                    }
-                    finally
-                    {
-                        _logger.LogTrace("Python GIL released after tokenizer loading");
-                    }
-                }
+                    _logger.LogInformation("Tokenizer loaded successfully for model: {ModelName}", modelName);
+                    return tokenizer;
+                });
             }
             catch (OperationCanceledException)
             {
@@ -312,19 +304,16 @@ public class NllbPyTorchTranslationService : ITranslationService, ILoadable
             try
             {
                 _logger.LogTrace("Acquiring Python GIL for model loading");
-                using (Py.GIL())
+
+                return _runtimeManager.ExecuteWithGilAsync(() =>
                 {
-                    _logger.LogTrace("Python GIL acquired for model loading");
+                    cancellationToken.ThrowIfCancellationRequested();
 
-                    try
-                    {
-                        cancellationToken.ThrowIfCancellationRequested();
+                    _logger.LogTrace("Importing transformers module for model loading");
+                    dynamic transformers = Py.Import("transformers");
 
-                        _logger.LogTrace("Importing transformers module for model loading");
-                        dynamic transformers = Py.Import("transformers");
-
-                        _logger.LogTrace("Getting AutoModelForSeq2SeqLM from transformers");
-                        var autoModelForSeq2SeqLm = transformers.GetAttr("AutoModelForSeq2SeqLM");
+                    _logger.LogTrace("Getting AutoModelForSeq2SeqLM from transformers");
+                    var autoModelForSeq2SeqLm = transformers.GetAttr("AutoModelForSeq2SeqLM");
 
                         _logger.LogDebug("Loading model from pretrained with cache directory: {CacheDir}",
                             _pathService.ModelsDirectory);
@@ -332,14 +321,9 @@ public class NllbPyTorchTranslationService : ITranslationService, ILoadable
                             cache_dir: _pathService.ModelsDirectory,
                             torch_dtype: "auto");
 
-                        _logger.LogInformation("Model loaded successfully: {ModelName}", modelName);
-                        return model;
-                    }
-                    finally
-                    {
-                        _logger.LogTrace("Python GIL released after model loading");
-                    }
-                }
+                    _logger.LogInformation("Model loaded successfully: {ModelName}", modelName);
+                    return model;
+                });
             }
             catch (OperationCanceledException)
             {
