@@ -30,6 +30,8 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="FastText.NetWrapper"/>
+        <PackageReference Include="KokoroSharp" />
+        <PackageReference Include="SoundFlow" />
         <PackageReference Include="MessageBox.Avalonia" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection"/>
         <PackageReference Include="Microsoft.Extensions.Http"/>
@@ -38,6 +40,7 @@
         <PackageReference Include="Microsoft.ML.OnnxRuntime"/>
         <PackageReference Include="Microsoft.NET.Test.Sdk"/>
         <PackageReference Include="Moq"/>
+        <PackageReference Include="NAudio" />
         <PackageReference Include="NTextCat"/>
         <PackageReference Include="OpenCvSharp4"/>
         <PackageReference Include="pythonnet"/>

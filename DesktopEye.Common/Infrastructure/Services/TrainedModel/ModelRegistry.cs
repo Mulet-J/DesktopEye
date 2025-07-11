@@ -45,6 +45,16 @@ public class ModelRegistry
             Source = ModelSource.HuggingFace,
             Type = ModelType.TextTranslator
         },
+        new()
+        {
+            ModelName = "kokoro-v1.0.onnx",
+            ModelUrl = "https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/kokoro-v1.0.onnx",
+            ModelFolderName = "kokoro-tts",
+            Runtime = ModelRuntime.KokoroTts,
+            Source = ModelSource.DirectDownload,
+            Type = ModelType.TextToSpeech
+        }
+        
     ];
     
     public readonly List<Language> DefaultTesseractLanguages =

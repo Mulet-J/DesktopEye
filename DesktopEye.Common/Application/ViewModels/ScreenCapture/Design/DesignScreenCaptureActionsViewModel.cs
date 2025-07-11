@@ -7,6 +7,7 @@ using DesktopEye.Common.Domain.Features.TextClassification.Interfaces;
 using DesktopEye.Common.Domain.Features.TextTranslation.Interfaces;
 using DesktopEye.Common.Domain.Models;
 using DesktopEye.Common.Domain.Models.OpticalCharacterRecognition;
+using DesktopEye.Common.Infrastructure.Services.TTS;
 using DesktopEye.Common.Infrastructure.Services.Dialog;
 using DesktopEye.Common.Infrastructure.Services.Dictionary;
 using Moq;
@@ -21,7 +22,9 @@ public class DesignScreenCaptureActionsViewModel : ScreenCaptureActionsViewModel
         new Mock<ITranslationOrchestrator>().Object,
         new Mock<Bugsnag.IClient>().Object,
         new Mock<IWiktionaryService>().Object,
-        new Mock<IDialogService>().Object
+        new Mock<IDialogService>().Object,
+        new Mock<ITtsService>().Object,
+        new AudioPlayerViewModel()
     )
     {
         var words = new List<OcrWord> { new(0, 0, 0, 0, 1, "Le") };

@@ -9,6 +9,7 @@ using System.Timers;
 using Avalonia.Threading;
 using DesktopEye.Common.Application.ViewModels.ScreenCapture;
 
+using DesktopEye.Common.Application.ViewModels.ScreenCapture;
 
 namespace DesktopEye.Common.Application.Views.ScreenCapture;
 
@@ -25,6 +26,23 @@ public partial class ScreenCaptureActionsView : UserControl
         _selectionTimer = new Timer(1000); // 1,2 sec
         _selectionTimer.AutoReset = false;
         _selectionTimer.Elapsed += OnSelectionTimerElapsed;
+        
+        // Abonner au changement d'onglet
+        TabControl tabControl = this.FindControl<TabControl>("MainTabControl");
+        if (tabControl != null)
+        {
+            tabControl.SelectionChanged += TabControl_SelectionChanged;
+        }
+    }
+
+    private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (DataContext is ScreenCaptureActionsViewModel viewModel &&
+            sender is TabControl tabControl &&
+            tabControl.SelectedItem is TabItem selectedTab)
+        {
+            viewModel.ActiveTab = selectedTab.Name;
+        }
     }
 
     private void TranslatedTextBox_PropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
