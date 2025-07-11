@@ -18,12 +18,12 @@ using DesktopEye.Common.Application.ViewModels.Base;
 using DesktopEye.Common.Domain.Features.Dictionary.Helpers;
 using DesktopEye.Common.Domain.Features.OpticalCharacterRecognition.Interfaces;
 using DesktopEye.Common.Domain.Features.TextClassification.Interfaces;
+using DesktopEye.Common.Domain.Features.TextToSpeech;
 using DesktopEye.Common.Domain.Features.TextTranslation.Interfaces;
 using DesktopEye.Common.Domain.Models;
 using DesktopEye.Common.Domain.Models.OpticalCharacterRecognition;
 using DesktopEye.Common.Domain.Models.TextClassification;
 using DesktopEye.Common.Domain.Models.TextTranslation;
-using DesktopEye.Common.Infrastructure.Services.TTS;
 using DesktopEye.Common.Infrastructure.Services.Dialog;
 using DesktopEye.Common.Infrastructure.Services.Dictionary;
 using MsBox.Avalonia;
@@ -78,8 +78,12 @@ public partial class ScreenCaptureActionsViewModel : ViewModelBase
     // Dans la classe ScreenCaptureActionsViewModel
     [ObservableProperty] private ICommand? _relaunchAnalysisCommand;
 
-    public ScreenCaptureActionsViewModel(IOcrOrchestrator ocrOrchestrator, ITextClassifierOrchestrator classifierOrchestrator,
-        ITranslationOrchestrator translationOrchestrator, Bugsnag.IClient bugsnag, ITtsService ttsService, AudioPlayerViewModel audioPlayerViewModel,IWiktionaryService wiktionaryService, IDialogService dialogService)
+    public string DisplayText => OcrText?.Text ?? string.Empty;
+    
+    public ScreenCaptureActionsViewModel(IOcrOrchestrator ocrOrchestrator,
+        ITextClassifierOrchestrator classifierOrchestrator,
+        ITranslationOrchestrator translationOrchestrator, ITtsService ttsService,
+        AudioPlayerViewModel audioPlayerViewModel, Bugsnag.IClient bugsnag)
     {
         _ocrOrchestrator = ocrOrchestrator;
         _classifierOrchestrator = classifierOrchestrator;

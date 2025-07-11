@@ -2,9 +2,9 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 using DesktopEye.Common.Domain.Models;
-using DesktopEye.Common.Infrastructure.Services.TTS;
+using SoundFlow.Components;
 
-namespace DesktopEye.Common.Infrastructure.Services.TTS;
+namespace DesktopEye.Common.Domain.Features.TextToSpeech;
 
 public class AudioService
 {
@@ -23,7 +23,7 @@ public class AudioService
         return await _ttsService.TextToSpeechAsync(text, language);
     }
     
-    public SoundFlow.Components.SoundPlayer CreatePlayer(string audioFilePath)
+    public SoundPlayer? CreatePlayer(string audioFilePath)
     {
         if (!File.Exists(audioFilePath))
             throw new FileNotFoundException("Le fichier audio n'existe pas", audioFilePath);

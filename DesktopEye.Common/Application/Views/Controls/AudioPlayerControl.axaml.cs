@@ -7,8 +7,8 @@ using Avalonia.Markup.Xaml;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DesktopEye.Common.Application.ViewModels;
+using DesktopEye.Common.Domain.Features.TextToSpeech;
 using DesktopEye.Common.Domain.Models;
-using DesktopEye.Common.Infrastructure.Services.TTS;
 using SoundFlow.Components;
 using SoundFlow.Providers;
 

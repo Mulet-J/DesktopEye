@@ -7,10 +7,12 @@ using DesktopEye.Common.Domain.Features.OpticalCharacterRecognition;
 using DesktopEye.Common.Domain.Features.OpticalCharacterRecognition.Interfaces;
 using DesktopEye.Common.Domain.Features.TextClassification;
 using DesktopEye.Common.Domain.Features.TextClassification.Interfaces;
+using DesktopEye.Common.Domain.Features.TextToSpeech;
 using DesktopEye.Common.Domain.Features.TextTranslation;
 using DesktopEye.Common.Domain.Features.TextTranslation.Interfaces;
 using DesktopEye.Common.Domain.Models.OpticalCharacterRecognition;
 using DesktopEye.Common.Domain.Models.TextClassification;
+using DesktopEye.Common.Domain.Models.TextToSpeech;
 using DesktopEye.Common.Domain.Models.TextTranslation;
 using DesktopEye.Common.Infrastructure.Services.ApplicationPath;
 using DesktopEye.Common.Infrastructure.Services.Conda;
@@ -18,7 +20,6 @@ using DesktopEye.Common.Infrastructure.Services.Dialog;
 using DesktopEye.Common.Infrastructure.Services.Dictionary;
 using DesktopEye.Common.Infrastructure.Services.Download;
 using DesktopEye.Common.Infrastructure.Services.Python;
-using DesktopEye.Common.Infrastructure.Services.TTS;
 using DesktopEye.Common.Infrastructure.Services.TrainedModel;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -92,6 +93,7 @@ public static class ServicesRegistration
         RegisterOcrServices(services);
         RegisterTextClassificationServices(services);
         RegisterTranslationServices(services);
+        RegisterTextToSpeechServices(services);
     }
 
     /// <summary>
@@ -117,6 +119,14 @@ public static class ServicesRegistration
     private static void RegisterTranslationServices(IServiceCollection services)
     {
         services.AddKeyedTransient<ITranslationService, NllbPyTorchTranslationService>(TranslationType.Nllb);
+    }
+    
+    /// <summary>
+    ///  Registers text-to-speech services with their respective keys
+    /// </summary>
+    private static void RegisterTextToSpeechServices(IServiceCollection services)
+    {
+        services.AddKeyedTransient<ITtsService, KokoroTtsService>(TtsType.KokoroTts);
     }
 
     /// <summary>
