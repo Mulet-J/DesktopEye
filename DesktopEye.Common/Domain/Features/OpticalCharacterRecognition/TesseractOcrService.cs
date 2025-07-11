@@ -9,7 +9,6 @@ using DesktopEye.Common.Domain.Features.OpticalCharacterRecognition.Interfaces;
 using DesktopEye.Common.Domain.Models.OpticalCharacterRecognition;
 using DesktopEye.Common.Infrastructure.Exceptions;
 using DesktopEye.Common.Infrastructure.Services.ApplicationPath;
-using DesktopEye.Common.Infrastructure.Services.Download;
 using Microsoft.Extensions.Logging;
 using TesseractOCR;
 using TesseractOCR.Enums;
@@ -21,33 +20,21 @@ namespace DesktopEye.Common.Domain.Features.OpticalCharacterRecognition;
 
 public class TesseractOcrService : IOcrService, IDisposable
 {
-    private const string ModelsFolderName = "tessdata";
-
-    private const string DownloadUrl =
-        "https://raw.githubusercontent.com/tesseract-ocr/tessdata/refs/heads/main/[language].traineddata";
-
-    private readonly IDownloadService _downloadService;
-    private readonly object _lock = new();
     private readonly ILogger<TesseractOcrService> _logger;
-    private readonly string _modelsFolderPath;
     private readonly IPathService _pathService;
+
+    private readonly object _lock = new();
 
     private Engine? _engine;
 
     // Only used to detect language and orientation, unable to extract text
     private Engine? _osdEngine;
 
-    public TesseractOcrService(IPathService pathService, IDownloadService downloadService,
+    public TesseractOcrService(IPathService pathService,
         ILogger<TesseractOcrService> logger)
     {
-        _pathService = pathService ?? throw new ArgumentNullException(nameof(pathService));
-        _downloadService = downloadService ?? throw new ArgumentNullException(nameof(downloadService));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-
-        _modelsFolderPath = Path.Combine(pathService.ModelsDirectory, ModelsFolderName);
-
-        _logger.LogInformation("TesseractOcrService initialized with models folder path: {ModelsFolderPath}",
-            _modelsFolderPath);
+        _pathService = pathService;
+        _logger = logger;
     }
 
     public void Dispose()
@@ -68,7 +55,8 @@ public class TesseractOcrService : IOcrService, IDisposable
         {
             try
             {
-                _osdEngine = new Engine(_modelsFolderPath, TesseractOCR.Enums.Language.Osd);
+                _osdEngine = new Engine(Path.Combine(_pathService.ModelsDirectory, "tesseract"),
+                    TesseractOCR.Enums.Language.Osd);
                 return true;
             }
             catch
@@ -76,93 +64,6 @@ public class TesseractOcrService : IOcrService, IDisposable
                 _logger.LogError("Encountered an error when trying to load osd model");
                 return false;
             }
-        }
-    }
-
-    private async Task<bool> DownloadModelAsync(TesseractOCR.Enums.Language language)
-    {
-        var stringValue = LanguageHelper.EnumToString(language);
-        var modelName = $"{stringValue}.traineddata";
-        var modelPath = Path.Combine(_modelsFolderPath, modelName);
-
-        _logger.LogDebug("Checking model availability for language {Language} at path: {ModelPath}", language,
-            modelPath);
-
-        if (File.Exists(modelPath))
-        {
-            _logger.LogDebug("Model for language {Language} already exists", language);
-            return true;
-        }
-
-        try
-        {
-            _logger.LogInformation("Downloading model for language {Language}", language);
-
-            // Ensure the models folder exists
-            Directory.CreateDirectory(_modelsFolderPath);
-            _logger.LogDebug("Created models directory: {_modelsFolderPath}", _modelsFolderPath);
-
-            // Replace [language] placeholder with actual language code
-            var downloadUrl = DownloadUrl.Replace("[language]", stringValue.ToLowerInvariant());
-            _logger.LogDebug("Download URL for {Language}: {DownloadUrl}", modelName, downloadUrl);
-
-            // Download the model file
-            var result = await _downloadService.DownloadFileAsync(downloadUrl, modelPath);
-
-            if (result)
-                _logger.LogInformation("Successfully downloaded model for language {Language} to {ModelPath}", language,
-                    modelPath);
-            else
-                _logger.LogError("Failed to download model for language {Language} from {DownloadUrl}", language,
-                    downloadUrl);
-
-            return result;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Exception occurred while downloading model for language {Language}", language);
-            return false;
-        }
-    }
-
-    private async Task<bool> DownloadModelAsync(List<TesseractOCR.Enums.Language> languages)
-    {
-        if (languages.Count == 0)
-        {
-            _logger.LogDebug("No languages to download, returning success");
-            return true; // Nothing to download, consider it successful
-        }
-
-        _logger.LogInformation("Starting download of {LanguageCount} language models: {Languages}",
-            languages.Count, string.Join(", ", languages));
-
-        try
-        {
-            // Create tasks for downloading each model
-            var downloadTasks = languages.Select(DownloadModelAsync).ToArray();
-
-            _logger.LogDebug("Created {TaskCount} download tasks", downloadTasks.Length);
-
-            // Wait for all downloads to complete
-            var results = await Task.WhenAll(downloadTasks);
-
-            var successCount = results.Count(r => r);
-            var failureCount = results.Length - successCount;
-
-            if (failureCount > 0)
-                _logger.LogWarning("Download completed with {SuccessCount} successes and {FailureCount} failures",
-                    successCount, failureCount);
-            else
-                _logger.LogInformation("All {LanguageCount} language models downloaded successfully", languages.Count);
-
-            // Return true only if all downloads were successful
-            return results.All(result => result);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to download tessdata models for languages {Languages}",
-                string.Join(", ", languages));
-            return false;
         }
     }
 
@@ -213,7 +114,6 @@ public class TesseractOcrService : IOcrService, IDisposable
     }
 
     #endregion
-
 
     #region GetText
 
@@ -428,7 +328,7 @@ public class TesseractOcrService : IOcrService, IDisposable
                 _logger.LogDebug("Converted {LanguageCount} languages to library format", convertedLanguages.Count);
 
                 _engine?.Dispose();
-                _engine = new Engine(_modelsFolderPath, convertedLanguages);
+                _engine = new Engine(Path.Combine(_pathService.ModelsDirectory, "tessdata"), convertedLanguages);
 
                 _logger.LogInformation("OCR engine successfully initialized with {LanguageCount} languages",
                     convertedLanguages.Count);
@@ -443,7 +343,7 @@ public class TesseractOcrService : IOcrService, IDisposable
         }
     }
 
-    public async Task<bool> SetEngineAsync(List<Language> languages, CancellationToken cancellationToken = default)
+    private async Task<bool> SetEngineAsync(List<Language> languages, CancellationToken cancellationToken = default)
     {
         return await Task.Run(() => SetEngine(languages), cancellationToken);
     }

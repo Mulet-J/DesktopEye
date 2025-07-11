@@ -1,7 +1,6 @@
 using DesktopEye.Common.Domain.Features.TextClassification;
 using DesktopEye.Common.Domain.Models;
 using DesktopEye.Common.Infrastructure.Services.ApplicationPath;
-using DesktopEye.Common.Infrastructure.Services.Download;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -19,16 +18,11 @@ public class NTextCatClassifierTest
             client => { client.DefaultRequestHeaders.Add("User-Agent", "DesktopEye/1.0"); });
 
         // Build the service provider and get the HttpClientFactory
-        var serviceProvider = services.BuildServiceProvider();
-        var mockBugsnagService = new Mock<Bugsnag.IClient>();
-        var httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
-        var downloadLogger = new Mock<ILogger<DownloadService>>();
-        var downloadService = new DownloadService(httpClientFactory, downloadLogger.Object, mockBugsnagService.Object);
         var nTextCatLogger = new Mock<ILogger<NTextCatClassifierService>>();
+        var pathServiceMock = new Mock<IPathService>();
 
         // Create required dependencies
-        IPathService pathService = new PathService();
-        _nTextCatClassifierService = new NTextCatClassifierService(pathService, downloadService, nTextCatLogger.Object);
+        _nTextCatClassifierService = new NTextCatClassifierService(nTextCatLogger.Object, pathServiceMock.Object);
     }
 
     // [Fact]

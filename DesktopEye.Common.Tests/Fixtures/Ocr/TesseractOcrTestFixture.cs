@@ -23,7 +23,7 @@ public class TesseractOcrTestFixture : IDisposable
         var mockDownloadFactory = new Mock<IHttpClientFactory>();
         var mockDownloadService = new Mock<DownloadService>(mockDownloadFactory.Object, mockDownloadLogger.Object);
         var mockOcrLogger = new Mock<ILogger<TesseractOcrService>>();
-        OcrService = new TesseractOcrService(pathService, mockDownloadService.Object, mockOcrLogger.Object);
+        OcrService = new TesseractOcrService(pathService, mockOcrLogger.Object);
         OcrService.LoadRequired();
     }
 
