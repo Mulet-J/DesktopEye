@@ -122,7 +122,6 @@ jobs:
         dotnet publish ${{ matrix.project }}/${{ matrix.project }}.csproj \
           --runtime ${{ matrix.runtime }} \
           --configuration Release \
-          --self-contained true \
           --output ./publish/${{ matrix.runtime }} \
           --verbosity minimal \
           -p:PublishSingleFile=true \
