@@ -44,15 +44,15 @@ jobs:
     - name: Build solution
       run: dotnet build ${{ env.SOLUTION_FILE }} --configuration Release --no-restore
 
-  # - name: Run tests
-  #   run: dotnet test ${{ env.SOLUTION_FILE }} --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage"
+#    - name: Run tests
+#      run: dotnet test ${{ env.SOLUTION_FILE }} --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage"
 
-  #  - name: Upload test results
-  #    uses: actions/upload-artifact@v4
-  #    if: always()
-  #    with:
-  #      name: test-results
-  #      path: '**/TestResults/**/*'
+#    - name: Upload test results
+#      uses: actions/upload-artifact@v4
+#      if: always()
+#      with:
+#        name: test-results
+#        path: '**/TestResults/**/*'
 
   # Job de build et release
   build-and-release:
@@ -115,7 +115,7 @@ jobs:
 
     - name: Publish application
       run: |
-        dotnet publish ${{ matrix.project }} \
+        dotnet publish ${{ matrix.project }}/${{ matrix.project }}.csproj \
           --runtime ${{ matrix.runtime }} \
           --configuration Release \
           --self-contained true \
