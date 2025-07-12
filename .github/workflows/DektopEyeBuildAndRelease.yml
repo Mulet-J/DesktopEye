@@ -119,18 +119,10 @@ jobs:
     - name: Publish application
       shell: bash
       run: |
-        dotnet publish ${{ matrix.project }}/${{ matrix.project }}.csproj \
+       dotnet publish ${{ matrix.project }}/${{ matrix.project }}.csproj \
           --runtime ${{ matrix.runtime }} \
           --configuration Release \
-          --output ./publish/${{ matrix.runtime }} \
-          --verbosity minimal \
-          -p:PublishSingleFile=true \
-          -p:IncludeNativeLibrariesForSelfExtract=true \
-          -p:PublishTrimmed=false \
-          -p:RuntimeIdentifier=${{ matrix.runtime }} \
-          -p:AssemblyVersion=${{ steps.get_version.outputs.version }} \
-          -p:FileVersion=${{ steps.get_version.outputs.version }} \
-          -p:InformationalVersion=${{ steps.get_version.outputs.version }}
+          --output ./publish/${{ matrix.runtime }}
       timeout-minutes: 20
 
     - name: Create archive (Windows)
