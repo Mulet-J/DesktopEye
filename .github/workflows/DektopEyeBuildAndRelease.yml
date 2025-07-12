@@ -33,26 +33,32 @@ jobs:
     - name: Cache NuGet packages
       uses: actions/cache@v4
       with:
-        path: ~/.nuget/packages
-        key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj', '**/Directory.Packages.props') }}
+        path: |
+          ~/.nuget/packages
+          ~/.local/share/NuGet/v3-cache
+          ~/.cache/NuGet/v3-cache
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj', '**/Directory.Packages.props', '**/packages.lock.json') }}
         restore-keys: |
           ${{ runner.os }}-nuget-
 
     - name: Restore dependencies
-      run: dotnet restore ${{ env.SOLUTION_FILE }}
+      run: dotnet restore ${{ env.SOLUTION_FILE }} --verbosity minimal
+      timeout-minutes: 10
 
     - name: Build solution
-      run: dotnet build ${{ env.SOLUTION_FILE }} --configuration Release --no-restore
+      run: dotnet build ${{ env.SOLUTION_FILE }} --configuration Release --no-restore --verbosity minimal
+      timeout-minutes: 15
 
-#    - name: Run tests
-#      run: dotnet test ${{ env.SOLUTION_FILE }} --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage"
+   # - name: Run tests
+   #   run: dotnet test ${{ env.SOLUTION_FILE }} --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage" --logger trx
+   #   timeout-minutes: 10
 
-#    - name: Upload test results
-#      uses: actions/upload-artifact@v4
-#      if: always()
-#      with:
-#        name: test-results
-#        path: '**/TestResults/**/*'
+   # - name: Upload test results
+   #   uses: actions/upload-artifact@v4
+   #   if: always()
+   #   with:
+   #     name: test-results
+   #     path: '**/TestResults/**/*'
 
   # Job de build et release
   build-and-release:
@@ -110,8 +116,9 @@ jobs:
         fi
       shell: bash
 
-    - name: Restore dependencies
-      run: dotnet restore ${{ env.SOLUTION_FILE }}
+    - name: Restore dependencies for specific runtime
+      run: dotnet restore ${{ matrix.project }}/${{ matrix.project }}.csproj --runtime ${{ matrix.runtime }} --verbosity minimal
+      timeout-minutes: 15
 
     - name: Publish application
       run: |
@@ -121,12 +128,14 @@ jobs:
           --self-contained true \
           --output ./publish/${{ matrix.runtime }} \
           --no-restore \
+          --verbosity minimal \
           -p:PublishSingleFile=true \
           -p:IncludeNativeLibrariesForSelfExtract=true \
           -p:PublishTrimmed=false \
           -p:AssemblyVersion=${{ steps.get_version.outputs.version }} \
           -p:FileVersion=${{ steps.get_version.outputs.version }} \
           -p:InformationalVersion=${{ steps.get_version.outputs.version }}
+      timeout-minutes: 20
 
     - name: Create archive (Windows)
       if: matrix.os == 'windows-latest'
