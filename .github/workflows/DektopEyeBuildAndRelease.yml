@@ -117,6 +117,7 @@ jobs:
       shell: bash
 
     - name: Restore dependencies for specific runtime
+      shell: bash
       run: |
         dotnet restore ${{ matrix.project }}/${{ matrix.project }}.csproj \
           --runtime ${{ matrix.runtime }} \
@@ -125,6 +126,7 @@ jobs:
       timeout-minutes: 15
 
     - name: Publish application
+      shell: bash
       run: |
         dotnet publish ${{ matrix.project }}/${{ matrix.project }}.csproj \
           --runtime ${{ matrix.runtime }} \
