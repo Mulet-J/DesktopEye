@@ -49,16 +49,16 @@ jobs:
       run: dotnet build ${{ env.SOLUTION_FILE }} --configuration Release --no-restore --verbosity minimal
       timeout-minutes: 15
 
- #   - name: Run tests
- #     run: dotnet test ${{ env.SOLUTION_FILE }} --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage" --logger trx
- #     timeout-minutes: 10
+  #  - name: Run tests
+  #    run: dotnet test ${{ env.SOLUTION_FILE }} --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage" --logger trx
+  #    timeout-minutes: 10
 
- #   - name: Upload test results
- #     uses: actions/upload-artifact@v4
- #     if: always()
- #     with:
- #       name: test-results
- #       path: '**/TestResults/**/*'
+  #  - name: Upload test results
+  #    uses: actions/upload-artifact@v4
+  #    if: always()
+  #    with:
+  #      name: test-results
+  #      path: '**/TestResults/**/*'
 
   # Job de build et release
   build-and-release:
@@ -116,15 +116,6 @@ jobs:
         fi
       shell: bash
 
-    - name: Restore dependencies for specific runtime
-      shell: bash
-      run: |
-        dotnet restore ${{ matrix.project }}/${{ matrix.project }}.csproj \
-          --runtime ${{ matrix.runtime }} \
-          --verbosity minimal \
-          -p:RuntimeIdentifier=${{ matrix.runtime }}
-      timeout-minutes: 15
-
     - name: Publish application
       shell: bash
       run: |
@@ -133,7 +124,6 @@ jobs:
           --configuration Release \
           --self-contained true \
           --output ./publish/${{ matrix.runtime }} \
-          --no-restore \
           --verbosity minimal \
           -p:PublishSingleFile=true \
           -p:IncludeNativeLibrariesForSelfExtract=true \
