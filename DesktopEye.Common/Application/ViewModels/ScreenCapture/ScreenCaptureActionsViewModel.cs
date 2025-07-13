@@ -83,6 +83,8 @@ public partial class ScreenCaptureActionsViewModel : ViewModelBase
     public ScreenCaptureActionsViewModel(IOcrOrchestrator ocrOrchestrator,
         ITextClassifierOrchestrator classifierOrchestrator,
         ITranslationOrchestrator translationOrchestrator,
+        IWiktionaryService wiktionaryService,
+        IDialogService dialogService,
         AudioPlayerViewModel audioPlayerViewModel, Bugsnag.IClient bugsnag)
     {
         _ocrOrchestrator = ocrOrchestrator;
