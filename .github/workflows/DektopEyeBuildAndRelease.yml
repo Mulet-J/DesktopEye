@@ -22,8 +22,18 @@ jobs:
   # Job de CI - Tests et validation
   ci:
     name: Continuous Integration
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     if: github.event_name == 'pull_request' || (github.event_name == 'push' && !startsWith(github.ref, 'refs/tags/'))
+    
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            project: DesktopEye.Desktop.Windows
+          - os: ubuntu-latest
+            project: DesktopEye.Desktop.Linux
+          - os: macos-latest
+            project: DesktopEye.Desktop.MacOS
     
     steps:
     - name: Checkout code
@@ -48,11 +58,11 @@ jobs:
           ${{ runner.os }}-nuget-
 
     - name: Restore dependencies
-      run: dotnet restore ${{ env.SOLUTION_FILE }} --verbosity minimal
+      run: dotnet restore ${{ matrix.project }}/${{ matrix.project }}.csproj --verbosity minimal
       timeout-minutes: 10
 
     - name: Build solution
-      run: dotnet build ${{ env.SOLUTION_FILE }} --configuration Release --no-restore --verbosity minimal
+      run: dotnet build ${{ matrix.project }}/${{ matrix.project }}.csproj --configuration Release --no-restore --verbosity minimal
       timeout-minutes: 15
 
   #  - name: Run tests
