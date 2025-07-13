@@ -66,7 +66,7 @@ jobs:
       timeout-minutes: 15
 
     - name: Run tests
-      run: dotnet test ${{ env.SOLUTION_FILE }} --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage" --logger trx
+      run: dotnet test DesktopEye.Common.Tests/DesktopEye.Common.Tests.csproj --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage" --logger trx
       timeout-minutes: 10
 
     - name: Upload test results
