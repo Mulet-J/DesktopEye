@@ -351,7 +351,7 @@ public class TesseractOcrService : IOcrService, IDisposable
 
     #region Helpers
 
-    private static Language LibLanguageToLanguage(TesseractOCR.Enums.Language libLanguage)
+    public static Language LibLanguageToLanguage(TesseractOCR.Enums.Language libLanguage)
     {
         return libLanguage switch
         {
@@ -373,7 +373,7 @@ public class TesseractOcrService : IOcrService, IDisposable
         };
     }
 
-    private static TesseractOCR.Enums.Language LanguageToLibLanguage(Language language)
+    public static TesseractOCR.Enums.Language LanguageToLibLanguage(Language language)
     {
         return language switch
         {
@@ -395,17 +395,22 @@ public class TesseractOcrService : IOcrService, IDisposable
         };
     }
 
-    private static List<TesseractOCR.Enums.Language> LanguageToLibLanguage(List<Language> languages)
+    public static List<TesseractOCR.Enums.Language> LanguageToLibLanguage(List<Language> languages)
     {
         return languages.Select(LanguageToLibLanguage).ToList();
     }
 
-    private static List<OcrWord> ParseTsvString(string tsvContent)
+    public static List<OcrWord> ParseTsvString(string tsvContent)
     {
-        var lines = tsvContent.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries);
-
+        if (string.IsNullOrWhiteSpace(tsvContent))
+            return [];
+    
+        // Normaliser les fins de ligne pour garantir la cohérence
+        var normalizedContent = tsvContent.Replace("\r\n", "\n");
+        var lines = normalizedContent.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+    
         var ocrWords = new List<OcrWord>();
-
+    
         // Skip header row (first line)
         for (var i = 1; i < lines.Length; i++)
         {
@@ -413,11 +418,11 @@ public class TesseractOcrService : IOcrService, IDisposable
             if (word != null)
                 ocrWords.Add(word);
         }
-
+    
         return ocrWords;
     }
 
-    private static OcrWord? ParseTsvLine(string line)
+    public static OcrWord? ParseTsvLine(string line)
     {
         if (string.IsNullOrWhiteSpace(line))
             return null;

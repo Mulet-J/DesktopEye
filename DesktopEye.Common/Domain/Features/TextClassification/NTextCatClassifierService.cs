@@ -36,7 +36,7 @@ public class NTextCatClassifierService : ITextClassifierService, ILoadable
         _modelRegistry.DefaultModels.FirstOrDefault(model => model.ModelName == "NTextCat.xml") ??
         throw new InvalidOperationException("NTextCat model not found in registry");
 
-    private bool IsModelLoading => _loadingTask?.IsCompleted == false;
+    public bool IsModelLoading => _loadingTask?.IsCompleted == false;
     public bool IsModelLoaded => _languageIdentifier != null;
 
     public Language ClassifyText(string text)
@@ -108,7 +108,7 @@ public class NTextCatClassifierService : ITextClassifierService, ILoadable
     {
         if (IsModelLoaded || IsModelLoading) return true;
 
-        _loadingTask = LoadModelInternalAsync(cancellationToken);
+        _loadingTask = LoadModelInternalAsync();
         await _loadingTask;
         return true;
     }
@@ -119,7 +119,7 @@ public class NTextCatClassifierService : ITextClassifierService, ILoadable
         _isDisposed = true;
     }
 
-    private Task LoadModelInternalAsync(CancellationToken cancellationToken)
+    private Task LoadModelInternalAsync()
     {
         var modelPath = Path.Combine(_pathService.ModelsDirectory, NTextCatModel.ModelFolderName,
             NTextCatModel.ModelName);

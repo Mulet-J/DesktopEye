@@ -51,6 +51,8 @@
 
     <ItemGroup>
         <Folder Include="Assets\"/>
+        <Folder Include="e2e\" />
+        <Folder Include="Unit\Infrastructure\" />
     </ItemGroup>
 
     <ItemGroup>

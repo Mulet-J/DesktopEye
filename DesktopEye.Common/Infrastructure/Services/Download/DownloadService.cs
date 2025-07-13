@@ -21,7 +21,7 @@ public class DownloadService : IDownloadService
         _bugsnag = bugsnag;
     }
 
-    public async Task<bool> DownloadFileAsync(string url, string destinationPath)
+    public async Task<bool> DownloadFileAsync(string? url, string destinationPath)
     {
         _logger.LogInformation("Starting download from {Url} to {DestinationPath}", url, destinationPath);
 
@@ -30,13 +30,13 @@ public class DownloadService : IDownloadService
             if (string.IsNullOrWhiteSpace(url))
             {
                 _logger.LogError("Download failed: URL cannot be null or empty");
-                throw new ArgumentException("URL cannot be null or empty", nameof(url));
+                throw new ArgumentException(@"URL cannot be null or empty", nameof(url));
             }
 
             if (string.IsNullOrWhiteSpace(destinationPath))
             {
                 _logger.LogError("Download failed: Destination path cannot be null or empty");
-                throw new ArgumentException("Destination path cannot be null or empty", nameof(destinationPath));
+                throw new ArgumentException(@"Destination path cannot be null or empty", nameof(destinationPath));
             }
 
             // Ensure directory exists
