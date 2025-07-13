@@ -1,5 +1,6 @@
 using Bugsnag.AspNet.Core;
 using DesktopEye.Common.Application.ViewModels;
+using DesktopEye.Common.Domain.Features.Dictionary;
 using DesktopEye.Common.Domain.Features.OpticalCharacterRecognition;
 using DesktopEye.Common.Domain.Features.OpticalCharacterRecognition.Interfaces;
 using DesktopEye.Common.Domain.Features.TextClassification;
@@ -11,13 +12,16 @@ using DesktopEye.Common.Domain.Models.TextClassification;
 using DesktopEye.Common.Domain.Models.TextTranslation;
 using DesktopEye.Common.Infrastructure.Services.ApplicationPath;
 using DesktopEye.Common.Infrastructure.Services.Conda;
+using DesktopEye.Common.Infrastructure.Services.Dialog;
+using DesktopEye.Common.Infrastructure.Services.Dictionary;
 using DesktopEye.Common.Infrastructure.Services.Download;
 using DesktopEye.Common.Infrastructure.Services.Python;
 using DesktopEye.Common.Infrastructure.Services.TrainedModel;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MainViewModel = DesktopEye.Common.Application.ViewModels.MainViewModel;
-using ScreenCaptureActionsViewModel = DesktopEye.Common.Application.ViewModels.ScreenCapture.ScreenCaptureActionsViewModel;
+using ScreenCaptureActionsViewModel =
+    DesktopEye.Common.Application.ViewModels.ScreenCapture.ScreenCaptureActionsViewModel;
 using ScreenCaptureViewModel = DesktopEye.Common.Application.ViewModels.ScreenCapture.ScreenCaptureViewModel;
 
 namespace DesktopEye.Common.Infrastructure.Configuration;
@@ -37,7 +41,7 @@ public static class ServicesRegistration
         RegisterExternalServices(services);
         RegisterViewModels(services);
     }
-    
+
     /// <summary>
     /// Registers logging configuration
     /// </summary>
@@ -61,7 +65,7 @@ public static class ServicesRegistration
         services.AddSingleton<IPythonRuntimeManager, PythonRuntimeManager>();
         services.AddSingleton<IModelProvider, ModelProvider>();
         services.AddSingleton<ServicesLoader>();
-        
+        services.AddSingleton<IDialogService, DialogService>();
         // Scoped infrastructure services
         services.AddHttpClient("DesktopEyeClient",
             client => { client.DefaultRequestHeaders.Add("User-Agent", "DesktopEye/1.0"); });
@@ -79,7 +83,7 @@ public static class ServicesRegistration
         services.AddSingleton<IOcrOrchestrator, OcrOrchestrator>();
         services.AddSingleton<ITextClassifierOrchestrator, TextClassifierOrchestrator>();
         services.AddSingleton<ITranslationOrchestrator, TranslationOrchestrator>();
-        
+
         // Domain services by type (transient)
         RegisterOcrServices(services);
         RegisterTextClassificationServices(services);
@@ -122,6 +126,8 @@ public static class ServicesRegistration
             configuration.ApiKey = "80808d682d0824d1e39b970ba69feffd";
             configuration.ReleaseStage = "production";
         });
+
+        services.AddSingleton<IWiktionaryService, WiktionaryService>();
     }
 
     /// <summary>
