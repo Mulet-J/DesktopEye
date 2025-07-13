@@ -1,0 +1,74 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:viewModels="clr-namespace:DesktopEye.Common.Application.ViewModels"
+             x:Class="DesktopEye.Common.Application.Views.Controls.AudioPlayerControl"
+             x:DataType="viewModels:AudioPlayerViewModel">
+
+    <StackPanel Orientation="Horizontal" Spacing="8">
+        <!-- Bouton de génération audio -->
+        <Button Command="{Binding GenerateAudioCommand}"
+                IsEnabled="{Binding !IsGeneratingAudio}"
+                Classes="secondary"
+                ToolTip.Tip="Générer et écouter l'audio">
+            <StackPanel Orientation="Horizontal" Spacing="4">
+                <PathIcon Data="M3,9V15H7L12,20V4L7,9H3M16.5,12C16.5,10.23 15.5,8.71 14,7.97V16C15.5,15.29 16.5,13.76 16.5,12Z"
+                          Width="14" Height="14"
+                          Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                <TextBlock Text="Écouter" IsVisible="{Binding !IsGeneratingAudio}" />
+                <TextBlock Text="Génération..." IsVisible="{Binding IsGeneratingAudio}" />
+            </StackPanel>
+        </Button>
+
+        <!-- Contrôles de lecture (visibles seulement si audio prêt) -->
+        <StackPanel Orientation="Horizontal" Spacing="4"
+                    IsVisible="{Binding IsAudioReady}">
+
+            <!-- Play/Pause -->
+            <Button Command="{Binding PlayAudioCommand}"
+                    IsVisible="{Binding !IsPlaying}"
+                    Classes="icon"
+                    ToolTip.Tip="Lecture">
+                <PathIcon Data="M8,5.14V19.14L19,12.14L8,5.14Z" 
+                          Width="12" Height="12"
+                          Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+            </Button>
+
+            <Button Command="{Binding PauseAudioCommand}"
+                    IsVisible="{Binding IsPlaying}"
+                    Classes="icon"
+                    ToolTip.Tip="Pause">
+                <PathIcon Data="M14,19H18V5H14M6,19H10V5H6V19Z"
+                          Width="12" Height="12" 
+                          Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+            </Button>
+
+            <!-- Stop -->
+            <Button Command="{Binding StopAudioCommand}"
+                    Classes="icon"
+                    ToolTip.Tip="Arrêter">
+                <PathIcon Data="M18,18H6V6H18V18Z"
+                          Width="12" Height="12"
+                          Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+            </Button>
+
+            <!-- Contrôle de vitesse -->
+            <Slider Value="{Binding CurrentPlaybackSpeed}"
+                    Minimum="0.5" Maximum="1.0"
+                    TickFrequency="0.1"
+                    Width="60"
+                    VerticalAlignment="Center" />
+            <TextBlock Text="{Binding CurrentPlaybackSpeed, StringFormat='{}{0:F1}x'}"
+                       VerticalAlignment="Center"
+                       Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                       Width="30"
+                       FontSize="12" />
+        </StackPanel>
+        
+        <!-- Indicateur de progression -->
+        <ProgressBar IsVisible="{Binding IsGeneratingAudio}" 
+                     IsIndeterminate="True" 
+                     Width="60" 
+                     Height="4"
+                     VerticalAlignment="Center" />
+    </StackPanel>
+</UserControl>

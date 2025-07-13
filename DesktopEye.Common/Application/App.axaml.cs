@@ -12,6 +12,7 @@ using DesktopEye.Common.Application.Views.ScreenCapture;
 using DesktopEye.Common.Application.Views.Setup;
 using DesktopEye.Common.Domain.Features.OpticalCharacterRecognition.Interfaces;
 using DesktopEye.Common.Domain.Features.TextClassification.Interfaces;
+using DesktopEye.Common.Domain.Features.TextToSpeech.Interfaces;
 using DesktopEye.Common.Domain.Features.TextTranslation.Interfaces;
 using DesktopEye.Common.Infrastructure.Configuration;
 using DesktopEye.Common.Infrastructure.Configuration.Interfaces;
@@ -37,12 +38,10 @@ public class App : Avalonia.Application
         {
             using var engine = new Engine("", Language.English);
         }
-        catch
+        catch (Exception e)
         {
+            ;
         }
-
-        // DownloadModels();
-        // PreloadServices();
     }
 
     public override void Initialize()
@@ -54,8 +53,7 @@ public class App : Avalonia.Application
     {
         // Preload services, obviously only pass singletons here
         var preloader = _services.GetRequiredService<ServicesLoader>();
-        preloader.PreloadServices(typeof(IOcrOrchestrator), typeof(ITextClassifierOrchestrator),
-            typeof(ITranslationOrchestrator));
+        preloader.PreloadServices(typeof(IOcrOrchestrator), typeof(ITextClassifierOrchestrator), typeof(ITranslationOrchestrator), typeof(ITtsOrchestrator));
     }
 
     public override void OnFrameworkInitializationCompleted()

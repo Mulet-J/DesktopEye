@@ -5,4 +5,5 @@ public enum ModelType
     OpticalCharacterRecognition,
     TextClassifier,
     TextTranslator,
+    TextToSpeech,
 }

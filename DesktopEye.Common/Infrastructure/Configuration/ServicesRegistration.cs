@@ -1,3 +1,5 @@
+using System;
+using System.IO;
 using Bugsnag.AspNet.Core;
 using DesktopEye.Common.Application.ViewModels;
 using DesktopEye.Common.Application.ViewModels.Setup;
@@ -6,10 +8,13 @@ using DesktopEye.Common.Domain.Features.OpticalCharacterRecognition;
 using DesktopEye.Common.Domain.Features.OpticalCharacterRecognition.Interfaces;
 using DesktopEye.Common.Domain.Features.TextClassification;
 using DesktopEye.Common.Domain.Features.TextClassification.Interfaces;
+using DesktopEye.Common.Domain.Features.TextToSpeech;
+using DesktopEye.Common.Domain.Features.TextToSpeech.Interfaces;
 using DesktopEye.Common.Domain.Features.TextTranslation;
 using DesktopEye.Common.Domain.Features.TextTranslation.Interfaces;
 using DesktopEye.Common.Domain.Models.OpticalCharacterRecognition;
 using DesktopEye.Common.Domain.Models.TextClassification;
+using DesktopEye.Common.Domain.Models.TextToSpeech;
 using DesktopEye.Common.Domain.Models.TextTranslation;
 using DesktopEye.Common.Infrastructure.Configuration.Interfaces;
 using DesktopEye.Common.Infrastructure.Services.ApplicationPath;
@@ -91,11 +96,13 @@ public static class ServicesRegistration
         services.AddSingleton<IOcrOrchestrator, OcrOrchestrator>();
         services.AddSingleton<ITextClassifierOrchestrator, TextClassifierOrchestrator>();
         services.AddSingleton<ITranslationOrchestrator, TranslationOrchestrator>();
+        services.AddSingleton<ITtsOrchestrator, TtsOrchestrator>();
 
         // Domain services by type (transient)
         RegisterOcrServices(services);
         RegisterTextClassificationServices(services);
         RegisterTranslationServices(services);
+        RegisterTextToSpeechServices(services);
     }
 
     /// <summary>
@@ -122,6 +129,14 @@ public static class ServicesRegistration
     {
         services.AddKeyedTransient<ITranslationService, NllbPyTorchTranslationService>(TranslationType.Nllb);
     }
+    
+    /// <summary>
+    ///  Registers text-to-speech services with their respective keys
+    /// </summary>
+    private static void RegisterTextToSpeechServices(IServiceCollection services)
+    {
+        services.AddKeyedTransient<ITtsService, KokoroTtsService>(TtsType.KokoroTts);
+    }
 
     /// <summary>
     ///     Registers external services and monitoring tools
@@ -137,6 +152,7 @@ public static class ServicesRegistration
 
         services.AddSingleton<IWiktionaryService, WiktionaryService>();
     }
+    
 
     /// <summary>
     ///     Registers application ViewModels
@@ -147,11 +163,6 @@ public static class ServicesRegistration
         services.AddTransient<SettingsViewModel>();
         services.AddTransient<ScreenCaptureViewModel>();
         services.AddTransient<ScreenCaptureActionsViewModel>();
-
-        //Setup
-        services.AddTransient<SetupViewModel>();
-        services.AddTransient<SetupPathViewModel>();
-        services.AddTransient<SetupPythonViewModel>();
-        services.AddTransient<SetupModelsViewModel>();
+        services.AddTransient<AudioPlayerViewModel>();
     }
 }

@@ -4,6 +4,8 @@ using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using DesktopEye.Common.Domain.Features.OpticalCharacterRecognition.Interfaces;
 using DesktopEye.Common.Domain.Features.TextClassification.Interfaces;
+using DesktopEye.Common.Domain.Features.TextToSpeech;
+using DesktopEye.Common.Domain.Features.TextToSpeech.Interfaces;
 using DesktopEye.Common.Domain.Features.TextTranslation.Interfaces;
 using DesktopEye.Common.Domain.Models;
 using DesktopEye.Common.Domain.Models.OpticalCharacterRecognition;
@@ -19,9 +21,10 @@ public class DesignScreenCaptureActionsViewModel : ScreenCaptureActionsViewModel
         new Mock<IOcrOrchestrator>().Object,
         new Mock<ITextClassifierOrchestrator>().Object,
         new Mock<ITranslationOrchestrator>().Object,
-        new Mock<Bugsnag.IClient>().Object,
         new Mock<IWiktionaryService>().Object,
-        new Mock<IDialogService>().Object
+        new Mock<IDialogService>().Object,
+        new AudioPlayerViewModel(new DesignTtsOrchestrator()),
+        new Mock<Bugsnag.IClient>().Object
     )
     {
         var words = new List<OcrWord> { new(0, 0, 0, 0, 1, "Le") };
