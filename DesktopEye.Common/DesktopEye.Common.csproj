@@ -40,7 +40,6 @@
         <PackageReference Include="Microsoft.ML.OnnxRuntime"/>
         <PackageReference Include="Microsoft.NET.Test.Sdk"/>
         <PackageReference Include="Moq"/>
-        <PackageReference Include="NAudio" />
         <PackageReference Include="NTextCat"/>
         <PackageReference Include="OpenCvSharp4"/>
         <PackageReference Include="pythonnet"/>

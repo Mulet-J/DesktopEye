@@ -28,7 +28,6 @@
     <PackageVersion Include="Microsoft.ML.Tokenizers" Version="2.0.0-preview.1.25127.4" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
     <PackageVersion Include="Moq" Version="4.20.72" />
-    <PackageVersion Include="NAudio" Version="2.2.1" />
     <PackageVersion Include="NTextCat" Version="0.3.65" />
     <PackageVersion Include="OpenCvSharp4" Version="4.11.0.20250507" />
     <PackageVersion Include="OpenCvSharp4.official.runtime.linux-x64" Version="4.11.0.20250507" />

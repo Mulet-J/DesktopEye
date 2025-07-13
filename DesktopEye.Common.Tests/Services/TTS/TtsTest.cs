@@ -29,20 +29,6 @@ public class TtsTest
     [Fact]
     public void TestSoundflowInitWithAudioFile()
     {
-        /*using var miniAudioEngine = new MiniAudioEngine(48000, Capability.Playback);
-        
-        var audioFilePath = "/Users/remi.marques/Library/Application_Support/DesktopEye/Audio/test.wav";
-        using var dataProvider = new StreamDataProvider(File.OpenRead(audioFilePath));
-        var player = new SoundPlayer(dataProvider);
-
-        Mixer.Master.AddComponent(player);
-        
-        player.Play();
-        
-        // Attendre un peu pour s'assurer que le son est joué
-        System.Threading.Thread.Sleep(10000);
-        
-        player.Stop();*/
         
         // Dans une méthode de test
         using var miniAudioEngine = new MiniAudioEngine(48000, Capability.Playback);
