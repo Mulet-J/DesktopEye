@@ -53,9 +53,9 @@ jobs:
           ~/.nuget/packages
           ~/.local/share/NuGet/v3-cache
           ~/.cache/NuGet/v3-cache
-        key: ${{ matrix.os }}-nuget-${{ hashFiles('**/*.csproj', '**/Directory.Packages.props', '**/packages.lock.json') }}
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj', '**/Directory.Packages.props', '**/packages.lock.json') }}
         restore-keys: |
-          ${{ matrix.os }}-nuget-
+          ${{ runner.os }}-nuget-
 
     - name: Restore dependencies
       run: dotnet restore ${{ matrix.project }}/${{ matrix.project }}.csproj --verbosity minimal
