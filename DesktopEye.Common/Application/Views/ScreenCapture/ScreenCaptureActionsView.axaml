@@ -357,15 +357,6 @@
                                             <TextBlock Text="Copier" FontSize="13" />
                                         </StackPanel>
                                     </Button>
-                                    <Button Classes="primary"
-                                            ToolTip.Tip="Écouter">
-                                        <StackPanel Orientation="Horizontal" Spacing="8">
-                                            <PathIcon
-                                                Data="M3,9V15H7L12,20V4L7,9H3M16.5,12C16.5,10.23 15.5,8.71 14,7.97V16C15.5,15.29 16.5,13.76 16.5,12Z"
-                                                Width="14" Height="14" />
-                                            <TextBlock Text="Écouter" FontSize="13" />
-                                        </StackPanel>
-                                    </Button>
                                 </StackPanel>
                             </Grid>
                         </TabItem>

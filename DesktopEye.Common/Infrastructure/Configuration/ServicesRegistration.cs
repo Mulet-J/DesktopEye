@@ -165,11 +165,4 @@ public static class ServicesRegistration
         services.AddTransient<ScreenCaptureActionsViewModel>();
         services.AddTransient<AudioPlayerViewModel>();
     }
-
-        //Setup
-        services.AddTransient<SetupViewModel>();
-        services.AddTransient<SetupPathViewModel>();
-        services.AddTransient<SetupPythonViewModel>();
-        services.AddTransient<SetupModelsViewModel>();
-    }
 }
