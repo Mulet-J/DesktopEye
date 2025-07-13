@@ -17,8 +17,6 @@ using DesktopEye.Common.Domain.Features.TextTranslation.Interfaces;
 using DesktopEye.Common.Infrastructure.Configuration;
 using DesktopEye.Common.Infrastructure.Configuration.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
-using TesseractOCR;
-using TesseractOCR.Enums;
 using MainViewModel = DesktopEye.Common.Application.ViewModels.MainViewModel;
 using ScreenCaptureViewModel = DesktopEye.Common.Application.ViewModels.ScreenCapture.ScreenCaptureViewModel;
 
@@ -33,15 +31,6 @@ public class App : Avalonia.Application
     public App(IServiceProvider services)
     {
         Services = services;
-        // Dirty fix to force tesseract's library loading before others
-        try
-        {
-            using var engine = new Engine("", Language.English);
-        }
-        catch (Exception e)
-        {
-            ;
-        }
     }
 
     public override void Initialize()
@@ -53,7 +42,8 @@ public class App : Avalonia.Application
     {
         // Preload services, obviously only pass singletons here
         var preloader = Services.GetRequiredService<ServicesLoader>();
-        preloader.PreloadServices(typeof(IOcrOrchestrator), typeof(ITextClassifierOrchestrator), typeof(ITranslationOrchestrator), typeof(ITtsOrchestrator));
+        preloader.PreloadServices(typeof(IOcrOrchestrator), typeof(ITextClassifierOrchestrator),
+            typeof(ITranslationOrchestrator), typeof(ITtsOrchestrator));
     }
 
     public override void OnFrameworkInitializationCompleted()

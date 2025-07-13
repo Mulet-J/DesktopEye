@@ -21,9 +21,9 @@
         <PackageReference Include="KokoroSharp"/>
         <PackageReference Include="Microsoft.NET.Test.Sdk"/>
         <PackageReference Include="Moq"/>
-        <PackageReference Include="Sdcb.OpenCvSharp4.mini.runtime.osx-arm64" />
+        <PackageReference Include="Sdcb.OpenCvSharp4.mini.runtime.osx-arm64"/>
         <PackageReference Include="xunit"/>
-        <PackageReference Include="xunit.abstractions" />
+        <PackageReference Include="xunit.abstractions"/>
         <PackageReference Include="xunit.runner.visualstudio">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
@@ -51,8 +51,7 @@
 
     <ItemGroup>
         <Folder Include="Assets\"/>
-        <Folder Include="e2e\" />
-        <Folder Include="Unit\Infrastructure\" />
+        <Folder Include="Unit\Infrastructure\"/>
     </ItemGroup>
 
     <ItemGroup>

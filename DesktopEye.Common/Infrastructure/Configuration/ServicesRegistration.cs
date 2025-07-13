@@ -1,5 +1,3 @@
-using System;
-using System.IO;
 using Bugsnag.AspNet.Core;
 using DesktopEye.Common.Application.ViewModels;
 using DesktopEye.Common.Application.ViewModels.Setup;
@@ -129,9 +127,9 @@ public static class ServicesRegistration
     {
         services.AddKeyedTransient<ITranslationService, NllbPyTorchTranslationService>(TranslationType.Nllb);
     }
-    
+
     /// <summary>
-    ///  Registers text-to-speech services with their respective keys
+    ///     Registers text-to-speech services with their respective keys
     /// </summary>
     private static void RegisterTextToSpeechServices(IServiceCollection services)
     {
@@ -152,7 +150,7 @@ public static class ServicesRegistration
 
         services.AddSingleton<IWiktionaryService, WiktionaryService>();
     }
-    
+
 
     /// <summary>
     ///     Registers application ViewModels
@@ -164,5 +162,11 @@ public static class ServicesRegistration
         services.AddTransient<ScreenCaptureViewModel>();
         services.AddTransient<ScreenCaptureActionsViewModel>();
         services.AddTransient<AudioPlayerViewModel>();
+
+        //Setup
+        services.AddTransient<SetupViewModel>();
+        services.AddTransient<SetupPathViewModel>();
+        services.AddTransient<SetupPythonViewModel>();
+        services.AddTransient<SetupModelsViewModel>();
     }
 }
