@@ -43,7 +43,7 @@ public class AreaSelectionControl : UserControl
     {
         get
         {
-            var scaleFactoringService = (App._services?.GetService(typeof(IScaleFactoringService)) ??
+            var scaleFactoringService = (App.Services?.GetService(typeof(IScaleFactoringService)) ??
                            throw new InvalidOperationException("ScaleFactoringService is not registered in the service provider.")) as IScaleFactoringService;
             return scaleFactoringService!.GetOsScaleFactor(this);
         }
