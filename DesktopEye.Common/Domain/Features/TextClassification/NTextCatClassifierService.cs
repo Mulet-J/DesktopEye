@@ -8,8 +8,9 @@ using DesktopEye.Common.Domain.Features.TextClassification.Helpers;
 using DesktopEye.Common.Domain.Features.TextClassification.Interfaces;
 using DesktopEye.Common.Domain.Models;
 using DesktopEye.Common.Infrastructure.Configuration.Interfaces;
+using DesktopEye.Common.Infrastructure.Models;
 using DesktopEye.Common.Infrastructure.Services.ApplicationPath;
-using DesktopEye.Common.Infrastructure.Services.Download;
+using DesktopEye.Common.Infrastructure.Services.TrainedModel;
 using Microsoft.Extensions.Logging;
 using NTextCat;
 
@@ -17,34 +18,26 @@ namespace DesktopEye.Common.Domain.Features.TextClassification;
 
 public class NTextCatClassifierService : ITextClassifierService, ILoadable
 {
-    private const string BaseModelName = "Core14.profile.xml";
-
-    private readonly string _baseModelDownloadUrl =
-        "https://raw.githubusercontent.com/ivanakcheurov/ntextcat/refs/heads/master/src/LanguageModels/Core14.profile.xml";
-
-    private readonly IDownloadService _downloadService;
     private readonly ILogger<NTextCatClassifierService> _logger;
-    private readonly string _modelPath;
-    private readonly string _modelsFolder;
+    private readonly ModelRegistry _modelRegistry = new ModelRegistry();
+    private readonly IPathService _pathService;
     private bool _isDisposed;
 
     private RankedLanguageIdentifier? _languageIdentifier;
     private Task? _loadingTask;
 
-    public NTextCatClassifierService(IPathService pathService, IDownloadService downloadService,
-        ILogger<NTextCatClassifierService> logger)
+    public NTextCatClassifierService(ILogger<NTextCatClassifierService> logger, IPathService pathService)
     {
-        _downloadService = downloadService;
         _logger = logger;
-        _modelsFolder = pathService.ModelsDirectory;
-        _modelPath = Path.Combine(_modelsFolder, BaseModelName);
+        _pathService = pathService;
     }
 
-    public string Name => "NTextCat";
+    private Model NTextCatModel =>
+        _modelRegistry.DefaultModels.FirstOrDefault(model => model.ModelName == "NTextCat.xml") ??
+        throw new InvalidOperationException("NTextCat model not found in registry");
 
+    private bool IsModelLoading => _loadingTask?.IsCompleted == false;
     public bool IsModelLoaded => _languageIdentifier != null;
-    public bool IsModelLoading => _loadingTask?.IsCompleted == false;
-    public string? LoadedModelName => IsModelLoaded ? BaseModelName : null;
 
     public Language ClassifyText(string text)
     {
@@ -123,74 +116,36 @@ public class NTextCatClassifierService : ITextClassifierService, ILoadable
     public void Dispose()
     {
         if (_isDisposed) return;
-
-        // _languageIdentifier?.Dispose();
         _isDisposed = true;
     }
 
-    private async Task LoadModelInternalAsync(CancellationToken cancellationToken)
+    private Task LoadModelInternalAsync(CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Initializing NTextCat classifier service with model path: {ModelPath}", _modelPath);
-
-        var downloadResult = await DownloadModelAsync(cancellationToken);
-        if (!downloadResult)
-        {
-            _logger.LogError("Failed to download model file from {Url}", _baseModelDownloadUrl);
-            throw new Exception("Failed to download language model");
-        }
+        var modelPath = Path.Combine(_pathService.ModelsDirectory, NTextCatModel.ModelFolderName,
+            NTextCatModel.ModelName);
+        _logger.LogInformation("Initializing NTextCat classifier service with model path: {ModelPath}", modelPath);
 
         try
         {
             _logger.LogDebug("Loading language identifier factory");
             var factory = new RankedLanguageIdentifierFactory();
-            _languageIdentifier = factory.Load(_modelPath);
-            _logger.LogInformation("Successfully initialized NTextCat classifier with model: {ModelPath}", _modelPath);
+            _languageIdentifier = factory.Load(modelPath);
+            _logger.LogInformation("Successfully initialized NTextCat classifier with model: {ModelPath}", modelPath);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to initialize NTextCat classifier from model: {ModelPath}", _modelPath);
+            _logger.LogError(ex, "Failed to initialize NTextCat classifier from model: {ModelPath}", modelPath);
             throw new InvalidOperationException("Failed to initialize NTextCat classifier", ex);
         }
-    }
 
-    private async Task<bool> DownloadModelAsync(CancellationToken cancellationToken)
-    {
-        _logger.LogDebug("Checking if model file exists at: {ModelPath}", _modelPath);
-
-        if (File.Exists(_modelPath))
-        {
-            _logger.LogDebug("Model file already exists, skipping download");
-            return true;
-        }
-
-        try
-        {
-            _logger.LogInformation("Model file not found. Starting download from: {Url}", _baseModelDownloadUrl);
-
-            var success = await _downloadService.DownloadFileAsync(_baseModelDownloadUrl, _modelPath);
-
-            if (success)
-                _logger.LogInformation("Successfully downloaded model file to: {ModelPath}", _modelPath);
-            else
-                _logger.LogWarning("Download service returned false for model download");
-
-            return success;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Exception occurred while downloading model from {Url} to {Path}",
-                _baseModelDownloadUrl, _modelPath);
-            return false;
-        }
+        return Task.CompletedTask;
     }
 
     private static void ValidateInput(string text)
     {
-        if (text == null)
-            throw new ArgumentNullException(nameof(text));
-
+        ArgumentNullException.ThrowIfNull(text);
         if (string.IsNullOrWhiteSpace(text))
-            throw new ArgumentException("Text cannot be empty or whitespace", nameof(text));
+            throw new ArgumentException(@"Text cannot be empty or whitespace", nameof(text));
     }
 
     private Language LibLanguageToLanguage(string? language)

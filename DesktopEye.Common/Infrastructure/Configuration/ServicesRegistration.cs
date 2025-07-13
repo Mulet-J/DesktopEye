@@ -15,6 +15,7 @@ using DesktopEye.Common.Infrastructure.Services.Dialog;
 using DesktopEye.Common.Infrastructure.Services.Dictionary;
 using DesktopEye.Common.Infrastructure.Services.Download;
 using DesktopEye.Common.Infrastructure.Services.Python;
+using DesktopEye.Common.Infrastructure.Services.TrainedModel;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MainViewModel = DesktopEye.Common.Application.ViewModels.MainViewModel;
@@ -61,12 +62,15 @@ public static class ServicesRegistration
         services.AddSingleton<IPathService, PathService>();
         services.AddSingleton<ICondaService, CondaService>();
         services.AddSingleton<IPythonRuntimeManager, PythonRuntimeManager>();
+        services.AddSingleton<IModelProvider, ModelProvider>();
         services.AddSingleton<ServicesLoader>();
         services.AddSingleton<IDialogService, DialogService>();
         // Scoped infrastructure services
         services.AddHttpClient("DesktopEyeClient",
             client => { client.DefaultRequestHeaders.Add("User-Agent", "DesktopEye/1.0"); });
         services.AddScoped<IDownloadService, DownloadService>();
+        services.AddScoped<IModelDownloadService, ModelDownloadService>();
+        services.AddScoped<IModelStorageService, ModelStorageService>();
     }
 
     /// <summary>

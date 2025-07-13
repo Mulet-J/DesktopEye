@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using DesktopEye.Common.Infrastructure.Services.ApplicationPath;
 using DesktopEye.Common.Infrastructure.Services.Conda;
 using Microsoft.Extensions.Logging;
@@ -11,6 +13,7 @@ namespace DesktopEye.Common.Infrastructure.Services.Python;
 
 public class PythonRuntimeManager : IPythonRuntimeManager
 {
+    private readonly SemaphoreSlim _semaphore = new(1, 1);
     private readonly ICondaService _condaService;
     private readonly HashSet<object> _dependentClasses;
     private readonly object _lock = new();
@@ -175,4 +178,93 @@ public class PythonRuntimeManager : IPythonRuntimeManager
             }
         }
     }
+    
+    
+    #region ExecuteWithGil
+
+    /// <summary>
+    ///     Executes a function with Python GIL (Global Interpreter Lock) protection
+    /// </summary>
+    /// <param name="func">The function to execute</param>
+    public void ExecuteWithGil(Action func)
+    {
+        _semaphore.Wait();
+        try
+        {
+            using (Py.GIL())
+            {
+                func();
+            }
+        }
+        finally
+        {
+            _semaphore.Release();
+        }
+    }
+
+    /// <summary>
+    ///     Executes a function with Python GIL (Global Interpreter Lock) protection (async version)
+    /// </summary>
+    /// <param name="func">The function to execute</param>
+    public async Task ExecuteWithGilAsync(Action func)
+    {
+        await _semaphore.WaitAsync();
+        try
+        {
+            using (Py.GIL())
+            {
+                func();
+            }
+        }
+        finally
+        {
+            _semaphore.Release();
+        }
+    }
+
+    /// <summary>
+    ///     Executes a function with Python GIL (Global Interpreter Lock) protection and returns a result
+    /// </summary>
+    /// <typeparam name="T">The return type</typeparam>
+    /// <param name="func">The function to execute</param>
+    /// <returns>The result of the function</returns>
+    public T ExecuteWithGil<T>(Func<T> func)
+    {
+        _semaphore.Wait();
+        try
+        {
+            using (Py.GIL())
+            {
+                return func();
+            }
+        }
+        finally
+        {
+            _semaphore.Release();
+        }
+    }
+
+    /// <summary>
+    ///     Executes a function with Python GIL (Global Interpreter Lock) protection and returns a result (async version)
+    /// </summary>
+    /// <typeparam name="T">The return type</typeparam>
+    /// <param name="func">The function to execute</param>
+    /// <returns>The result of the function</returns>
+    public async Task<T> ExecuteWithGilAsync<T>(Func<T> func)
+    {
+        await _semaphore.WaitAsync();
+        try
+        {
+            using (Py.GIL())
+            {
+                return func();
+            }
+        }
+        finally
+        {
+            _semaphore.Release();
+        }
+    }
+
+    #endregion
 }
