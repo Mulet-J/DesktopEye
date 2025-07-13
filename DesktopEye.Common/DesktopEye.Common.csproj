@@ -9,7 +9,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <AvaloniaResource Include="Application\Assets\avalonia-logo.ico" />
+        <AvaloniaResource Include="Application\Assets\avalonia-logo.ico"/>
         <AvaloniaResource Include="Assets\**"/>
     </ItemGroup>
 
@@ -22,8 +22,8 @@
             <IncludeAssets Condition="'$(Configuration)' != 'Debug'">None</IncludeAssets>
             <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
         </PackageReference>
-        <PackageReference Include="Bugsnag" />
-        <PackageReference Include="Bugsnag.AspNet.Core" />
+        <PackageReference Include="Bugsnag"/>
+        <PackageReference Include="Bugsnag.AspNet.Core"/>
         <PackageReference Include="CommunityToolkit.Mvvm"/>
         <PackageReference Include="coverlet.collector">
             <PrivateAssets>all</PrivateAssets>
@@ -59,19 +59,24 @@
 
     <ItemGroup>
         <EmbeddedResource Update="Application\Resources\ResourcesCommon.resx">
-          <Generator>PublicResXFileCodeGenerator</Generator>
-          <LastGenOutput>ResourcesCommon.Designer.cs</LastGenOutput>
-          <CustomToolNamespace>DesktopEye.Common.Resources</CustomToolNamespace>
+            <Generator>PublicResXFileCodeGenerator</Generator>
+            <LastGenOutput>ResourcesCommon.Designer.cs</LastGenOutput>
+            <CustomToolNamespace>DesktopEye.Common.Application.Resources</CustomToolNamespace>
         </EmbeddedResource>
         <EmbeddedResource Update="Application\Resources\ResourcesLanguages.resx">
-          <Generator>PublicResXFileCodeGenerator</Generator>
-          <LastGenOutput>ResourcesLanguages.Designer.cs</LastGenOutput>
-          <CustomToolNamespace>DesktopEye.Common.Resources</CustomToolNamespace>
+            <Generator>PublicResXFileCodeGenerator</Generator>
+            <LastGenOutput>ResourcesLanguages.Designer.cs</LastGenOutput>
+            <CustomToolNamespace>DesktopEye.Common.Application.Resources</CustomToolNamespace>
         </EmbeddedResource>
         <EmbeddedResource Update="Application\Resources\ResourcesTray.resx">
-          <Generator>PublicResXFileCodeGenerator</Generator>
-          <LastGenOutput>ResourcesTray.Designer.cs</LastGenOutput>
-          <CustomToolNamespace>DesktopEye.Common.Resources</CustomToolNamespace>
+            <Generator>PublicResXFileCodeGenerator</Generator>
+            <LastGenOutput>ResourcesTray.Designer.cs</LastGenOutput>
+            <CustomToolNamespace>DesktopEye.Common.Application.Resources</CustomToolNamespace>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Application\Resources\ResourcesSetup.resx">
+            <Generator>PublicResXFileCodeGenerator</Generator>
+            <LastGenOutput>ResourcesSetup.Designer.cs</LastGenOutput>
+            <CustomToolNamespace>DesktopEye.Common.Application.Resources</CustomToolNamespace>
         </EmbeddedResource>
     </ItemGroup>
 
@@ -108,19 +113,24 @@
             <DependentUpon>ResourcesCommon.resx</DependentUpon>
         </Compile>
         <Compile Update="Application\App.axaml.cs">
-          <DependentUpon>App.axaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>App.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Application\Resources\ResourcesSetup.Designer.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>ResourcesSetup.resx</DependentUpon>
         </Compile>
     </ItemGroup>
 
     <ItemGroup>
-      <AdditionalFiles Include="Application\Views\Controls\AreaSelectionControl.axaml" />
-      <AdditionalFiles Include="Application\Views\MainView.axaml" />
-      <AdditionalFiles Include="Application\Views\MainWindow.axaml" />
-      <AdditionalFiles Include="Application\Views\ScreenCapture\ScreenCaptureActionsView.axaml" />
-      <AdditionalFiles Include="Application\Views\ScreenCapture\ScreenCaptureActionsWindow.axaml" />
-      <AdditionalFiles Include="Application\Views\ScreenCapture\ScreenCaptureView.axaml" />
-      <AdditionalFiles Include="Application\Views\ScreenCapture\ScreenCaptureWindow.axaml" />
-      <AdditionalFiles Include="Application\Views\SettingsView.axaml" />
+        <AdditionalFiles Include="Application\Views\Controls\AreaSelectionControl.axaml"/>
+        <AdditionalFiles Include="Application\Views\MainView.axaml"/>
+        <AdditionalFiles Include="Application\Views\MainWindow.axaml"/>
+        <AdditionalFiles Include="Application\Views\ScreenCapture\ScreenCaptureActionsView.axaml"/>
+        <AdditionalFiles Include="Application\Views\ScreenCapture\ScreenCaptureActionsWindow.axaml"/>
+        <AdditionalFiles Include="Application\Views\ScreenCapture\ScreenCaptureView.axaml"/>
+        <AdditionalFiles Include="Application\Views\ScreenCapture\ScreenCaptureWindow.axaml"/>
+        <AdditionalFiles Include="Application\Views\SettingsView.axaml"/>
     </ItemGroup>
 </Project>

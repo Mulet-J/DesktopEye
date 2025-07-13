@@ -1,4 +1,6 @@
 using DesktopEye.Common.Domain.Features.TextClassification;
+using DesktopEye.Common.Infrastructure.Configuration;
+using DesktopEye.Common.Infrastructure.Configuration.Interfaces;
 using DesktopEye.Common.Infrastructure.Services.ApplicationPath;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -9,7 +11,8 @@ public class FastTextClassifierTestFixture : IDisposable
 {
     public FastTextClassifierTestFixture()
     {
-        IPathService pathService = new PathService();
+        IAppConfigService appConfigService = new AppConfigService();
+        IPathService pathService = new PathService(appConfigService);
         var classifierLogger = new Mock<ILogger<FastTextClassifierService>>();
         ClassifierService = new FastTextClassifierService(pathService, classifierLogger.Object);
     }

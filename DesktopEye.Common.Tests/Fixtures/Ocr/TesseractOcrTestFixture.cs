@@ -1,5 +1,7 @@
 using Avalonia;
 using DesktopEye.Common.Domain.Features.OpticalCharacterRecognition;
+using DesktopEye.Common.Infrastructure.Configuration;
+using DesktopEye.Common.Infrastructure.Configuration.Interfaces;
 using DesktopEye.Common.Infrastructure.Services.ApplicationPath;
 using DesktopEye.Common.Infrastructure.Services.Download;
 using JetBrains.Annotations;
@@ -18,7 +20,8 @@ public class TesseractOcrTestFixture : IDisposable
             .WithInterFont()
             .SetupWithoutStarting();
 
-        IPathService pathService = new PathService();
+        IAppConfigService appConfigService = new AppConfigService();
+        IPathService pathService = new PathService(appConfigService);
         var mockDownloadLogger = new Mock<ILogger<DownloadService>>();
         var mockDownloadFactory = new Mock<IHttpClientFactory>();
         var mockDownloadService = new Mock<DownloadService>(mockDownloadFactory.Object, mockDownloadLogger.Object);

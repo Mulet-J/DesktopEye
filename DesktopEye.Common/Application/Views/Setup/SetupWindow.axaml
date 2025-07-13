@@ -1,0 +1,31 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewModels="clr-namespace:DesktopEye.Common.Application.ViewModels.Setup"
+        xmlns:res="clr-namespace:DesktopEye.Common.Application.Resources"
+        xmlns:design="clr-namespace:DesktopEye.Common.Application.ViewModels.Setup.Design"
+        mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="500"
+        Width="600" Height="500"
+        x:Class="DesktopEye.Common.Application.Views.Setup.SetupWindow"
+        x:DataType="viewModels:SetupViewModel"
+        Title="SetupWindow">
+    <Design.DataContext>
+        <design:DesignSetupViewModel />
+    </Design.DataContext>
+
+    <Grid RowDefinitions="*,Auto">
+        <!-- Content area -->
+        <ContentControl Grid.Row="0" Name="ContentArea" Content="{Binding CurrentChildView}" />
+
+        <!-- Navigation buttons -->
+        <StackPanel Grid.Row="1" Orientation="Horizontal"
+                    HorizontalAlignment="Right" Margin="10">
+            <Button Name="BackButton" Content="{x:Static res:ResourcesSetup.Button_SetupBack}"
+                    Command="{Binding GoBackCommand}"
+                    IsEnabled="{Binding CanGoBack}" />
+            <Button Name="NextButton" Content="{Binding NextButtonText}"
+                    Command="{Binding GoNextCommand}" Margin="5,0,0,0" />
+        </StackPanel>
+    </Grid>
+</Window>

@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using DesktopEye.Common.Resources;
+using DesktopEye.Common.Application.Resources;
 
 namespace DesktopEye.Common.Domain.Models;
 

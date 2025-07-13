@@ -20,10 +20,9 @@ namespace DesktopEye.Common.Domain.Features.OpticalCharacterRecognition;
 
 public class TesseractOcrService : IOcrService, IDisposable
 {
+    private readonly object _lock = new();
     private readonly ILogger<TesseractOcrService> _logger;
     private readonly IPathService _pathService;
-
-    private readonly object _lock = new();
 
     private Engine? _engine;
 
@@ -328,7 +327,7 @@ public class TesseractOcrService : IOcrService, IDisposable
                 _logger.LogDebug("Converted {LanguageCount} languages to library format", convertedLanguages.Count);
 
                 _engine?.Dispose();
-                _engine = new Engine(Path.Combine(_pathService.ModelsDirectory, "tessdata"), convertedLanguages);
+                _engine = new Engine(Path.Combine(_pathService.ModelsDirectory, "tesseract"), convertedLanguages);
 
                 _logger.LogInformation("OCR engine successfully initialized with {LanguageCount} languages",
                     convertedLanguages.Count);
