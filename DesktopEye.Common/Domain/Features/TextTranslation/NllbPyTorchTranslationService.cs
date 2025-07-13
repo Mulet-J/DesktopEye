@@ -254,7 +254,7 @@ public class NllbPyTorchTranslationService : ITranslationService, ILoadable
     {
         _logger.LogDebug("Loading tokenizer asynchronously for model: {ModelName}", modelName);
 
-        return await Task.Run(async () =>
+        return await Task.Run(() =>
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -262,7 +262,7 @@ public class NllbPyTorchTranslationService : ITranslationService, ILoadable
             {
                 _logger.LogTrace("Executing tokenizer loading with GIL protection");
 
-                return await _runtimeManager.ExecuteWithGilAsync(() =>
+                return _runtimeManager.ExecuteWithGil(() =>
                 {
                     cancellationToken.ThrowIfCancellationRequested();
 
@@ -305,7 +305,7 @@ public class NllbPyTorchTranslationService : ITranslationService, ILoadable
             {
                 _logger.LogTrace("Acquiring Python GIL for model loading");
 
-                return _runtimeManager.ExecuteWithGilAsync(() =>
+                return _runtimeManager.ExecuteWithGil(() =>
                 {
                     cancellationToken.ThrowIfCancellationRequested();
 

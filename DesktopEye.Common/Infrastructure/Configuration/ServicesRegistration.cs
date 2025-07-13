@@ -8,6 +8,7 @@ using DesktopEye.Common.Domain.Features.OpticalCharacterRecognition.Interfaces;
 using DesktopEye.Common.Domain.Features.TextClassification;
 using DesktopEye.Common.Domain.Features.TextClassification.Interfaces;
 using DesktopEye.Common.Domain.Features.TextToSpeech;
+using DesktopEye.Common.Domain.Features.TextToSpeech.Interfaces;
 using DesktopEye.Common.Domain.Features.TextTranslation;
 using DesktopEye.Common.Domain.Features.TextTranslation.Interfaces;
 using DesktopEye.Common.Domain.Models.OpticalCharacterRecognition;
@@ -68,7 +69,6 @@ public static class ServicesRegistration
         services.AddSingleton<ICondaService, CondaService>();
         services.AddSingleton<IPythonRuntimeManager, PythonRuntimeManager>();
         services.AddSingleton<IModelProvider, ModelProvider>();
-        services.AddSingleton<AudioService>();
         services.AddSingleton<ServicesLoader>();
         services.AddSingleton<IDialogService, DialogService>();
         // Scoped infrastructure services
@@ -88,6 +88,7 @@ public static class ServicesRegistration
         services.AddSingleton<IOcrOrchestrator, OcrOrchestrator>();
         services.AddSingleton<ITextClassifierOrchestrator, TextClassifierOrchestrator>();
         services.AddSingleton<ITranslationOrchestrator, TranslationOrchestrator>();
+        services.AddSingleton<ITtsOrchestrator, TtsOrchestrator>();
 
         // Domain services by type (transient)
         RegisterOcrServices(services);

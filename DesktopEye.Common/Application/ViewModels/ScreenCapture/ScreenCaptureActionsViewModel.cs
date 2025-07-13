@@ -19,6 +19,7 @@ using DesktopEye.Common.Domain.Features.Dictionary.Helpers;
 using DesktopEye.Common.Domain.Features.OpticalCharacterRecognition.Interfaces;
 using DesktopEye.Common.Domain.Features.TextClassification.Interfaces;
 using DesktopEye.Common.Domain.Features.TextToSpeech;
+using DesktopEye.Common.Domain.Features.TextToSpeech.Interfaces;
 using DesktopEye.Common.Domain.Features.TextTranslation.Interfaces;
 using DesktopEye.Common.Domain.Models;
 using DesktopEye.Common.Domain.Models.OpticalCharacterRecognition;
@@ -36,7 +37,6 @@ public partial class ScreenCaptureActionsViewModel : ViewModelBase
     private readonly ITextClassifierOrchestrator _classifierOrchestrator;
     private readonly IOcrOrchestrator _ocrOrchestrator;
     private readonly ITranslationOrchestrator _translationOrchestrator;
-    private readonly ITtsService _ttsService;
     private readonly Bugsnag.IClient _bugsnag;
     private readonly IWiktionaryService _wiktionaryService;
     private readonly IDialogService _dialogService;
@@ -82,13 +82,12 @@ public partial class ScreenCaptureActionsViewModel : ViewModelBase
     
     public ScreenCaptureActionsViewModel(IOcrOrchestrator ocrOrchestrator,
         ITextClassifierOrchestrator classifierOrchestrator,
-        ITranslationOrchestrator translationOrchestrator, ITtsService ttsService,
+        ITranslationOrchestrator translationOrchestrator,
         AudioPlayerViewModel audioPlayerViewModel, Bugsnag.IClient bugsnag)
     {
         _ocrOrchestrator = ocrOrchestrator;
         _classifierOrchestrator = classifierOrchestrator;
         _translationOrchestrator = translationOrchestrator;
-        _ttsService = ttsService;
         _audioPlayer = audioPlayerViewModel;
         _bugsnag = bugsnag;
 

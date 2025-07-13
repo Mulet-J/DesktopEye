@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using DesktopEye.Common.Domain.Features.TextToSpeech.Interfaces;
 using DesktopEye.Common.Domain.Models;
 using DesktopEye.Common.Infrastructure.Configuration.Interfaces;
 using DesktopEye.Common.Infrastructure.Models;
@@ -41,25 +42,56 @@ public class KokoroTtsService : ITtsService, ILoadable
         _pathService = pathService;
         _modelDirectory = Path.Combine(_pathService.ModelsDirectory, KokoroTtsModel.ModelFolderName);
     }
+
+    private void EnsureSynthesizerInitialized()
+    {
+        if (_synthesizer == null)
+        {
+            
+            var model = KokoroTtsModel;
+            string modelPath = Path.Combine(_modelDirectory, model.ModelName);
+            
+            _logger.LogInformation("Initialisation du synthétiseur KokoroTts avec le modèle dans {ModelPath}", modelPath);
+            
+            
+            _synthesizer = new KokoroWavSynthesizer(modelPath);
+        }
+    }
     
-    private void InitializeSoundFlow()
+    private void EnsureMiniAudioEngineInitialized()
+    {
+        if (_miniAudioEngine == null)
+        {
+            _logger.LogInformation("Initialisation du moteur audio MiniAudioEngine");
+            _miniAudioEngine = new MiniAudioEngine(48000, Capability.Playback);
+        }
+    }
+    
+    
+    private void  InitializeSoundFlow()
     {
         try
         {
-            _synthesizer = new KokoroWavSynthesizer(Path.Combine(_modelDirectory, KokoroTtsModel.ModelName));
-            Directory.CreateDirectory(Path.Combine(_modelDirectory,"Audios"));
+            // Create output directory if it doesn't exist
+            if (!Directory.Exists(Path.Combine(_modelDirectory,"Audios")))
+            {
+                Directory.CreateDirectory(Path.Combine(_modelDirectory,"Audios"));
+            }
+            
             _miniAudioEngine = new MiniAudioEngine(48000, Capability.Playback);
+            _synthesizer = new KokoroWavSynthesizer(Path.Combine(_modelDirectory, KokoroTtsModel.ModelName));
             _soundFlowInitialized = true;
         }
         catch (Exception ex)
         {
-            Console.WriteLine($@"Erreur lors de l'initialisation de SoundFlow : {ex.Message}");
+            _logger.LogError($@"Erreur lors de l'initialisation de SoundFlow : {ex.Message}");
             _soundFlowInitialized = false;
         }
     }
 
     public async Task<string> TextToSpeechAsync(string text, Language language)
     {
+        EnsureSynthesizerInitialized();
         var voiceId = GetVoiceForLanguage(language);
         var fileName = $"TTS_{language}_{Guid.NewGuid()}.wav";
         var filePath = Path.Combine(Path.Combine(_modelDirectory,"Audios"), fileName);
@@ -73,12 +105,12 @@ public class KokoroTtsService : ITtsService, ILoadable
 
     public SoundPlayer? GetSoundPlayerForFile(string audioFilePath)
     {
-        if (!_soundFlowInitialized)
+        /*if (!_soundFlowInitialized)
         {
             Console.WriteLine(@"SoundFlow n'est pas initialisé. Impossible de créer un Media.");
             return null;
-        }
-        
+        }*/
+        EnsureMiniAudioEngineInitialized();
         var dataProvider = new StreamDataProvider(File.OpenRead(audioFilePath));
         var player = new SoundPlayer(dataProvider);
 
@@ -90,8 +122,10 @@ public class KokoroTtsService : ITtsService, ILoadable
         Language.French => "ff_siwis",    // Voix française
         Language.English => "af_heart",   // Voix anglaise
         Language.Spanish => "em_alex",    // Voix espagnole
-        Language.German => "de_css10",    // Voix allemande
         Language.Japanese => "jf_alpha",  // Voix japonaise
+        Language.Italian => "if_sara",    // Voix italienne
+        Language.Portuguese => "pf_dora", // Voix portugaise
+        Language.Chinese => "zf_xiaoxiao", // Voix chinoise
         _ => "af_heart"                   // Par défaut
     };
 
@@ -123,7 +157,15 @@ public class KokoroTtsService : ITtsService, ILoadable
         
         try
         {
-            InitializeSoundFlow();
+            //InitializeSoundFlow();
+            if (!Directory.Exists(Path.Combine(_modelDirectory,"Audios")))
+            {
+                Directory.CreateDirectory(Path.Combine(_modelDirectory,"Audios"));
+            }
+            
+            _synthesizer = new KokoroWavSynthesizer(Path.Combine(_modelDirectory, KokoroTtsModel.ModelName));
+            _soundFlowInitialized = true;
+            
             if (!_soundFlowInitialized)
             {
                 _logger.LogError("Failed to initialize SoundFlow for Kokoro TTS.");

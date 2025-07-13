@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DesktopEye.Common.Domain.Features.TextToSpeech;
+using DesktopEye.Common.Domain.Features.TextToSpeech.Interfaces;
 using DesktopEye.Common.Domain.Models;
 using SoundFlow.Components;
 using SoundFlow.Providers;
@@ -11,15 +12,15 @@ using SoundFlow.Backends.MiniAudio;
 
 namespace DesktopEye.Common.Application.ViewModels
 {
-    public partial class AudioPlayerViewModel : ObservableObject, IDisposable
+       public partial class AudioPlayerViewModel : ObservableObject, IDisposable
     {
-        private ITtsService _ttsService;
-        private SoundPlayer _soundPlayer;
-        private StreamDataProvider _dataProvider;
+        private readonly ITtsOrchestrator _ttsOrchestrator;
+        private SoundPlayer? _soundPlayer;
+        private StreamDataProvider? _dataProvider;
         private bool _disposedValue;
 
         [ObservableProperty]
-        private string _text;
+        private string _text = string.Empty;
 
         [ObservableProperty]
         private Language? _language;
@@ -37,76 +38,50 @@ namespace DesktopEye.Common.Application.ViewModels
         private float _currentPlaybackSpeed = 1.0f;
 
         [ObservableProperty]
-        private string _audioFilePath;
+        private string _audioFilePath = string.Empty;
 
-        public ITtsService TtsService
+        public AudioPlayerViewModel(ITtsOrchestrator ttsOrchestrator)
         {
-            get => _ttsService;
-            set => SetProperty(ref _ttsService, value);
+            _ttsOrchestrator = ttsOrchestrator ?? throw new ArgumentNullException(nameof(ttsOrchestrator));
+            Console.WriteLine($"AudioPlayerViewModel créé avec TtsOrchestrator: {_ttsOrchestrator != null}");
         }
 
         [RelayCommand]
         public async Task GenerateAudio()
         {
-            Console.WriteLine($"GenerateAudio appelé - Text: '{Text}', Language: {Language}, TtsManager: {TtsService != null}");
+            Console.WriteLine($"GenerateAudio appelé - Text: '{Text}', Language: {Language}");
 
-            if (string.IsNullOrWhiteSpace(Text))
+            if (string.IsNullOrWhiteSpace(Text) || Language == null)
             {
-                Console.WriteLine("Erreur: Texte vide ou null");
+                Console.WriteLine("Impossible de générer l'audio: texte vide ou langue non définie");
                 return;
             }
 
-            if (!Language.HasValue)
+            if (IsPlaying)
             {
-                Console.WriteLine("Erreur: Langue non définie");
-                return;
+                _soundPlayer.Stop();
+                IsPlaying = false;
             }
 
-            if (TtsService == null)
-            {
-                Console.WriteLine("Erreur: TtsManager null");
-                return;
-            }
-
+            IsGeneratingAudio = true;
             try
             {
-                Console.WriteLine("Début de génération audio...");
-                IsGeneratingAudio = true;
-                CleanupCurrentMedia();
-
-                IsAudioReady = false;
-                IsPlaying = false;
-                AudioFilePath = null;
-
-                var filePath = await TtsService.TextToSpeechAsync(Text, Language.Value);
-                Console.WriteLine($"Fichier généré : {filePath}");
-
-                if (!File.Exists(filePath))
+                // Générer le fichier audio
+                AudioFilePath = await _ttsOrchestrator.GenerateAudioAsync(Text, Language.Value);
+                
+                // Créer le lecteur
+                _soundPlayer = _ttsOrchestrator.CreatePlayer(AudioFilePath);
+                if (_soundPlayer != null)
                 {
-                    Console.WriteLine($"Le fichier audio n'existe pas : {filePath}");
-                    return;
+                    _soundPlayer.PlaybackSpeed = CurrentPlaybackSpeed;
+                    IsAudioReady = true;
+                    _soundPlayer.PlaybackEnded += OnPlaybackEnded;
+                    PlayAudio();
                 }
-
-                AudioFilePath = filePath;
-
-                // Créer le SoundPlayer
-                _dataProvider = new StreamDataProvider(File.OpenRead(filePath));
-                _soundPlayer = new SoundPlayer(_dataProvider);
-
-                _soundPlayer.PlaybackSpeed = CurrentPlaybackSpeed;
-
-                Mixer.Master.AddComponent(_soundPlayer);
-
-                IsAudioReady = true;
-                Console.WriteLine("MediaPlayer créé et prêt");
-
-                // Démarrer automatiquement la lecture
-                PlayAudio();
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Erreur lors de la génération audio : {ex.Message}");
-                Console.WriteLine($"StackTrace : {ex.StackTrace}");
+                Console.WriteLine($"Erreur lors de la génération audio: {ex.Message}");
             }
             finally
             {
@@ -124,6 +99,7 @@ namespace DesktopEye.Common.Application.ViewModels
             }
 
             Console.WriteLine("Lecture audio en cours...");
+            Mixer.Master.AddComponent(_soundPlayer);
             _soundPlayer.Play();
             IsPlaying = true;
         }
@@ -154,6 +130,13 @@ namespace DesktopEye.Common.Application.ViewModels
             {
                 _soundPlayer.PlaybackSpeed = value;
             }
+        }
+        
+        private void OnPlaybackEnded(object? sender, EventArgs e)
+        {
+            IsPlaying = false;
+            _soundPlayer.Stop();
+            Console.WriteLine("Lecture terminée");
         }
 
         private void CleanupCurrentMedia()

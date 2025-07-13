@@ -92,13 +92,13 @@ public class ModelDownloadService : IModelDownloadService, IDisposable
     {
         _logger.LogDebug("Loading tokenizer asynchronously for model: {ModelName}", modelName);
 
-        return await Task.Run(async () =>
+        return await Task.Run(() =>
         {
             try
             {
                 _logger.LogTrace("Executing tokenizer loading with GIL protection");
 
-                return await _runtimeManager.ExecuteWithGilAsync(() =>
+                return _runtimeManager.ExecuteWithGil(() =>
                 {
                     _logger.LogTrace("Importing transformers module");
                     dynamic transformers = Py.Import("transformers");
@@ -137,7 +137,7 @@ public class ModelDownloadService : IModelDownloadService, IDisposable
             {
                 _logger.LogTrace("Acquiring Python GIL for model loading");
 
-                return _runtimeManager.ExecuteWithGilAsync(() =>
+                return _runtimeManager.ExecuteWithGil(() =>
                 {
                     _logger.LogTrace("Python GIL acquired for model loading");
 

@@ -10,11 +10,13 @@ using DesktopEye.Common.Application.Views;
 using DesktopEye.Common.Application.Views.ScreenCapture;
 using DesktopEye.Common.Domain.Features.OpticalCharacterRecognition.Interfaces;
 using DesktopEye.Common.Domain.Features.TextClassification.Interfaces;
+using DesktopEye.Common.Domain.Features.TextToSpeech.Interfaces;
 using DesktopEye.Common.Domain.Features.TextTranslation.Interfaces;
 using DesktopEye.Common.Infrastructure.Configuration;
 using DesktopEye.Common.Infrastructure.Models;
 using DesktopEye.Common.Resources;
 using Microsoft.Extensions.DependencyInjection;
+using TesseractOCR;
 using TesseractOCR.Enums;
 using MainViewModel = DesktopEye.Common.Application.ViewModels.MainViewModel;
 using ScreenCaptureViewModel = DesktopEye.Common.Application.ViewModels.ScreenCapture.ScreenCaptureViewModel;
@@ -30,6 +32,14 @@ public class App : Avalonia.Application
     public App(IServiceProvider services)
     {
         _services = services;
+        try
+        {
+            using var engine = new Engine("", Language.English);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
         DownloadModels();
         PreloadServices();
     }
@@ -43,7 +53,7 @@ public class App : Avalonia.Application
     {
         // Preload services, obviously only pass singletons here
         var preloader = _services.GetRequiredService<ServicesLoader>();
-        preloader.PreloadServices(typeof(IOcrOrchestrator), typeof(ITextClassifierOrchestrator), typeof(ITranslationOrchestrator));
+        preloader.PreloadServices(typeof(IOcrOrchestrator), typeof(ITextClassifierOrchestrator), typeof(ITranslationOrchestrator), typeof(ITtsOrchestrator));
     }
     
     private void DownloadModels()
