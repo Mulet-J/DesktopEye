@@ -1,5 +1,6 @@
 using Bugsnag.AspNet.Core;
 using DesktopEye.Common.Application.ViewModels;
+using DesktopEye.Common.Domain.Features.Dictionary;
 using DesktopEye.Common.Domain.Features.OpticalCharacterRecognition;
 using DesktopEye.Common.Domain.Features.OpticalCharacterRecognition.Interfaces;
 using DesktopEye.Common.Domain.Features.TextClassification;

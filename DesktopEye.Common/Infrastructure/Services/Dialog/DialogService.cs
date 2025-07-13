@@ -6,11 +6,35 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Threading;
+using Microsoft.Extensions.Logging;
 
 namespace DesktopEye.Common.Infrastructure.Services.Dialog;
 
+/// <summary>
+/// Service pour afficher des boîtes de dialogue à l'utilisateur.
+/// </summary>
 public class DialogService : IDialogService
 {
+    private readonly ILogger<DialogService> _logger;
+    private readonly Bugsnag.IClient _bugsnag;
+
+    /// <summary>
+    /// Initialise une nouvelle instance du service de dialogue.
+    /// </summary>
+    /// <param name="logger">Le logger pour enregistrer les erreurs.</param>
+    /// <param name="bugsnag">Le client Bugsnag pour rapporter les exceptions.</param>
+    public DialogService(ILogger<DialogService> logger, Bugsnag.IClient bugsnag)
+    {
+        _logger = logger;
+        _bugsnag = bugsnag;
+    }
+
+    /// <summary>
+    /// Affiche une boîte de dialogue stylisée avec le titre et le contenu spécifiés.
+    /// </summary>
+    /// <param name="title">Le titre de la boîte de dialogue.</param>
+    /// <param name="message">Le contenu de la boîte de dialogue.</param>
+    /// <returns>Une tâche représentant l'opération asynchrone.</returns>
     public async Task ShowMessageBoxAsync(string title, string message)
     {
         try
@@ -26,7 +50,7 @@ public class DialogService : IDialogService
                 // Créer une DockPanel pour organiser les contrôles
                 var dockPanel = new DockPanel
                 {
-                    LastChildFill = true
+                    LastChildFill = false
                 };
 
                 // Ajouter le bouton Fermer en bas
@@ -38,7 +62,7 @@ public class DialogService : IDialogService
                     Margin = new Thickness(10),
                     Width = 100,
                     Height = 30,
-                    Background = new SolidColorBrush(Colors.Gray), // Bleu style Windows
+                    Background = new SolidColorBrush(Colors.Gray),
                     Foreground = new SolidColorBrush(Colors.Black)
                 };
 
@@ -51,7 +75,6 @@ public class DialogService : IDialogService
                     Margin = new Thickness(10),
                     VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
                     HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
-                    MaxHeight = 500,
                     Content = new TextBlock
                     {
                         Text = message,
@@ -61,6 +84,7 @@ public class DialogService : IDialogService
                     }
                 };
 
+                DockPanel.SetDock(scrollViewer, Dock.Top);
                 dockPanel.Children.Add(scrollViewer);
 
                 // Créer la fenêtre
@@ -74,10 +98,9 @@ public class DialogService : IDialogService
                     WindowStartupLocation = WindowStartupLocation.CenterOwner,
                     ShowInTaskbar = false,
                     CanResize = true,
-                    Background = new SolidColorBrush(Colors.Black), // Fond blanc simple
+                    Background = new SolidColorBrush(Colors.Black),
                     Content = dockPanel,
-                    SystemDecorations = SystemDecorations.Full,
-                    SizeToContent = SizeToContent.WidthAndHeight
+                    SystemDecorations = SystemDecorations.Full
                 };
 
                 // Ajouter un gestionnaire pour le bouton fermer
@@ -96,9 +119,8 @@ public class DialogService : IDialogService
         }
         catch (Exception ex)
         {
-            // Logger l'exception avec plus de détails
-            Console.WriteLine($"Erreur dans ShowMessageBoxAsync: {ex.Message}");
-            Console.WriteLine($"StackTrace: {ex.StackTrace}");
+            _logger.LogError(ex, "Erreur lors de l'affichage de la boîte de dialogue: {Message}", ex.Message);
+            _bugsnag.Notify(ex);
 
             // Afficher une boîte de dialogue de secours plus simple
             await Dispatcher.UIThread.InvokeAsync(() =>
