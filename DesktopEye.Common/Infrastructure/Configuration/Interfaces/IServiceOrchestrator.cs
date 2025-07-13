@@ -2,7 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace DesktopEye.Common.Infrastructure.Configuration;
+namespace DesktopEye.Common.Infrastructure.Configuration.Interfaces;
 
 public interface IServiceOrchestrator<TService, TServiceType> : IDisposable
 {

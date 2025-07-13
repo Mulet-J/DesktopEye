@@ -2,7 +2,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using DesktopEye.Common.Domain.Models;
 using DesktopEye.Common.Domain.Models.TextTranslation;
-using DesktopEye.Common.Infrastructure.Configuration;
+using DesktopEye.Common.Infrastructure.Configuration.Interfaces;
 
 namespace DesktopEye.Common.Domain.Features.TextTranslation.Interfaces;
 

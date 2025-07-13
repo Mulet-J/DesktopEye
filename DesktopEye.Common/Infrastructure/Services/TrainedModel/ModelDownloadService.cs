@@ -13,11 +13,11 @@ namespace DesktopEye.Common.Infrastructure.Services.TrainedModel;
 
 public class ModelDownloadService : IModelDownloadService, IDisposable
 {
+    private readonly IClient _bugsnagClient;
     private readonly IDownloadService _downloadService;
+    private readonly ILogger<ModelDownloadService> _logger;
     private readonly IPathService _pathService;
     private readonly IPythonRuntimeManager _runtimeManager;
-    private readonly ILogger<ModelDownloadService> _logger;
-    private readonly IClient _bugsnagClient;
 
     public ModelDownloadService(IDownloadService downloadService, IPathService pathService,
         IPythonRuntimeManager runtimeManager, ILogger<ModelDownloadService> logger,
@@ -28,7 +28,18 @@ public class ModelDownloadService : IModelDownloadService, IDisposable
         _runtimeManager = runtimeManager;
         _logger = logger;
         _bugsnagClient = bugsnagClient;
-        _runtimeManager.StartRuntime(this);
+    }
+
+    public void Dispose()
+    {
+        try
+        {
+            // _runtimeManager.StopRuntime(this);
+        }
+        catch (Exception ex)
+        {
+            _bugsnagClient.Notify(ex);
+        }
     }
 
     public async Task<bool> DownloadModelAsync(Model model)
@@ -49,20 +60,26 @@ public class ModelDownloadService : IModelDownloadService, IDisposable
             var result = false;
             if (model.Source == ModelSource.HuggingFace && model.Runtime == ModelRuntime.NllbPyTorch)
             {
-                _logger.LogDebug("Loading tokenizer asynchronously");
-                var tokenizer = await LoadTokenizerAsync(model.ModelName, modelFolderPath);
-                _logger.LogDebug("Loading model asynchronously");
-                var trainedModel = await LoadModelAsync(model.ModelName, modelFolderPath);
-                if (tokenizer != null && trainedModel != null)
-                {
-                    _logger.LogInformation("Successfully loaded model and tokenizer for language {Language}",
-                        model.ModelName);
-                    result = true;
-                }
-                else
-                {
-                    _logger.LogError("Failed to load model or tokenizer for language {Language}", model.ModelName);
-                }
+                result = true;
+                // This method of downloading models tends to generate errors that cannot be handled
+                // _runtimeManager.StartRuntime(this);
+                // _logger.LogDebug("Loading tokenizer asynchronously");
+                // var tokenizer = await LoadTokenizerAsync(model.ModelName, modelFolderPath);
+                // _logger.LogDebug("Loading model asynchronously");
+                // var trainedModel = await LoadModelAsync(model.ModelName, modelFolderPath);
+                // if (tokenizer != null && trainedModel != null)
+                // {
+                //     _logger.LogInformation("Successfully loaded model and tokenizer for language {Language}",
+                //         model.ModelName);
+                //
+                //     result = true;
+                // }
+                // else
+                // {
+                //     _logger.LogError("Failed to load model or tokenizer for language {Language}", model.ModelName);
+                // }
+                //
+                // _runtimeManager.StopRuntime(this);
             }
             else
             {
@@ -168,17 +185,5 @@ public class ModelDownloadService : IModelDownloadService, IDisposable
                 throw;
             }
         });
-    }
-    
-    public void Dispose()
-    {
-        try
-        {
-            _runtimeManager.StopRuntime(this);
-        }
-        catch (Exception ex)
-        {
-            _bugsnagClient.Notify(ex);
-        }
     }
 }

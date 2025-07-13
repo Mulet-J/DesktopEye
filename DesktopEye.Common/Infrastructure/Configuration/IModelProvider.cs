@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
+using DesktopEye.Common.Domain.Models;
 using DesktopEye.Common.Infrastructure.Models;
-using TesseractOCR.Enums;
 
 namespace DesktopEye.Common.Infrastructure.Configuration;
 
