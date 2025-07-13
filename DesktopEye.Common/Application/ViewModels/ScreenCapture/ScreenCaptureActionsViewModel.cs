@@ -1,11 +1,20 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
+using Avalonia.Input;
+using Avalonia.Layout;
+using Avalonia.Media;
 using Avalonia.Media.Imaging;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DesktopEye.Common.Application.ViewModels.Base;
+using DesktopEye.Common.Domain.Features.Dictionary.Helpers;
 using DesktopEye.Common.Domain.Features.OpticalCharacterRecognition.Interfaces;
 using DesktopEye.Common.Domain.Features.TextClassification.Interfaces;
 using DesktopEye.Common.Domain.Features.TextTranslation.Interfaces;
@@ -13,6 +22,9 @@ using DesktopEye.Common.Domain.Models;
 using DesktopEye.Common.Domain.Models.OpticalCharacterRecognition;
 using DesktopEye.Common.Domain.Models.TextClassification;
 using DesktopEye.Common.Domain.Models.TextTranslation;
+using DesktopEye.Common.Infrastructure.Services.Dialog;
+using DesktopEye.Common.Infrastructure.Services.Dictionary;
+using MsBox.Avalonia;
 
 namespace DesktopEye.Common.Application.ViewModels.ScreenCapture;
 
@@ -23,6 +35,8 @@ public partial class ScreenCaptureActionsViewModel : ViewModelBase
     private readonly IOcrOrchestrator _ocrOrchestrator;
     private readonly ITranslationOrchestrator _translationOrchestrator;
     private readonly Bugsnag.IClient _bugsnag;
+    private readonly IWiktionaryService _wiktionaryService;
+    private readonly IDialogService _dialogService;
 
     // Available options
     [ObservableProperty]
@@ -58,12 +72,14 @@ public partial class ScreenCaptureActionsViewModel : ViewModelBase
     [ObservableProperty] private ICommand? _relaunchAnalysisCommand;
 
     public ScreenCaptureActionsViewModel(IOcrOrchestrator ocrOrchestrator, ITextClassifierOrchestrator classifierOrchestrator,
-        ITranslationOrchestrator translationOrchestrator, Bugsnag.IClient bugsnag)
+        ITranslationOrchestrator translationOrchestrator, Bugsnag.IClient bugsnag, IWiktionaryService wiktionaryService, IDialogService dialogService)
     {
         _ocrOrchestrator = ocrOrchestrator;
         _classifierOrchestrator = classifierOrchestrator;
         _translationOrchestrator = translationOrchestrator;
         _bugsnag = bugsnag;
+        _wiktionaryService = wiktionaryService;
+        _dialogService = dialogService;
         _currentOcrType = _ocrOrchestrator.CurrentServiceType;
         _currentClassifierType = _classifierOrchestrator.CurrentServiceType;
         _currentTranslationType = _translationOrchestrator.CurrentServiceType;
@@ -72,7 +88,37 @@ public partial class ScreenCaptureActionsViewModel : ViewModelBase
         // Initialiser la commande
         RelaunchAnalysisCommand = new AsyncRelayCommand(RelaunchAnalysis);
     }
-
+    
+    public async Task HandleDefinitionLookupAsync(string selectedText)
+    {
+        if (string.IsNullOrWhiteSpace(selectedText))
+            return;
+        try
+        {
+            var normalizedText = selectedText.ToLower().Trim();
+            var response = await _wiktionaryService.GetDefinitionsAsync(normalizedText);
+            
+            string message;
+            if (response == null || !response.Any())
+            {
+                message = $"Aucune définition trouvée pour \"{normalizedText}\".";
+            }
+            else
+            {
+                message = WiktionaryFormatter.FormatDefinitions(response, normalizedText);
+            }
+            
+            await _dialogService.ShowMessageBoxAsync("Wiktionary Definition", message);
+        }
+        catch (Exception ex)
+        {
+            _bugsnag.Notify(ex);
+            await _dialogService.ShowMessageBoxAsync("Error", 
+                "Impossible de récupérer les définitions pour le terme sélectionné.");
+        }
+    }
+    
+    
     public void SetBitmap(Bitmap bitmap)
     {
         try

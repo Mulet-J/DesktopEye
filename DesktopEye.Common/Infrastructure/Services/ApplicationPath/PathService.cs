@@ -14,7 +14,7 @@ public class PathService : IPathService
     {
         // Initialize directories based on the application name
         AppDataDirectory = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData).Replace(" ", "_"),
             ApplicationName);
 
         _appConfigService = appConfigService;

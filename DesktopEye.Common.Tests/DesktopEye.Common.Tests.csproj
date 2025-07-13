@@ -21,6 +21,7 @@
         <PackageReference Include="KokoroSharp"/>
         <PackageReference Include="Microsoft.NET.Test.Sdk"/>
         <PackageReference Include="Moq"/>
+        <PackageReference Include="Sdcb.OpenCvSharp4.mini.runtime.osx-arm64" />
         <PackageReference Include="xunit"/>
         <PackageReference Include="xunit.abstractions" />
         <PackageReference Include="xunit.runner.visualstudio">
@@ -40,7 +41,6 @@
 
     <ItemGroup>
         <PackageReference Include="SkiaSharp.NativeAssets.macOS"/>
-        <PackageReference Include="OpenCvSharp4.runtime.osx_arm64"/>
     </ItemGroup>
 
     <ItemGroup>
