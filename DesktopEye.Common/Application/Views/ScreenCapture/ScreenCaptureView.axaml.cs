@@ -78,7 +78,7 @@ public partial class ScreenCaptureView : UserControl
             }
             catch (Exception exception)
             {
-                Console.WriteLine(exception);
+                ;
             }
     }
 

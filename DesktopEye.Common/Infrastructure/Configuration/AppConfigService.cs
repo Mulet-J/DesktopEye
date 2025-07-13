@@ -95,8 +95,7 @@ public class AppConfigService : IAppConfigService
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error setting config value: {ex.Message}");
-            throw;
+            ;
         }
     }
 
@@ -133,7 +132,6 @@ public class AppConfigService : IAppConfigService
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error loading config: {ex.Message}");
             Config = new AppConfig();
             SaveConfig();
         }
@@ -163,7 +161,6 @@ public class AppConfigService : IAppConfigService
         catch (Exception ex)
         {
             // Log error and use default config
-            Console.WriteLine($"Error loading config: {ex.Message}");
             Config = new AppConfig();
             await SaveConfigAsync();
         }
@@ -182,8 +179,7 @@ public class AppConfigService : IAppConfigService
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error saving config: {ex.Message}");
-            throw;
+            ;
         }
     }
 
@@ -196,8 +192,7 @@ public class AppConfigService : IAppConfigService
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error saving config: {ex.Message}");
-            throw;
+            ;
         }
     }
 

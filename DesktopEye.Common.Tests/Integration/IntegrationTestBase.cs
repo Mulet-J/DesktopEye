@@ -74,8 +74,7 @@ public abstract class IntegrationTestBase : IAsyncLifetime
                 .SetupWithoutStarting();
         } catch (Exception ex)
         {
-            // Log or handle the exception if Avalonia initialization fails
-            Console.WriteLine($@"Avalonia initialization failed: {ex.Message}");
+            ;
         }
        
     }
@@ -419,44 +418,37 @@ public class MockBugsnagClient : IClient
 
     public void Notify(Exception exception)
     {
-        // Log the exception to the output for testing purposes
-        Console.WriteLine($@"Bugsnag notified with exception: {exception.Message}");
+        ;
     }
 
     public void Notify(Exception exception, Middleware callback)
     {
-        // Log the exception to the output for testing purposes
-        Console.WriteLine($@"Bugsnag notified with exception: {exception.Message}");
+        ;
     }
 
     public void Notify(Exception exception, Severity severity)
     {
-        // Log the exception to the output for testing purposes
-        Console.WriteLine($@"Bugsnag notified with exception: {exception.Message}");
+        ;
     }
 
     public void Notify(Exception exception, Severity severity, Middleware callback)
     {
-        // Log the exception to the output for testing purposes
-        Console.WriteLine($@"Bugsnag notified with exception: {exception.Message}");
+        ;
     }
 
     public void Notify(Exception exception, HandledState handledState)
     {
-        // Log the exception to the output for testing purposes
-        Console.WriteLine($@"Bugsnag notified with exception: {exception.Message}");
+        ;
     }
 
     public void Notify(Exception exception, HandledState handledState, Middleware callback)
     {
-        // Log the exception to the output for testing purposes
-        Console.WriteLine($@"Bugsnag notified with exception: {exception.Message}");
+        ;
     }
 
     public void Notify(Report report, Middleware callback)
     {
-        // Log the report to the output for testing purposes
-        Console.WriteLine($@"Bugsnag notified with report: {report}");
+        ;
     }
 
     public void BeforeNotify(Middleware middleware)

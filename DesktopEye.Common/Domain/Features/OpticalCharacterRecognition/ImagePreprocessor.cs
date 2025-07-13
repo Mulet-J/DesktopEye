@@ -276,8 +276,7 @@ public static class ImagePreprocessor
         }
         catch (Exception ex)
         {
-            // Log error but don't fail the main process
-            Console.WriteLine($@"Unable to save debug image: {ex.Message}");
+            ;
         }
     }
 }

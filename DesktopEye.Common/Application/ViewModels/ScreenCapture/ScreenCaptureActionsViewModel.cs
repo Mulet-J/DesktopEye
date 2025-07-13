@@ -141,32 +141,23 @@ public partial class ScreenCaptureActionsViewModel : ViewModelBase
     {
         try
         {
-            Console.WriteLine("[DEBUG] Entrée dans SetBitmap");
             if (bitmap == null)
             {
-                Console.WriteLine("[DEBUG] Le bitmap est null");
                 return;
             }
         
             Bitmap = bitmap;
-            Console.WriteLine("[DEBUG] Bitmap défini");
         
             // Reset des états et démarrage de l'analyse automatique
-            Console.WriteLine("[DEBUG] Avant ResetResults");
             ResetResults();
-            Console.WriteLine("[DEBUG] Après ResetResults");
 
             // Lancer la tâche
             Task.Run(async () => {
-                Console.WriteLine("[DEBUG] Démarrage de StartAutoAnalysis");
                 await StartAutoAnalysis();
-                Console.WriteLine("[DEBUG] Fin de StartAutoAnalysis");
             });
         }
         catch (Exception e)
         {
-            Console.WriteLine($"[DEBUG] Exception dans SetBitmap: {e.Message}");
-            Console.WriteLine($"[DEBUG] StackTrace: {e.StackTrace}");
             _bugsnag.Notify(e);
         }
     }
@@ -243,28 +234,22 @@ public partial class ScreenCaptureActionsViewModel : ViewModelBase
         if (Bitmap == null)
             return;
     
-        Console.WriteLine("[DEBUG] Début ExtractText");
         IsProcessingImage = true;
         IsExtractingText = true;
         try
         {
-            Console.WriteLine("[DEBUG] Avant appel à GetTextFromBitmapAsync");
             //OcrText = await _ocrOrchestrator.GetTextFromBitmapAsync(Bitmap);
             OcrText = await GetTextWithTimeoutAsync(Bitmap);
-            Console.WriteLine($"[DEBUG] Après GetTextFromBitmapAsync, texte reçu: {OcrText?.Text?.Length ?? 0} caractères");
             HasOcrText = !string.IsNullOrWhiteSpace(OcrText?.Text);
-            Console.WriteLine($"[DEBUG] HasOcrText défini à {HasOcrText}");
         }
         catch (Exception e)
         {
-            Console.WriteLine($"[DEBUG] Exception dans ExtractText: {e.Message}");
             _bugsnag.Notify(e);
         }
         finally
         {
             IsProcessingImage = false;
             IsExtractingText = false;
-            Console.WriteLine("[DEBUG] Fin ExtractText");
         }
     }
     
@@ -277,7 +262,6 @@ public partial class ScreenCaptureActionsViewModel : ViewModelBase
             // 20 secondes de timeout
             if (await Task.WhenAny(ocrTask, Task.Delay(20000)) != ocrTask)
             {
-                Console.WriteLine("[DEBUG] Timeout dépassé pour l'OCR");
                 return new OcrResult(null, "Le traitement OCR a pris trop de temps", 0);
             }
         
@@ -285,7 +269,6 @@ public partial class ScreenCaptureActionsViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[DEBUG] Exception dans GetTextWithTimeoutAsync: {ex.Message}");
             return new OcrResult(null, string.Empty, 0);
         }
     }
@@ -428,7 +411,6 @@ public partial class ScreenCaptureActionsViewModel : ViewModelBase
         {
             if (AudioPlayer == null)
             {
-                Console.WriteLine("[DEBUG] AudioPlayer est null dans UpdateAudioPlayerSource");
                 return;
             }
             
@@ -452,7 +434,6 @@ public partial class ScreenCaptureActionsViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[DEBUG] Exception dans UpdateAudioPlayerSource: {ex.Message}");
             _bugsnag.Notify(ex);
         }
     }

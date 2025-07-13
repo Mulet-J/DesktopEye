@@ -43,17 +43,14 @@ namespace DesktopEye.Common.Application.ViewModels
         public AudioPlayerViewModel(ITtsOrchestrator ttsOrchestrator)
         {
             _ttsOrchestrator = ttsOrchestrator ?? throw new ArgumentNullException(nameof(ttsOrchestrator));
-            Console.WriteLine($"AudioPlayerViewModel créé avec TtsOrchestrator: {_ttsOrchestrator != null}");
         }
 
         [RelayCommand]
         public async Task GenerateAudio()
         {
-            Console.WriteLine($"GenerateAudio appelé - Text: '{Text}', Language: {Language}");
 
             if (string.IsNullOrWhiteSpace(Text) || Language == null)
             {
-                Console.WriteLine("Impossible de générer l'audio: texte vide ou langue non définie");
                 return;
             }
 
@@ -81,7 +78,7 @@ namespace DesktopEye.Common.Application.ViewModels
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Erreur lors de la génération audio: {ex.Message}");
+                ;
             }
             finally
             {
@@ -94,11 +91,9 @@ namespace DesktopEye.Common.Application.ViewModels
         {
             if (!IsAudioReady || _soundPlayer == null)
             {
-                Console.WriteLine("Audio non prêt ou player null");
                 return;
             }
 
-            Console.WriteLine("Lecture audio en cours...");
             Mixer.Master.AddComponent(_soundPlayer);
             _soundPlayer.Play();
             IsPlaying = true;
@@ -136,7 +131,6 @@ namespace DesktopEye.Common.Application.ViewModels
         {
             IsPlaying = false;
             _soundPlayer.Stop();
-            Console.WriteLine("Lecture terminée");
         }
 
         private void CleanupCurrentMedia()
