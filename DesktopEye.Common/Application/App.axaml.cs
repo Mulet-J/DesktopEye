@@ -40,10 +40,7 @@ public class App : Avalonia.Application
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
-        }
-        catch
-        {
+            ;
         }
     }
 
