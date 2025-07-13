@@ -38,21 +38,18 @@ public class AreaSelectionControl : UserControl
 
     private string SelectionDimensions => $"{(int)_selectionRect.Width}×{(int)_selectionRect.Height}";
 
-    //TODO modify to adapt to users's screen
-    public double ScaleFactor => 1.0;
-
-    /*private double GetScaleFactor()
+    private double ScaleFactor
     {
-        if (TopLevel.GetTopLevel(this) is { } topLevel)
+        get
         {
-            var screen = topLevel.Screens.ScreenFromVisual(this);
-            if (screen != null)
+            if (TopLevel.GetTopLevel(this) is { } topLevel)
             {
-                return screen.Scaling;
+                var screen = topLevel.Screens!.ScreenFromVisual(this);
+                return screen?.Scaling ?? 1.0;
             }
+            return 1.0;
         }
-        return 1.0; // Valeur par défaut si l'écran n'est pas détectable
-    }*/
+    }
     protected override void OnPointerPressed(PointerPressedEventArgs e)
     {
         base.OnPointerPressed(e);
