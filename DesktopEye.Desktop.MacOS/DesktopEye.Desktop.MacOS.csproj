@@ -32,4 +32,17 @@
     <ItemGroup>
         <ProjectReference Include="..\DesktopEye.Common\DesktopEye.Common.csproj"/>
     </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="libs\x64\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="libs\x64\libleptonica-1.85.0.dll.dylib">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="libs\x64\libtesseract55.dll.dylib">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
 </Project>
