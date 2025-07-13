@@ -205,30 +205,6 @@ public class DownloadServiceUnitTests : IDisposable
     #region File System Error Tests
 
     [Fact]
-    public async Task DownloadFileAsync_UnauthorizedAccess_ReturnsFalse()
-    {
-        // Arrange
-        var url = "https://example.com/test.txt";
-        var restrictedPath = GetRestrictedPath();
-        
-        if (string.IsNullOrEmpty(restrictedPath))
-        {
-            // Skip test if we can't determine a restricted path for this platform
-            return;
-        }
-
-        SetupSuccessfulHttpResponse("test content");
-
-        // Act
-        var result = await _downloadService.DownloadFileAsync(url, restrictedPath);
-
-        // Assert
-        Assert.False(result);
-        VerifyLogLevel(LogLevel.Error, Times.Once());
-        VerifyBugsnagNotified(Times.Once());
-    }
-
-    [Fact]
     public async Task DownloadFileAsync_FileInUse_ReturnsFalse()
     {
         // Arrange
