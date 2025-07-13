@@ -1,6 +1,4 @@
 using Avalonia.Controls;
-using Avalonia.Input;
-using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 
 namespace DesktopEye.Common.Application.Views;
@@ -17,19 +15,5 @@ public partial class MainWindow : Window
     private void InitializeComponent()
     {
         AvaloniaXamlLoader.Load(this);
-    }
-
-    private void OnTitleBarPointerPressed(object sender, PointerPressedEventArgs e)
-    {
-        if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed) BeginMoveDrag(e);
-    }
-
-    private void MinimizeWindow(object sender, RoutedEventArgs e)
-    {
-    }
-
-    private void CloseWindow(object sender, RoutedEventArgs e)
-    {
-        Close();
     }
 }

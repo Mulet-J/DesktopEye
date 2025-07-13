@@ -114,7 +114,7 @@ public class FastTextClassifierService : ITextClassifierService, ILoadable
         throw new NotImplementedException();
     }
 
-    private Language LibLanguageToLanguage(string language)
+    public Language LibLanguageToLanguage(string language)
     {
         _logger.LogDebug("Converting library language format: {LanguageLabel}", language);
 

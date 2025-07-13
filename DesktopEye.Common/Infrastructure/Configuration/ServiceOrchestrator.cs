@@ -287,7 +287,7 @@ public abstract class ServiceOrchestrator<TService, TServiceType> : IServiceOrch
         if (CurrentServiceType.Equals(serviceType) && CurrentService != null)
             return;
 
-        if (CurrentService != null && CurrentService is IDisposable disposable) disposable.Dispose();
+        if (CurrentService is IDisposable disposable) disposable.Dispose();
 
         CurrentService = CreateService(serviceType);
         CurrentServiceType = serviceType;

@@ -4,5 +4,5 @@ namespace DesktopEye.Common.Infrastructure.Services.Download;
 
 public interface IDownloadService
 {
-    Task<bool> DownloadFileAsync(string url, string destinationPath);
+    Task<bool> DownloadFileAsync(string? url, string destinationPath);
 }

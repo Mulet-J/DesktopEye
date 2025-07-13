@@ -65,16 +65,16 @@ jobs:
       run: dotnet build ${{ matrix.project }}/${{ matrix.project }}.csproj --configuration Release --no-restore --verbosity minimal
       timeout-minutes: 15
 
-  #  - name: Run tests
-  #    run: dotnet test ${{ env.SOLUTION_FILE }} --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage" --logger trx
-  #    timeout-minutes: 10
+    - name: Run tests
+      run: dotnet test DesktopEye.Common.Tests/DesktopEye.Common.Tests.csproj --configuration Release --verbosity normal --collect:"XPlat Code Coverage" --logger trx
+      timeout-minutes: 10
 
-  #  - name: Upload test results
-  #    uses: actions/upload-artifact@v4
-  #    if: always()
-  #    with:
-  #      name: test-results
-  #      path: '**/TestResults/**/*'
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-results-${{ matrix.os }}
+        path: '**/TestResults/**/*'
 
   # Job de build et release
   build-and-release:

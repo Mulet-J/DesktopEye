@@ -105,7 +105,7 @@ public class ModelDownloadService : IModelDownloadService, IDisposable
         return false;
     }
 
-    private async Task<dynamic> LoadTokenizerAsync(string modelName, string modelDirectory)
+    private async Task<dynamic> LoadTokenizerAsync(string? modelName, string modelDirectory)
     {
         _logger.LogDebug("Loading tokenizer asynchronously for model: {ModelName}", modelName);
 
@@ -144,7 +144,7 @@ public class ModelDownloadService : IModelDownloadService, IDisposable
         });
     }
 
-    private async Task<dynamic> LoadModelAsync(string modelName, string modelDirectory)
+    private async Task<dynamic> LoadModelAsync(string? modelName, string modelDirectory)
     {
         _logger.LogDebug("Loading model asynchronously: {ModelName}", modelName);
 

@@ -1,6 +1,5 @@
 ﻿using System;
 using Avalonia;
-using DesktopEye.Common;
 using DesktopEye.Common.Application;
 using DesktopEye.Common.Infrastructure.Configuration;
 using DesktopEye.Common.Infrastructure.Services.ScreenCapture;

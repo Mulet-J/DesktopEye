@@ -51,7 +51,7 @@ public class TrayIconManager : IDisposable
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Erreur lors de la création de l'icône dans la zone de notification : {ex.Message}");
+            Console.WriteLine($@"Erreur lors de la création de l'icône dans la zone de notification : {ex.Message}");
         }
     }
 

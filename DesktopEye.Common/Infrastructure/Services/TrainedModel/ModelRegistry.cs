@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using DesktopEye.Common.Infrastructure.Models;
 using TesseractOCR.Enums;
 
@@ -79,7 +78,7 @@ public class ModelRegistry
         Language.Osd
     ];
 
-    public List<Model> GenerateTesseractRegistry(List<TesseractOCR.Enums.Language> languages)
+    public List<Model> GenerateTesseractRegistry(List<Language> languages)
     {
         var models = new List<Model>();
         foreach (var language in languages)
