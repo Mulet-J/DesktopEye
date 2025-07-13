@@ -26,7 +26,7 @@ namespace DesktopEye.Common.Application;
 
 public class App : Avalonia.Application
 {
-    private readonly IServiceProvider _services;
+    public static IServiceProvider _services;
     private Window? _mainWindow;
     private TrayIcon? _trayIcon;
 

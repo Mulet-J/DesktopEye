@@ -13,6 +13,7 @@ internal static class Program
     private static void AddPlatformServices(this IServiceCollection services)
     {
         services.AddSingleton<IScreenCaptureService, LinuxScreenCaptureService>();
+        services.AddSingleton<IScaleFactoringService, LinuxScaleFactoringService>();
     }
 
     // Initialization code. Don't use any Avalonia, third-party APIs or any
