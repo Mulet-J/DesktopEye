@@ -105,11 +105,7 @@ public class KokoroTtsService : ITtsService, ILoadable
 
     public SoundPlayer? GetSoundPlayerForFile(string audioFilePath)
     {
-        /*if (!_soundFlowInitialized)
-        {
-            Console.WriteLine(@"SoundFlow n'est pas initialisé. Impossible de créer un Media.");
-            return null;
-        }*/
+
         EnsureMiniAudioEngineInitialized();
         var dataProvider = new StreamDataProvider(File.OpenRead(audioFilePath));
         var player = new SoundPlayer(dataProvider);
