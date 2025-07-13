@@ -14,6 +14,7 @@ internal static class Program
     private static void AddPlatformServices(this IServiceCollection services)
     {
         services.AddSingleton<IScreenCaptureService, WindowsScreenCaptureService>();
+        services.AddSingleton<IScaleFactoringService, WindowsScaleFactoringService>();
     }
 
     // Initialization code. Don't use any Avalonia, third-party APIs or any

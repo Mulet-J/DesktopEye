@@ -5,6 +5,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
+using DesktopEye.Common.Infrastructure.Services.ScreenCapture;
 
 namespace DesktopEye.Common.Application.Views.Controls;
 
@@ -38,21 +39,16 @@ public class AreaSelectionControl : UserControl
 
     private string SelectionDimensions => $"{(int)_selectionRect.Width}×{(int)_selectionRect.Height}";
 
-    //TODO modify to adapt to users's screen
-    public double ScaleFactor => 1.0;
-
-    /*private double GetScaleFactor()
+    private double ScaleFactor
     {
-        if (TopLevel.GetTopLevel(this) is { } topLevel)
+        get
         {
-            var screen = topLevel.Screens.ScreenFromVisual(this);
-            if (screen != null)
-            {
-                return screen.Scaling;
-            }
+            var scaleFactoringService = (App.Services?.GetService(typeof(IScaleFactoringService)) ??
+                           throw new InvalidOperationException("ScaleFactoringService is not registered in the service provider.")) as IScaleFactoringService;
+            return scaleFactoringService!.GetOsScaleFactor(this);
         }
-        return 1.0; // Valeur par défaut si l'écran n'est pas détectable
-    }*/
+    }
+
     protected override void OnPointerPressed(PointerPressedEventArgs e)
     {
         base.OnPointerPressed(e);

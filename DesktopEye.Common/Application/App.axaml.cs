@@ -26,13 +26,13 @@ namespace DesktopEye.Common.Application;
 
 public class App : Avalonia.Application
 {
-    private readonly IServiceProvider _services;
+    public static IServiceProvider Services = null!;
     private Window? _mainWindow;
     private TrayIcon? _trayIcon;
 
     public App(IServiceProvider services)
     {
-        _services = services;
+        Services = services;
         // Dirty fix to force tesseract's library loading before others
         try
         {
@@ -52,7 +52,7 @@ public class App : Avalonia.Application
     private void PreloadServices()
     {
         // Preload services, obviously only pass singletons here
-        var preloader = _services.GetRequiredService<ServicesLoader>();
+        var preloader = Services.GetRequiredService<ServicesLoader>();
         preloader.PreloadServices(typeof(IOcrOrchestrator), typeof(ITextClassifierOrchestrator), typeof(ITranslationOrchestrator), typeof(ITtsOrchestrator));
     }
 
@@ -63,16 +63,16 @@ public class App : Avalonia.Application
             DisableAvaloniaDataAnnotationValidation();
             _mainWindow = new MainWindow
             {
-                DataContext = _services.GetService<MainViewModel>()
+                DataContext = Services.GetService<MainViewModel>()
             };
             desktop.ShutdownMode = ShutdownMode.OnExplicitShutdown;
 
-            var config = _services.GetRequiredService<IAppConfigService>();
+            var config = Services.GetRequiredService<IAppConfigService>();
 
             if (!config.IsSetupFinished())
             {
                 // Setup not finished - show setup window as main window
-                var setupViewModel = _services.GetRequiredService<SetupViewModel>();
+                var setupViewModel = Services.GetRequiredService<SetupViewModel>();
                 var setupWindow = new SetupWindow
                 {
                     DataContext = setupViewModel
@@ -113,7 +113,7 @@ public class App : Avalonia.Application
     {
         _mainWindow = new MainWindow
         {
-            DataContext = _services.GetService<MainViewModel>()
+            DataContext = Services.GetService<MainViewModel>()
         };
 
         desktop.MainWindow = _mainWindow;
@@ -186,7 +186,7 @@ public class App : Avalonia.Application
     {
         var fullScreenWindow = new ScreenCaptureWindow
         {
-            DataContext = _services.GetService<ScreenCaptureViewModel>()
+            DataContext = Services.GetService<ScreenCaptureViewModel>()
         };
         fullScreenWindow.Show();
     }
