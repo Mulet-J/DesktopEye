@@ -1,0 +1,173 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:DesktopEye.Common.Application.ViewModels.Setup"
+             xmlns:design="clr-namespace:DesktopEye.Common.Application.ViewModels.Setup.Design"
+             mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="400"
+             x:Class="DesktopEye.Common.Application.Views.Setup.SetupPathView"
+             x:DataType="viewModels:SetupPathViewModel">
+
+    <Design.DataContext>
+        <design:DesignSetupPathViewModel />
+    </Design.DataContext>
+
+    <UserControl.Styles>
+        <Style Selector="Border.card">
+            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseLowBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="BoxShadow" Value="0 2 8 0 #20000000" />
+        </Style>
+
+        <Style Selector="TextBlock.title">
+            <Setter Property="FontSize" Value="18" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+        </Style>
+
+        <Style Selector="TextBlock.subtitle">
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+
+        <Style Selector="TextBox.path-input">
+            <Setter Property="MinHeight" Value="36" />
+            <Setter Property="Padding" Value="12,8" />
+            <Setter Property="FontFamily" Value="Consolas, 'Courier New', monospace" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseMediumLowBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="6" />
+        </Style>
+
+        <Style Selector="TextBox.path-input:focus">
+            <Setter Property="BorderBrush" Value="{DynamicResource SystemAccentColor}" />
+            <Setter Property="BorderThickness" Value="2" />
+        </Style>
+
+        <Style Selector="Button.explore-button">
+            <Setter Property="MinHeight" Value="36" />
+            <Setter Property="Padding" Value="16,8" />
+            <Setter Property="Background" Value="{DynamicResource SystemAccentColor}" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="FontWeight" Value="Medium" />
+        </Style>
+
+        <Style Selector="Button.explore-button:pointerover">
+            <Setter Property="Background" Value="{DynamicResource SystemAccentColorDark1}" />
+        </Style>
+
+        <Style Selector="Button.explore-button:pressed">
+            <Setter Property="Background" Value="{DynamicResource SystemAccentColorDark2}" />
+        </Style>
+
+        <Style Selector="Border.error-container">
+            <Setter Property="Background" Value="{DynamicResource SystemFillColorCriticalBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SystemFillColorCriticalBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="Padding" Value="12,8" />
+        </Style>
+
+        <Style Selector="TextBlock.error-text">
+            <Setter Property="Foreground" Value="Red" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+
+        <Style Selector="Path.folder-icon">
+            <Setter Property="Fill" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+        </Style>
+
+        <!-- Additional visual polish -->
+        <Style Selector="Border.card:pointerover">
+            <Setter Property="BoxShadow" Value="0 4 12 0 #30000000" />
+        </Style>
+    </UserControl.Styles>
+
+    <Grid ColumnDefinitions="*" RowDefinitions="*">
+        <!-- Main container with padding -->
+        <Border Classes="card"
+                MaxWidth="500"
+                MinWidth="400"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Margin="32">
+
+            <StackPanel Margin="32" Spacing="24">
+                <!-- Header Section -->
+                <StackPanel Spacing="8">
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <!-- Folder icon -->
+                        <Viewbox Width="24" Height="24" VerticalAlignment="Center">
+                            <Canvas Width="24" Height="24">
+                                <Path Classes="folder-icon"
+                                      Data="M10 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2h-8l-2-2z" />
+                            </Canvas>
+                        </Viewbox>
+                        <TextBlock Classes="title" Text="Application Data Folder" />
+                    </StackPanel>
+
+                    <TextBlock Classes="subtitle"
+                               Text="Choose where the application will store its data files and configuration." />
+                </StackPanel>
+
+                <!-- Path Selection Section -->
+                <StackPanel Spacing="12">
+                    <TextBlock Text="Folder Path:"
+                               FontWeight="Medium"
+                               FontSize="14"
+                               Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                        <TextBox Grid.Column="0"
+                                 Classes="path-input"
+                                 Text="{Binding LocalAppDataFolder}"
+                                 Watermark="Select a folder path..."
+                                 IsReadOnly="False" />
+
+                        <Button Grid.Column="1"
+                                Classes="explore-button"
+                                Click="SelectFolderButton_Click"
+                                Content="Browse"
+                                ToolTip.Tip="Browse for folder" />
+                    </Grid>
+                </StackPanel>
+
+                <!-- Validation Errors Section -->
+                <ItemsControl ItemsSource="{Binding ValidationErrors}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Spacing="8" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Classes="error-container">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <!-- Error icon -->
+                                    <Viewbox Width="16" Height="16" VerticalAlignment="Top" Margin="0,2,0,0">
+                                        <Canvas Width="24" Height="24">
+                                            <Path Fill="{DynamicResource SystemFillColorCriticalBrush}"
+                                                  Data="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+                                        </Canvas>
+                                    </Viewbox>
+
+                                    <TextBlock Classes="error-text" Text="{Binding}" />
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

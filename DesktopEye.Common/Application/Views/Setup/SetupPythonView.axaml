@@ -1,0 +1,190 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:DesktopEye.Common.Application.ViewModels.Setup"
+             xmlns:design="clr-namespace:DesktopEye.Common.Application.ViewModels.Setup.Design"
+             mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="400"
+             x:Class="DesktopEye.Common.Application.Views.Setup.SetupPythonView"
+             x:DataType="viewModels:SetupPythonViewModel">
+    <Design.DataContext>
+        <design:DesignSetupPythonViewModel />
+    </Design.DataContext>
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <!-- Theme-aware colors -->
+            <SolidColorBrush x:Key="SuccessColor" Color="#28A745" />
+            <SolidColorBrush x:Key="DangerColor" Color="#DC3545" />
+            <SolidColorBrush x:Key="InfoColor" Color="#17A2B8" />
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <UserControl.Styles>
+        <!-- Card styling -->
+        <Style Selector="Border.setup-card">
+            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SystemControlBackgroundBaseLowBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="32" />
+            <Setter Property="BoxShadow" Value="0 4 12 0 #10000000" />
+        </Style>
+
+        <Style Selector="TextBlock.main-title">
+            <Setter Property="FontSize" Value="24" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Margin" Value="0,0,0,24" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+        </Style>
+
+        <Style Selector="TextBlock.section-title">
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="FontWeight" Value="Medium" />
+            <Setter Property="Margin" Value="0,0,0,12" />
+            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+        </Style>
+
+        <Style Selector="Button.install-button">
+            <Setter Property="Background" Value="{DynamicResource InfoColor}" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="Padding" Value="20,10" />
+            <Setter Property="FontWeight" Value="Medium" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="MinWidth" Value="180" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="Margin" Value="0,20,0,0" />
+        </Style>
+
+        <Style Selector="Button.install-button:pointerover">
+            <Setter Property="Background" Value="#138A9C" />
+        </Style>
+
+        <Style Selector="Button.install-button:pressed">
+            <Setter Property="Background" Value="#0F7A8A" />
+        </Style>
+
+        <Style Selector="Border.status-dot">
+            <Setter Property="Width" Value="14" />
+            <Setter Property="Height" Value="14" />
+            <Setter Property="CornerRadius" Value="7" />
+            <Setter Property="Margin" Value="0,0,12,0" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+
+        <Style Selector="Border.status-dot.success">
+            <Setter Property="Background" Value="{DynamicResource SuccessColor}" />
+        </Style>
+
+        <Style Selector="Border.status-dot.error">
+            <Setter Property="Background" Value="{DynamicResource DangerColor}" />
+        </Style>
+
+        <Style Selector="TextBlock.status-text">
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+        </Style>
+
+        <Style Selector="TextBlock.success-message">
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="FontWeight" Value="Medium" />
+            <Setter Property="Foreground" Value="{DynamicResource SuccessColor}" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="Margin" Value="0,16,0,0" />
+        </Style>
+
+        <Style Selector="StackPanel.status-container">
+            <Setter Property="Orientation" Value="Horizontal" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="Margin" Value="0,0,0,8" />
+        </Style>
+
+        <!-- Error Panel Styles -->
+        <Style Selector="Border.error-container">
+            <Setter Property="Background" Value="{DynamicResource SystemFillColorCriticalBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SystemFillColorCriticalBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="Padding" Value="12,8" />
+        </Style>
+
+        <Style Selector="TextBlock.error-text">
+            <Setter Property="Foreground" Value="Red" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+    </UserControl.Styles>
+
+    <Grid ColumnDefinitions="*" RowDefinitions="*">
+        <Border Classes="setup-card"
+                MaxWidth="450"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center">
+            <StackPanel>
+                <!-- Header -->
+                <TextBlock Classes="main-title" Text="Python Environment Setup" />
+
+                <!-- Status Section -->
+                <TextBlock Classes="section-title"
+                           Text="Environment Status"
+                           HorizontalAlignment="Center" />
+
+                <StackPanel Classes="status-container">
+                    <Border Classes="status-dot"
+                            Classes.success="{Binding IsCondaInstalled}"
+                            Classes.error="{Binding !IsCondaInstalled}" />
+                    <TextBlock Classes="status-text">
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat="Conda: {0}">
+                                <Binding Path="IsCondaInstalled" />
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                </StackPanel>
+
+
+                <!-- Install Button -->
+                <Button Classes="install-button"
+                        Content="Install Python Environment"
+                        Command="{Binding SetupUpCondaCommand}" />
+
+                <!-- Success Message -->
+                <TextBlock Classes="success-message"
+                           Text="✓ Installation completed successfully!"
+                           IsVisible="{Binding InstallSuccess}" />
+
+                <ItemsControl ItemsSource="{Binding ValidationErrors}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Spacing="8" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Classes="error-container">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <!-- Error icon -->
+                                    <Viewbox Width="16" Height="16" VerticalAlignment="Top" Margin="0,2,0,0">
+                                        <Canvas Width="24" Height="24">
+                                            <Path Fill="{DynamicResource SystemFillColorCriticalBrush}"
+                                                  Data="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+                                        </Canvas>
+                                    </Viewbox>
+
+                                    <TextBlock Classes="error-text" Text="{Binding}" />
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

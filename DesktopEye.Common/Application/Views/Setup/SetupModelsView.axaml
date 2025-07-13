@@ -1,0 +1,236 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:DesktopEye.Common.Application.ViewModels.Setup"
+             xmlns:design="clr-namespace:DesktopEye.Common.Application.ViewModels.Setup.Design"
+             mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="400"
+             x:Class="DesktopEye.Common.Application.Views.Setup.SetupModelsView"
+             x:DataType="viewModels:SetupModelsViewModel">
+
+    <Design.DataContext>
+        <design:DesignSetupModelsViewModel />
+    </Design.DataContext>
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <!-- Theme-aware colors -->
+            <SolidColorBrush x:Key="SuccessColor" Color="#28A745" />
+            <SolidColorBrush x:Key="InfoColor" Color="#17A2B8" />
+            <SolidColorBrush x:Key="PrimaryColor" Color="#007BFF" />
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <UserControl.Styles>
+        <!-- Card styling -->
+        <Style Selector="Border.setup-card">
+            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SystemControlBackgroundBaseLowBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="24" />
+            <Setter Property="BoxShadow" Value="0 4 12 0 #10000000" />
+        </Style>
+
+        <Style Selector="TextBlock.main-title">
+            <Setter Property="FontSize" Value="20" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Margin" Value="0,0,0,16" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+        </Style>
+
+        <Style Selector="TextBlock.section-title">
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="FontWeight" Value="Medium" />
+            <Setter Property="Margin" Value="0,0,0,12" />
+            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+        </Style>
+
+        <Style Selector="TextBlock.description">
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="LineHeight" Value="18" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="TextAlignment" Value="Center" />
+            <Setter Property="Margin" Value="0,0,0,16" />
+        </Style>
+
+        <Style Selector="Button.download-button">
+            <Setter Property="Background" Value="{DynamicResource PrimaryColor}" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="Padding" Value="20,10" />
+            <Setter Property="FontWeight" Value="Medium" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="MinWidth" Value="200" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="Margin" Value="0,16,0,0" />
+        </Style>
+
+        <Style Selector="Button.download-button:pointerover">
+            <Setter Property="Background" Value="#0056B3" />
+        </Style>
+
+        <Style Selector="Button.download-button:pressed">
+            <Setter Property="Background" Value="#004085" />
+        </Style>
+
+        <Style Selector="Border.info-panel">
+            <Setter Property="Background" Value="{DynamicResource SystemFillColorSolidNeutralBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource InfoColor}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="Padding" Value="12" />
+            <Setter Property="Margin" Value="0,0,0,16" />
+        </Style>
+
+        <Style Selector="TextBlock.info-text">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="LineHeight" Value="16" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+        </Style>
+
+        <Style Selector="TextBlock.success-message">
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="FontWeight" Value="Medium" />
+            <Setter Property="Foreground" Value="{DynamicResource SuccessColor}" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="Margin" Value="0,16,0,0" />
+        </Style>
+
+        <Style Selector="Border.feature-item">
+            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SystemControlBackgroundBaseLowBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="4" />
+            <Setter Property="Padding" Value="8,4" />
+            <Setter Property="Margin" Value="0,0,0,4" />
+        </Style>
+
+        <Style Selector="TextBlock.feature-text">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+        </Style>
+
+        <!-- Error Panel Styles -->
+        <Style Selector="Border.error-container">
+            <Setter Property="Background" Value="{DynamicResource SystemFillColorCriticalBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SystemFillColorCriticalBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="Padding" Value="12,8" />
+        </Style>
+
+        <Style Selector="TextBlock.error-text">
+            <Setter Property="Foreground" Value="Red" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+    </UserControl.Styles>
+
+    <Grid ColumnDefinitions="*" RowDefinitions="*">
+        <Border Classes="setup-card"
+                MaxWidth="500"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center">
+            <StackPanel>
+                <!-- Header -->
+                <TextBlock Classes="main-title" Text="AI Models Setup" />
+
+                <!-- Description -->
+                <TextBlock Classes="description">
+                    This will download the required models for DesktopEye to function properly.
+                </TextBlock>
+
+                <!-- Info Panel -->
+                <Border Classes="info-panel">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,0,0,6">
+                            <!-- Info icon -->
+                            <Viewbox Width="14" Height="14" VerticalAlignment="Top" Margin="0,1,0,0">
+                                <Canvas Width="24" Height="24">
+                                    <Path Fill="{DynamicResource InfoColor}"
+                                          Data="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,17A1.5,1.5 0 0,1 10.5,15.5A1.5,1.5 0 0,1 12,14A1.5,1.5 0 0,1 13.5,15.5A1.5,1.5 0 0,1 12,17M12,10A1,1 0 0,1 13,11V15A1,1 0 0,1 12,16A1,1 0 0,1 11,15V11A1,1 0 0,1 12,10Z" />
+                                </Canvas>
+                            </Viewbox>
+                            <TextBlock Classes="info-text" FontWeight="Medium" Text="What will be downloaded:" />
+                        </StackPanel>
+
+                        <StackPanel Spacing="2" Margin="20,0,0,0">
+                            <Border Classes="feature-item">
+                                <TextBlock Classes="feature-text"
+                                           Text="• Computer Vision Models - For screen analysis and object detection" />
+                            </Border>
+                            <Border Classes="feature-item">
+                                <TextBlock Classes="feature-text"
+                                           Text="• OCR Models - For text recognition and extraction" />
+                            </Border>
+                            <Border Classes="feature-item">
+                                <TextBlock Classes="feature-text"
+                                           Text="• Language Models - For natural language processing" />
+                            </Border>
+                        </StackPanel>
+
+                    </StackPanel>
+                </Border>
+
+                <!-- Download Button -->
+                <Button Classes="download-button"
+                        Command="{Binding DownloadRequiredModelsCommand}">
+                    <Button.Content>
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <!-- Download icon -->
+                            <Viewbox Width="16" Height="16" VerticalAlignment="Center">
+                                <Canvas Width="24" Height="24">
+                                    <Path Fill="White"
+                                          Data="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
+                                    <Path Fill="White"
+                                          Data="M12,11L16,15H13V19H11V15H8L12,11Z" />
+                                </Canvas>
+                            </Viewbox>
+                            <TextBlock Text="Download Required Models" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button.Content>
+                </Button>
+
+                <!-- Success Message -->
+                <TextBlock Classes="success-message"
+                           Text="✓ Models downloaded successfully!"
+                           IsVisible="{Binding ModelsDownloaded}" />
+
+                <!-- Error Messages -->
+                <ItemsControl ItemsSource="{Binding ValidationErrors}" Margin="0,12,0,0">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Spacing="8" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Classes="error-container">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <!-- Error icon -->
+                                    <Viewbox Width="16" Height="16" VerticalAlignment="Top" Margin="0,2,0,0">
+                                        <Canvas Width="24" Height="24">
+                                            <Path Fill="{DynamicResource SystemFillColorCriticalBrush}"
+                                                  Data="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,17A1.5,1.5 0 0,1 10.5,15.5A1.5,1.5 0 0,1 12,14A1.5,1.5 0 0,1 13.5,15.5A1.5,1.5 0 0,1 12,17M12,10A1,1 0 0,1 13,11V15A1,1 0 0,1 12,16A1,1 0 0,1 11,15V11A1,1 0 0,1 12,10Z" />
+                                        </Canvas>
+                                    </Viewbox>
+
+                                    <TextBlock Classes="error-text" Text="{Binding}" />
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

@@ -1,4 +1,7 @@
+using Bugsnag;
 using DesktopEye.Common.Domain.Features.TextTranslation;
+using DesktopEye.Common.Infrastructure.Configuration;
+using DesktopEye.Common.Infrastructure.Configuration.Interfaces;
 using DesktopEye.Common.Infrastructure.Services.ApplicationPath;
 using DesktopEye.Common.Infrastructure.Services.Conda;
 using DesktopEye.Common.Infrastructure.Services.Download;
@@ -16,10 +19,12 @@ public class NllbPyTorchTranslationTestFixture : IDisposable
         var mockDownloadService = new Mock<IDownloadService>();
 
         // Create required dependencies
-        IPathService pathService = new PathService();
+        IAppConfigService appConfigService = new AppConfigService();
+        IPathService pathService = new PathService(appConfigService);
         var condaLogger = new Mock<ILogger<CondaService>>();
-        var mockBugsnagService = new Mock<Bugsnag.IClient>();
-        ICondaService condaService = new CondaService(pathService, mockDownloadService.Object, mockBugsnagService.Object, condaLogger.Object);
+        var mockBugsnagService = new Mock<IClient>();
+        ICondaService condaService = new CondaService(pathService, mockDownloadService.Object,
+            mockBugsnagService.Object, condaLogger.Object);
         var runtimeManagerLogger = new Mock<ILogger<PythonRuntimeManager>>();
         IPythonRuntimeManager runtimeManager =
             new PythonRuntimeManager(pathService, condaService, runtimeManagerLogger.Object);

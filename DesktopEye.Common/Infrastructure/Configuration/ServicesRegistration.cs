@@ -1,5 +1,6 @@
 using Bugsnag.AspNet.Core;
 using DesktopEye.Common.Application.ViewModels;
+using DesktopEye.Common.Application.ViewModels.Setup;
 using DesktopEye.Common.Domain.Features.Dictionary;
 using DesktopEye.Common.Domain.Features.OpticalCharacterRecognition;
 using DesktopEye.Common.Domain.Features.OpticalCharacterRecognition.Interfaces;
@@ -10,11 +11,13 @@ using DesktopEye.Common.Domain.Features.TextTranslation.Interfaces;
 using DesktopEye.Common.Domain.Models.OpticalCharacterRecognition;
 using DesktopEye.Common.Domain.Models.TextClassification;
 using DesktopEye.Common.Domain.Models.TextTranslation;
+using DesktopEye.Common.Infrastructure.Configuration.Interfaces;
 using DesktopEye.Common.Infrastructure.Services.ApplicationPath;
 using DesktopEye.Common.Infrastructure.Services.Conda;
 using DesktopEye.Common.Infrastructure.Services.Dialog;
 using DesktopEye.Common.Infrastructure.Services.Dictionary;
 using DesktopEye.Common.Infrastructure.Services.Download;
+using DesktopEye.Common.Infrastructure.Services.PathValidation;
 using DesktopEye.Common.Infrastructure.Services.Python;
 using DesktopEye.Common.Infrastructure.Services.TrainedModel;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,7 +32,7 @@ namespace DesktopEye.Common.Infrastructure.Configuration;
 public static class ServicesRegistration
 {
     /// <summary>
-    /// Registers all application services for dependency injection
+    ///     Registers all application services for dependency injection
     /// </summary>
     /// <param name="services">The service collection</param>
     /// <returns>The configured service collection</returns>
@@ -43,7 +46,7 @@ public static class ServicesRegistration
     }
 
     /// <summary>
-    /// Registers logging configuration
+    ///     Registers logging configuration
     /// </summary>
     private static void RegisterLogging(IServiceCollection services)
     {
@@ -55,7 +58,7 @@ public static class ServicesRegistration
     }
 
     /// <summary>
-    /// Registers infrastructure layer services
+    ///     Registers infrastructure layer services
     /// </summary>
     private static void RegisterInfrastructureServices(IServiceCollection services)
     {
@@ -63,8 +66,13 @@ public static class ServicesRegistration
         services.AddSingleton<IPathService, PathService>();
         services.AddSingleton<ICondaService, CondaService>();
         services.AddSingleton<IPythonRuntimeManager, PythonRuntimeManager>();
-        services.AddSingleton<IModelProvider, ModelProvider>();
         services.AddSingleton<ServicesLoader>();
+        services.AddSingleton<IAppConfigService, AppConfigService>();
+
+
+        services.AddSingleton<IModelProvider, ModelProvider>();
+        services.AddTransient<IPathValidationService, PathValidationService>();
+
         services.AddSingleton<IDialogService, DialogService>();
         // Scoped infrastructure services
         services.AddHttpClient("DesktopEyeClient",
@@ -75,7 +83,7 @@ public static class ServicesRegistration
     }
 
     /// <summary>
-    /// Registers domain layer services and managers
+    ///     Registers domain layer services and managers
     /// </summary>
     private static void RegisterDomainServices(IServiceCollection services)
     {
@@ -91,7 +99,7 @@ public static class ServicesRegistration
     }
 
     /// <summary>
-    /// Registers OCR services with their respective keys
+    ///     Registers OCR services with their respective keys
     /// </summary>
     private static void RegisterOcrServices(IServiceCollection services)
     {
@@ -99,7 +107,7 @@ public static class ServicesRegistration
     }
 
     /// <summary>
-    /// Registers text classification services with their respective keys
+    ///     Registers text classification services with their respective keys
     /// </summary>
     private static void RegisterTextClassificationServices(IServiceCollection services)
     {
@@ -108,7 +116,7 @@ public static class ServicesRegistration
     }
 
     /// <summary>
-    /// Registers translation services with their respective keys
+    ///     Registers translation services with their respective keys
     /// </summary>
     private static void RegisterTranslationServices(IServiceCollection services)
     {
@@ -116,7 +124,7 @@ public static class ServicesRegistration
     }
 
     /// <summary>
-    /// Registers external services and monitoring tools
+    ///     Registers external services and monitoring tools
     /// </summary>
     private static void RegisterExternalServices(IServiceCollection services)
     {
@@ -131,7 +139,7 @@ public static class ServicesRegistration
     }
 
     /// <summary>
-    /// Registers application ViewModels
+    ///     Registers application ViewModels
     /// </summary>
     private static void RegisterViewModels(IServiceCollection services)
     {
@@ -139,6 +147,11 @@ public static class ServicesRegistration
         services.AddTransient<SettingsViewModel>();
         services.AddTransient<ScreenCaptureViewModel>();
         services.AddTransient<ScreenCaptureActionsViewModel>();
-    }
 
+        //Setup
+        services.AddTransient<SetupViewModel>();
+        services.AddTransient<SetupPathViewModel>();
+        services.AddTransient<SetupPythonViewModel>();
+        services.AddTransient<SetupModelsViewModel>();
+    }
 }

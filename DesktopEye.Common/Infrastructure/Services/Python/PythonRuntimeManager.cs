@@ -13,12 +13,12 @@ namespace DesktopEye.Common.Infrastructure.Services.Python;
 
 public class PythonRuntimeManager : IPythonRuntimeManager
 {
-    private readonly SemaphoreSlim _semaphore = new(1, 1);
     private readonly ICondaService _condaService;
     private readonly HashSet<object> _dependentClasses;
     private readonly object _lock = new();
     private readonly ILogger<PythonRuntimeManager> _logger;
     private readonly IPathService _pathService;
+    private readonly SemaphoreSlim _semaphore = new(1, 1);
     private bool _isDisposed;
 
     public PythonRuntimeManager(IPathService pathService, ICondaService condaService,
@@ -178,8 +178,8 @@ public class PythonRuntimeManager : IPythonRuntimeManager
             }
         }
     }
-    
-    
+
+
     #region ExecuteWithGil
 
     /// <summary>

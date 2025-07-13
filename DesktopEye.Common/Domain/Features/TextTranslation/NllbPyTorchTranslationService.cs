@@ -20,25 +20,21 @@ namespace DesktopEye.Common.Domain.Features.TextTranslation;
 public class NllbPyTorchTranslationService : ITranslationService, ILoadable
 {
     private static readonly List<string> PipDependencies = ["transformers", "pytorch"];
-    
-    private readonly ICondaService _condaService;
-    private readonly ILogger<NllbPyTorchTranslationService> _logger;
-    private readonly IPathService _pathService;
 
-    private readonly ModelRegistry _modelRegistry = new ModelRegistry();
+    private readonly ICondaService _condaService;
     private readonly SemaphoreSlim _initializationSemaphore = new(1, 1);
-    
+    private readonly ILogger<NllbPyTorchTranslationService> _logger;
+
+    private readonly ModelRegistry _modelRegistry = new();
+    private readonly IPathService _pathService;
+    private readonly IPythonRuntimeManager _runtimeManager;
+
     private Task<bool>? _initializationTask;
     private volatile bool _isInitialized;
     private volatile bool _isInitializing;
 
     private dynamic? _model;
     private dynamic? _tokenizer;
-    private readonly IPythonRuntimeManager _runtimeManager;
-    
-    private Model NllbPyTorchModel =>
-        _modelRegistry.DefaultModels.FirstOrDefault(model => model.ModelName == "facebook/nllb-200-distilled-600M") ??
-        throw new InvalidOperationException("NllbPyTorch model not found in registry");
 
     //TODO find why the interop code randomly crashes
 
@@ -50,7 +46,8 @@ public class NllbPyTorchTranslationService : ITranslationService, ILoadable
         _runtimeManager = runtimeManager;
         _logger = logger;
 
-        _logger.LogInformation("Initializing NllbPyTorchTranslationService with model directory: {ModelDirectory}", pathService.ModelsDirectory);
+        _logger.LogInformation("Initializing NllbPyTorchTranslationService with model directory: {ModelDirectory}",
+            pathService.ModelsDirectory);
 
         try
         {
@@ -64,6 +61,10 @@ public class NllbPyTorchTranslationService : ITranslationService, ILoadable
             throw;
         }
     }
+
+    private Model NllbPyTorchModel =>
+        _modelRegistry.DefaultModels.FirstOrDefault(model => model.ModelName == "facebook/nllb-200-distilled-600M") ??
+        throw new InvalidOperationException("NllbPyTorch model not found in registry");
 
     public void Dispose()
     {
@@ -262,7 +263,7 @@ public class NllbPyTorchTranslationService : ITranslationService, ILoadable
             {
                 _logger.LogTrace("Executing tokenizer loading with GIL protection");
 
-                return await _runtimeManager.ExecuteWithGilAsync(() =>
+                return _runtimeManager.ExecuteWithGil(() =>
                 {
                     cancellationToken.ThrowIfCancellationRequested();
 
@@ -272,9 +273,9 @@ public class NllbPyTorchTranslationService : ITranslationService, ILoadable
                     _logger.LogTrace("Getting AutoTokenizer from transformers");
                     var autoTokenizer = transformers.GetAttr("AutoTokenizer");
 
-                        _logger.LogDebug("Loading tokenizer from pretrained model with cache directory: {CacheDir}",
-                            _pathService.ModelsDirectory);
-                        var tokenizer = autoTokenizer.from_pretrained(modelName, cache_dir: _pathService.ModelsDirectory);
+                    _logger.LogDebug("Loading tokenizer from pretrained model with cache directory: {CacheDir}",
+                        _pathService.ModelsDirectory);
+                    var tokenizer = autoTokenizer.from_pretrained(modelName, cache_dir: _pathService.ModelsDirectory);
 
                     _logger.LogInformation("Tokenizer loaded successfully for model: {ModelName}", modelName);
                     return tokenizer;
@@ -305,7 +306,7 @@ public class NllbPyTorchTranslationService : ITranslationService, ILoadable
             {
                 _logger.LogTrace("Acquiring Python GIL for model loading");
 
-                return _runtimeManager.ExecuteWithGilAsync(() =>
+                return _runtimeManager.ExecuteWithGil(() =>
                 {
                     cancellationToken.ThrowIfCancellationRequested();
 
@@ -315,11 +316,11 @@ public class NllbPyTorchTranslationService : ITranslationService, ILoadable
                     _logger.LogTrace("Getting AutoModelForSeq2SeqLM from transformers");
                     var autoModelForSeq2SeqLm = transformers.GetAttr("AutoModelForSeq2SeqLM");
 
-                        _logger.LogDebug("Loading model from pretrained with cache directory: {CacheDir}",
-                            _pathService.ModelsDirectory);
-                        var model = autoModelForSeq2SeqLm.from_pretrained(modelName,
-                            cache_dir: _pathService.ModelsDirectory,
-                            torch_dtype: "auto");
+                    _logger.LogDebug("Loading model from pretrained with cache directory: {CacheDir}",
+                        _pathService.ModelsDirectory);
+                    var model = autoModelForSeq2SeqLm.from_pretrained(modelName,
+                        cache_dir: _pathService.ModelsDirectory,
+                        torch_dtype: "auto");
 
                     _logger.LogInformation("Model loaded successfully: {ModelName}", modelName);
                     return model;

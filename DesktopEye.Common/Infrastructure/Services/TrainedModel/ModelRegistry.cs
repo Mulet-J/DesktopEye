@@ -50,15 +50,22 @@ public class ModelRegistry
     public readonly List<Language> DefaultTesseractLanguages =
     [
         Language.English,
-        Language.SpanishCastilian,
-        Language.Portuguese,
         Language.French,
         Language.German,
-        Language.Italian,
-        Language.Japanese,
-        Language.JapaneseVertical,
+        Language.SpanishCastilian,
         Language.ChineseSimplified,
         Language.ChineseTraditional,
+        Language.Portuguese,
+        Language.Japanese,
+        Language.JapaneseVertical,        
+        Language.Korean,
+        Language.Portuguese,
+        Language.Italian,
+        Language.Dutch,
+        Language.Russian,
+        Language.Swedish,
+        Language.Norwegian,
+        Language.Danish,
         Language.Osd
     ];
 

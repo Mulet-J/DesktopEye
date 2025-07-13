@@ -1,20 +1,22 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using Avalonia.Platform;
+using DesktopEye.Common.Application.Resources;
+using DesktopEye.Common.Application.ViewModels.Setup;
 using DesktopEye.Common.Application.Views;
 using DesktopEye.Common.Application.Views.ScreenCapture;
+using DesktopEye.Common.Application.Views.Setup;
 using DesktopEye.Common.Domain.Features.OpticalCharacterRecognition.Interfaces;
 using DesktopEye.Common.Domain.Features.TextClassification.Interfaces;
 using DesktopEye.Common.Domain.Features.TextTranslation.Interfaces;
 using DesktopEye.Common.Infrastructure.Configuration;
-using DesktopEye.Common.Infrastructure.Models;
-using DesktopEye.Common.Resources;
+using DesktopEye.Common.Infrastructure.Configuration.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
+using TesseractOCR;
 using TesseractOCR.Enums;
 using MainViewModel = DesktopEye.Common.Application.ViewModels.MainViewModel;
 using ScreenCaptureViewModel = DesktopEye.Common.Application.ViewModels.ScreenCapture.ScreenCaptureViewModel;
@@ -30,8 +32,17 @@ public class App : Avalonia.Application
     public App(IServiceProvider services)
     {
         _services = services;
-        DownloadModels();
-        PreloadServices();
+        // Dirty fix to force tesseract's library loading before others
+        try
+        {
+            using var engine = new Engine("", Language.English);
+        }
+        catch
+        {
+        }
+
+        // DownloadModels();
+        // PreloadServices();
     }
 
     public override void Initialize()
@@ -43,17 +54,8 @@ public class App : Avalonia.Application
     {
         // Preload services, obviously only pass singletons here
         var preloader = _services.GetRequiredService<ServicesLoader>();
-        preloader.PreloadServices(typeof(IOcrOrchestrator), typeof(ITextClassifierOrchestrator), typeof(ITranslationOrchestrator));
-    }
-    
-    private void DownloadModels()
-    {
-        // Download models if needed
-        var modelProvider = _services.GetRequiredService<IModelProvider>();
-        // TODO: Empty list for now, change it for the correct user models
-        var userCustomModels = new List<Model>();
-        var userCustomLanguages = new List<Language>();
-        modelProvider.Process(userCustomModels, userCustomLanguages);
+        preloader.PreloadServices(typeof(IOcrOrchestrator), typeof(ITextClassifierOrchestrator),
+            typeof(ITranslationOrchestrator));
     }
 
     public override void OnFrameworkInitializationCompleted()
@@ -66,10 +68,61 @@ public class App : Avalonia.Application
                 DataContext = _services.GetService<MainViewModel>()
             };
             desktop.ShutdownMode = ShutdownMode.OnExplicitShutdown;
+
+            var config = _services.GetRequiredService<IAppConfigService>();
+
+            if (!config.IsSetupFinished())
+            {
+                // Setup not finished - show setup window as main window
+                var setupViewModel = _services.GetRequiredService<SetupViewModel>();
+                var setupWindow = new SetupWindow
+                {
+                    DataContext = setupViewModel
+                };
+
+                // Subscribe to setup completion event
+                setupViewModel.SetupCompleted += OnSetupCompleted;
+
+                desktop.MainWindow = setupWindow;
+                setupWindow.Show();
+            }
+            else
+            {
+                // Setup already finished - show main window and preload services
+                ShowMainWindowAndPreload(desktop);
+            }
+
             InitializeTrayIcon();
         }
 
         base.OnFrameworkInitializationCompleted();
+    }
+
+    private void OnSetupCompleted(object? sender, EventArgs e)
+    {
+        // Setup is now complete, switch to main window
+        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            // Close setup window
+            desktop.MainWindow?.Close();
+
+            // Show main window and preload services
+            ShowMainWindowAndPreload(desktop);
+        }
+    }
+
+    private void ShowMainWindowAndPreload(IClassicDesktopStyleApplicationLifetime desktop)
+    {
+        _mainWindow = new MainWindow
+        {
+            DataContext = _services.GetService<MainViewModel>()
+        };
+
+        desktop.MainWindow = _mainWindow;
+        _mainWindow.Show();
+
+        // Now preload services
+        PreloadServices();
     }
 
     private static void DisableAvaloniaDataAnnotationValidation()
@@ -83,7 +136,8 @@ public class App : Avalonia.Application
     {
         _trayIcon = new TrayIcon
         {
-            Icon = new WindowIcon(AssetLoader.Open(new Uri("avares://DesktopEye.Common/Application/Assets/avalonia-logo.ico"))),
+            Icon = new WindowIcon(
+                AssetLoader.Open(new Uri("avares://DesktopEye.Common/Application/Assets/avalonia-logo.ico"))),
             ToolTipText = "DesktopEye.Common",
             IsVisible = true
         };
