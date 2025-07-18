@@ -16,18 +16,18 @@ Installez les dépendances supplémentaires :
 ```bash
 # Ubuntu/Debian
 sudo apt-get update
-sudo apt-get install tesseract-ocr libopencv-dev
+sudo apt-get install tesseract-ocr libopencv-dev espeak-ng
 
 # CentOS/RHEL/Fedora
-sudo yum install tesseract opencv-devel
+sudo yum install tesseract opencv-devel espeak-ng
 # ou avec dnf
-sudo dnf install tesseract opencv-devel
+sudo dnf install tesseract opencv-devel espeak-ng
 
 # Arch Linux
-sudo pacman -S tesseract opencv
+sudo pacman -S tesseract opencv espeak-ng
 ```
 
-### macOS
+### MacOS
 
 Installez Tesseract :
 
@@ -38,6 +38,22 @@ brew install tesseract
 # Avec MacPorts
 sudo port install tesseract
 ```
+
+Installer espeak-ng:
+```bash
+# Avec Homebrew
+brew install espeak-ng
+
+# Avec MacPorts
+sudo port install espeak-ng
+```
+
+### Windows
+
+Installez espeak-ng :
+
+Rendez-vous sur la page release de [espeak-ng](https://github.com/espeak-ng/espeak-ng/releases) et téléchargez le fichier .msi de la dernière version
+
 
 ## Installation
 

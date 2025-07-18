@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DesktopEye.Common.Application.ViewModels.Base;
@@ -24,15 +25,15 @@ public partial class SetupModelsViewModel : ViewModelBase, IValidatableViewModel
 
     public void ValidateValues()
     {
-        if (!ModelsDownloaded) DownloadRequiredModels();
+        if (!ModelsDownloaded) ValidationErrors.Add("Models must be downloaded before proceeding.");
     }
 
     [RelayCommand]
-    private void DownloadRequiredModels()
+    private async Task DownloadRequiredModels()
     {
+        ValidationErrors.Clear();
         var userCustomModels = new List<Model>();
         var userCustomLanguages = new List<Language>();
-        _ = _modelProvider.Process(userCustomModels, userCustomLanguages);
-        ModelsDownloaded = true;
+        ModelsDownloaded = await _modelProvider.Process(userCustomModels, userCustomLanguages);
     }
 }

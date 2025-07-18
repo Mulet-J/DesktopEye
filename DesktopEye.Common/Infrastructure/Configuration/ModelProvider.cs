@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Bugsnag;
 using DesktopEye.Common.Domain.Models;
 using DesktopEye.Common.Infrastructure.Exceptions;
@@ -34,7 +35,7 @@ public class ModelProvider : IModelProvider
     /// <param name="userCustomModels">List of user-defined custom models</param>
     /// <param name="userSelectedOcrLanguages">List of user-selected OCR languages</param>
     /// <returns>List of models including both default and user-defined models</returns>
-    public List<Model> Process(List<Model> userCustomModels, List<Language> userSelectedOcrLanguages)
+    public async Task<bool> Process(List<Model> userCustomModels, List<Language> userSelectedOcrLanguages)
     {
         // Load model definitions from the registry and combine with user-defined custom models
         var models = LoadModelDefinitions(userCustomModels, userSelectedOcrLanguages);
@@ -45,7 +46,7 @@ public class ModelProvider : IModelProvider
             var unavailableModels = GetUnavailableModels(models);
 
             // Download models that are not available
-            DownloadModels(unavailableModels);
+            return await DownloadModels(unavailableModels);
         }
         catch (Exception e)
         {
@@ -53,7 +54,7 @@ public class ModelProvider : IModelProvider
             _logger.LogError(e, "Error processing model provider");
         }
 
-        return models;
+        return false;
     }
 
 
@@ -94,18 +95,20 @@ public class ModelProvider : IModelProvider
     ///     Downloads models that are not available on the system.
     /// </summary>
     /// <param name="models">List of models to download</param>
-    private async void DownloadModels(List<Model> models)
+    private async Task<bool> DownloadModels(List<Model> models)
     {
         try
         {
             foreach (var model in models.Where(model => !_modelStorageService.IsModelAvailable(model)))
                 await _modelDownloadService.DownloadModelAsync(model);
+            return true;
         }
         catch (Exception e)
         {
             _bugsnagClient.Notify(e);
             _logger.LogError(e, "Error downloading models");
         }
+        return false;
     }
 
     #region Helpers
