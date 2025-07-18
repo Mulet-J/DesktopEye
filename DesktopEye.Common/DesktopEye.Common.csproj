@@ -12,6 +12,13 @@
         <AvaloniaResource Include="Application\Assets\avalonia-logo.ico"/>
         <AvaloniaResource Include="Assets\**"/>
     </ItemGroup>
+    <ItemGroup>
+        <Content Include="..\DesktopEye.Common\voices\**\*.*">
+            <Link>voices\%(RecursiveDir)%(Filename)%(Extension)</Link>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+    
 
     <ItemGroup>
         <PackageReference Include="Avalonia"/>
