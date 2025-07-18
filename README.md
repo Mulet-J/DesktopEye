@@ -52,7 +52,7 @@ sudo port install espeak-ng
 
 Installez espeak-ng :
 
-Rendez-vous sur la page release de [espeak-ng](https://github.com/espeak-ng/espeak-ng/releases) et téléchargez le fichier .msi de la dernière version
+Rendez-vous sur la page release de [espeak-ng](https://github.com/espeak-ng/espeak-ng/releases) et téléchargez le fichier .msi de la dernière version puis exécutez-le et suivez les instructions.
 
 
 ## Installation
