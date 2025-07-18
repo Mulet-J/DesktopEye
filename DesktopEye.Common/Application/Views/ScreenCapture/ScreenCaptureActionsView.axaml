@@ -307,6 +307,7 @@
                                                      LineHeight="24"
                                                      AcceptsReturn="True"
                                                      IsReadOnly="False"
+                                                     MaxHeight= "350"
                                                      Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
                                         </ScrollViewer>
 
@@ -363,6 +364,7 @@
                                                      FontSize="14"
                                                      AcceptsReturn="True"
                                                      IsReadOnly="False"
+                                                     MaxHeight= "350"
                                                      LineHeight="24"
                                                      Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
                                         </ScrollViewer>

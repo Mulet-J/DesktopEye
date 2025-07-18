@@ -12,6 +12,13 @@
         <AvaloniaResource Include="Application\Assets\avalonia-logo.ico"/>
         <AvaloniaResource Include="Assets\**"/>
     </ItemGroup>
+    <ItemGroup>
+        <Content Include="..\DesktopEye.Common\voices\**\*.*">
+            <Link>voices\%(RecursiveDir)%(Filename)%(Extension)</Link>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+    
 
     <ItemGroup>
         <PackageReference Include="Avalonia"/>
@@ -43,11 +50,7 @@
         <PackageReference Include="NTextCat"/>
         <PackageReference Include="OpenCvSharp4"/>
         <PackageReference Include="pythonnet"/>
-        <PackageReference Include="SciSharp.TensorFlow.Redist"/>
-        <PackageReference Include="SciSharp.TensorFlowHub"/>
         <PackageReference Include="SkiaSharp"/>
-        <PackageReference Include="TensorFlow.Keras"/>
-        <PackageReference Include="TensorFlow.NET"/>
         <PackageReference Include="TesseractOCR"/>
         <PackageReference Include="xunit"/>
         <PackageReference Include="xunit.runner.visualstudio">
