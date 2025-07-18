@@ -50,11 +50,7 @@
         <PackageReference Include="NTextCat"/>
         <PackageReference Include="OpenCvSharp4"/>
         <PackageReference Include="pythonnet"/>
-        <PackageReference Include="SciSharp.TensorFlow.Redist"/>
-        <PackageReference Include="SciSharp.TensorFlowHub"/>
         <PackageReference Include="SkiaSharp"/>
-        <PackageReference Include="TensorFlow.Keras"/>
-        <PackageReference Include="TensorFlow.NET"/>
         <PackageReference Include="TesseractOCR"/>
         <PackageReference Include="xunit"/>
         <PackageReference Include="xunit.runner.visualstudio">
