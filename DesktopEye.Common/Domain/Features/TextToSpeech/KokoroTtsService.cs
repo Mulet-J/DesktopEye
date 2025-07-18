@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -10,6 +11,7 @@ using DesktopEye.Common.Infrastructure.Models;
 using DesktopEye.Common.Infrastructure.Services.ApplicationPath;
 using DesktopEye.Common.Infrastructure.Services.TrainedModel;
 using KokoroSharp;
+using KokoroSharp.Processing;
 using KokoroSharp.Utilities;
 using Microsoft.Extensions.Logging;
 using SoundFlow.Backends.MiniAudio;
@@ -89,19 +91,65 @@ public class KokoroTtsService : ITtsService, ILoadable
         }
     }
 
-    public async Task<string> TextToSpeechAsync(string text, Language language)
+public async Task<string> TextToSpeechAsync(string text, Language language)
+{
+    try 
     {
         EnsureSynthesizerInitialized();
+        
+        // Nettoyage et validation du texte
+        text = text?.Trim() ?? string.Empty;
+        if (string.IsNullOrEmpty(text))
+        {
+            _logger.LogWarning("Tentative de synthèse avec un texte vide");
+            return string.Empty;
+        }
+
         var voiceId = GetVoiceForLanguage(language);
         var fileName = $"TTS_{language}_{Guid.NewGuid()}.wav";
-        var filePath = Path.Combine(Path.Combine(_modelDirectory,"Audios"), fileName);
+        var filePath = Path.Combine(Path.Combine(_modelDirectory, "Audios"), fileName);
 
         var voice = KokoroVoiceManager.GetVoice(voiceId);
-        var audioData = await _synthesizer!.SynthesizeAsync(text, voice);
+        
+        // Configuration plus restrictive pour éviter les dépassements
+        var config = new KokoroTTSPipelineConfig(new DefaultSegmentationConfig
+        {
+            MaxFirstSegmentLength = 100,  // Réduire significativement la taille des segments
+            MaxSecondSegmentLength = 100
+        })
+        {
+            // Fonction de segmentation personnalisée pour découper en plus petits morceaux
+            SegmentationFunc = tokens =>
+            {
+                var segments = new List<int[]>();
+                const int maxLength = 100;
+                
+                for (int i = 0; i < tokens.Length; i += maxLength)
+                {
+                    var length = Math.Min(maxLength, tokens.Length - i);
+                    var segment = new int[length];
+                    Array.Copy(tokens, i, segment, 0, length);
+                    segments.Add(segment);
+                }
+                
+                return segments;
+            },
+            SecondsOfPauseBetweenProperSegments = new PauseAfterSegmentStrategy(0.2f)
+        };
+
+        _logger.LogInformation("Début de la synthèse vocale pour {Length} caractères", text.Length);
+        var audioData = await _synthesizer!.SynthesizeAsync(text, voice, config);
         _synthesizer.SaveAudioToFile(audioData, filePath);
+        _logger.LogInformation("Synthèse vocale terminée, fichier sauvegardé : {FilePath}", filePath);
 
         return filePath;
     }
+    catch (Exception ex)
+    {
+        _logger.LogError(ex, "Erreur lors de la synthèse vocale: {Message}", ex.Message);
+        throw;
+    }
+}
 
     public SoundPlayer? GetSoundPlayerForFile(string audioFilePath)
     {
